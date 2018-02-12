@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3f13ef82-2812-4233-957e-0a34c64e1282" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/zz.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/zz.xml" />
+    <list default="true" id="3f13ef82-2812-4233-957e-0a34c64e1282" name="Default" comment="插入广告">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/moyi/yys/commands/HonorCommand.java" afterPath="$PROJECT_DIR$/src/moyi/yys/commands/HonorCommand.java" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/NewHonor/NewHonor.jar" afterPath="$PROJECT_DIR$/out/artifacts/NewHonor/NewHonor.jar" />
+      <change beforePath="$PROJECT_DIR$/out/production/NewHonor/moyi/yys/commands/HonorCommand.class" afterPath="$PROJECT_DIR$/out/production/NewHonor/moyi/yys/commands/HonorCommand.class" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,7 +31,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HonorData.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="HonorData.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/moyi/yys/configuration/HonorData.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="224">
@@ -43,44 +42,6 @@
                 <element signature="e#1710#1711#0" expanded="true" />
                 <element signature="e#1738#1739#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AdminChildCommand.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/moyi/yys/commands/AdminChildCommand.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="37" column="33" lean-forward="false" selection-start-line="37" selection-start-column="33" selection-end-line="37" selection-end-column="33" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlayerData.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/moyi/yys/configuration/PlayerData.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1200">
-              <caret line="90" column="44" lean-forward="false" selection-start-line="90" selection-start-column="44" selection-end-line="90" selection-end-column="44" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1529#1530#0" expanded="true" />
-                <element signature="e#1593#1594#0" expanded="true" />
-                <element signature="e#2865#2866#0" expanded="true" />
-                <element signature="e#2929#2930#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="HonorCommand.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/moyi/yys/commands/HonorCommand.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="48">
-              <caret line="76" column="45" lean-forward="false" selection-start-line="76" selection-start-column="45" selection-end-line="76" selection-end-column="45" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -104,6 +65,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="PUSH_TAGS">
+      <GitPushTagMode />
+    </option>
   </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
@@ -157,6 +121,11 @@
             <path>
               <item name="NewHonor" type="b2602c69:ProjectViewProjectNode" />
               <item name="NewHonor" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="NewHonor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="NewHonor" type="462c0819:PsiDirectoryNode" />
+              <item name=".idea" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="NewHonor" type="b2602c69:ProjectViewProjectNode" />
@@ -330,6 +299,14 @@
       <option name="presentableId" value="Default" />
       <updated>1517412484664</updated>
     </task>
+    <task id="LOCAL-00001" summary="插入广告">
+      <created>1518450655414</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1518450655414</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -365,6 +342,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="插入广告" />
+    <option name="LAST_COMMIT_MESSAGE" value="插入广告" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -749,6 +730,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/moyi/yys/NewHonor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="353">
+          <caret line="60" column="43" lean-forward="false" selection-start-line="60" selection-start-column="43" selection-end-line="60" selection-end-column="43" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/moyi/yys/commands/HonorCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="88" column="38" lean-forward="true" selection-start-line="88" selection-start-column="38" selection-end-line="88" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/moyi/yys/configuration/PlayerData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="657">
+          <caret line="90" column="44" lean-forward="false" selection-start-line="90" selection-start-column="44" selection-end-line="90" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1529#1530#0" expanded="true" />
+            <element signature="e#1593#1594#0" expanded="true" />
+            <element signature="e#2865#2866#0" expanded="true" />
+            <element signature="e#2929#2930#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/moyi/yys/commands/AdminChildCommand.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="400">
@@ -769,38 +782,6 @@
             <element signature="e#1710#1711#0" expanded="true" />
             <element signature="e#1738#1739#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/moyi/yys/configuration/PlayerData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1200">
-          <caret line="90" column="44" lean-forward="false" selection-start-line="90" selection-start-column="44" selection-end-line="90" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1529#1530#0" expanded="true" />
-            <element signature="e#1593#1594#0" expanded="true" />
-            <element signature="e#2865#2866#0" expanded="true" />
-            <element signature="e#2929#2930#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/moyi/yys/NewHonor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="60" column="43" lean-forward="false" selection-start-line="60" selection-start-column="43" selection-end-line="60" selection-end-column="43" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/moyi/yys/commands/HonorCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="76" column="45" lean-forward="false" selection-start-line="76" selection-start-column="45" selection-end-line="76" selection-end-column="45" />
-          <folding />
         </state>
       </provider>
     </entry>
