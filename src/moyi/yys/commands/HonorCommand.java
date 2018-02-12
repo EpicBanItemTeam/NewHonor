@@ -73,6 +73,8 @@ public class HonorCommand {
             .permission("newhonor.settings")
             .executor((src, args) -> {
                 src.sendMessage(Text.of("-------------------------------------"));
+                src.sendMessage(Text.of("MOYI服务器原创头衔插件,服务器群号:289061693"));
+                src.sendMessage(Text.of(""));
                 src.sendMessage(Text.of("/honor settings showhonor true/false  显示头衔在聊天栏"));
                 src.sendMessage(Text.of("/honor settings displayhonor true/false  显示头衔在头顶[名字前]"));
                 src.sendMessage(Text.of("-------------------------------------"));
@@ -86,6 +88,8 @@ public class HonorCommand {
             .permission("newhonor.admin")
             .executor((src, args) -> {
                 src.sendMessage(Text.of("-------------------------------------"));
+                src.sendMessage(Text.of("MOYI服务器原创头衔插件,服务器群号:289061693"));
+                src.sendMessage(Text.of(""));
                 src.sendMessage(Text.of("/honor admin add <honorID> <效果>      添加头衔"));
                 src.sendMessage(Text.of("/honor admin set <honorID> <效果>      设置头衔"));
                 src.sendMessage(Text.of("/honor admin delete <honorID>          删除头衔"));
@@ -111,7 +115,8 @@ public class HonorCommand {
             .permission("newhonor.use")
             .executor((src, args) -> {
                 src.sendMessage(Text.of("-------------------------------------"));
-                src.sendMessage(Text.of("插件作者MCBBSID:阴阳师元素祭祀 邮箱1418780411@qq.com"));
+                src.sendMessage(Text.of("MOYI服务器原创头衔插件,服务器群号:289061693"));
+                src.sendMessage(Text.of(""));
                 src.sendMessage(Text.of("/honor admin           管理员用指令"));
                 src.sendMessage(Text.of("/honor list [用户]     列出拥有的头衔"));
                 src.sendMessage(Text.of("/honor use <honorID>  使用头衔"));
