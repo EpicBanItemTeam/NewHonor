@@ -24,7 +24,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.UUID;
 
-@Plugin(id = "newhonor", name = "New Honor", version = "1.1.1-MoYiVersion", authors = "yinyangshi")
+@Plugin(id = "newhonor", name = "New Honor", version = "1.2", authors = "yinyangshi")
 public class NewHonor {
     private NewHonorMessageManage mMessage = new NewHonorMessageManage();
     @Inject
