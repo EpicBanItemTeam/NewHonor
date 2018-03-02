@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="NewHonor-Test">
-    <output-path>$PROJECT_DIR$/../../下载/mcsc/Sponge-1.10.2/mods</output-path>
-    <root id="archive" name="NewHonor-Test.jar">
-      <element id="module-output" name="NewHonor" />
-    </root>
-  </artifact>
-</component>
