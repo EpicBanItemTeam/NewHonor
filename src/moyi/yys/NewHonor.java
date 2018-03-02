@@ -41,8 +41,12 @@ public class NewHonor {
     @Listener
     public void onStarting(GameStartingServerEvent event) {
         try {
-            Files.createDirectory(cfgDir);
-            Files.createDirectories(cfgDir.resolve("PlayerData"));
+            if (!Files.exists(cfgDir)) {
+                Files.createDirectory(cfgDir);
+            }
+            if (!Files.exists(cfgDir.resolve("PlayerData"))) {
+                Files.createDirectories(cfgDir.resolve("PlayerData"));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
