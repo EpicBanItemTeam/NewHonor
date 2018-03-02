@@ -113,7 +113,7 @@ public class HonorCommand {
             .permission("newhonor.use")
             .executor((src, args) -> {
                 src.sendMessage(Text.of("-------------------------------------"));
-                src.sendMessage(Text.of("插件已发布在mcbbs.net上"));
+                src.sendMessage(Text.of("插件已发布在http://www.mcbbs.net/thread-785478-1-1.html"));
                 src.sendMessage(Text.of(""));
                 src.sendMessage(Text.of("/honor admin           管理员用指令"));
                 src.sendMessage(Text.of("/honor list [用户]     列出拥有的头衔"));
