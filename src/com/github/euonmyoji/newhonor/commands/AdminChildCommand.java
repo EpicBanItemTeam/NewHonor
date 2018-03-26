@@ -1,12 +1,15 @@
 package com.github.euonmyoji.newhonor.commands;
 
+import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
-import com.github.euonmyoji.newhonor.NewHonor;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.effect.potion.PotionEffect;
+import org.spongepowered.api.effect.potion.PotionEffectType;
+import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -17,7 +20,12 @@ import java.util.HashMap;
 @SuppressWarnings("ConstantConditions")
 class AdminChildCommand {
     private static NewHonor plugin = NewHonor.plugin;
-    private static HonorData hd = NewHonor.hd;
+
+    static CommandSpec effect = CommandSpec.builder()
+            .executor((src, args) -> {
+                PotionEffect.builder().potionType(PotionEffectTypes.)
+            })
+            .build();
 
     static CommandSpec refresh = CommandSpec.builder()
             .executor((src, args) -> {
@@ -86,7 +94,7 @@ class AdminChildCommand {
             .executor((src, args) -> {
                 String id = args.<String>getOne(Text.of("honorID")).get();
                 String honor = args.<String>getOne(Text.of("honor")).get();
-                if (hd.set(id, honor)) {
+                if (HonorData.set(id, honor)) {
                     plugin.logger.info(src.getName() + "设置了头衔" + id);
                     src.sendMessage(Text.of("[头衔插件]设置头衔成功(刷新缓存)"));
                     updateHonor(src);
@@ -101,7 +109,7 @@ class AdminChildCommand {
             .arguments(GenericArguments.string(Text.of("honorID")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(Text.of("honorID")).get();
-                if (hd.delete(id)) {
+                if (HonorData.delete(id)) {
                     plugin.logger.info(src.getName() + "删除了头衔" + id);
                     src.sendMessage(Text.of("[头衔插件]删除头衔成功(刷新缓存)"));
                     updateHonor(src);
@@ -118,7 +126,7 @@ class AdminChildCommand {
             .executor((src, args) -> {
                 String id = args.<String>getOne(Text.of("honorID")).get();
                 String honor = args.<String>getOne(Text.of("honor")).get();
-                if (hd.add(id, honor)) {
+                if (HonorData.add(id, honor)) {
                     plugin.logger.info(src.getName() + "添加了头衔" + id);
                     src.sendMessage(Text.of("[头衔插件]添加头衔成功"));
                     return CommandResult.success();
@@ -129,7 +137,7 @@ class AdminChildCommand {
 
     static CommandSpec reload = CommandSpec.builder()
             .executor((src, args) -> {
-                NewHonor.hd.reload();
+                HonorData.reload();
                 updateHonor(src);
                 return CommandResult.success();
             })
@@ -142,17 +150,17 @@ class AdminChildCommand {
      */
     private static void updateHonor(CommandSource src) {
         Task.builder().execute(() -> {
-            new HashMap<>(NewHonor.usinghonor).forEach((uuid, v) -> {
+            new HashMap<>(NewHonor.honorTextCache).forEach((uuid, v) -> {
                 PlayerData pd = new PlayerData(uuid);
                 if (pd.isShowHonor() && pd.getHonor().isPresent()) {
                     if (pd.getHonor().isPresent()) {
-                        NewHonor.usinghonor.put(uuid, pd.getHonor().get());
+                        NewHonor.honorTextCache.put(uuid, pd.getHonor().get());
                     } else {
                         pd.setUse("default");
-                        pd.getHonor().ifPresent(text -> NewHonor.usinghonor.put(uuid, text));
+                        pd.getHonor().ifPresent(text -> NewHonor.honorTextCache.put(uuid, text));
                     }
                 } else {
-                    NewHonor.usinghonor.remove(uuid);
+                    NewHonor.honorTextCache.remove(uuid);
                 }
             });
             src.sendMessage(Text.of("[头衔插件]缓存刷新完毕"));

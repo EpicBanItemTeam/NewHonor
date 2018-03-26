@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
-import com.google.common.reflect.TypeToken;
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -55,7 +55,7 @@ public class PlayerData {
 
     public boolean give(String id) {
         Optional<List<String>> honors = getHonors();
-        if (NewHonor.hd.getHonor(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
+        if (HonorData.getHonor(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
             honors.get().add(id);
             cfg.getNode("honors").setValue(honors.get());
             return save();
@@ -74,7 +74,7 @@ public class PlayerData {
     }
 
     public boolean setUse(String id) {
-        if ((getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || id.equals("default")) && NewHonor.hd.getHonor(id).isPresent()) {
+        if ((getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || id.equals("default")) && HonorData.getHonor(id).isPresent()) {
             cfg.getNode("using").setValue(id);
             return save();
         }
@@ -95,7 +95,7 @@ public class PlayerData {
     }
 
     public Optional<Text> getHonor() {
-        return Optional.ofNullable(cfg.getNode("using").getString("default")).flatMap(NewHonor.hd::getHonor);
+        return Optional.ofNullable(cfg.getNode("using").getString("default")).flatMap(HonorData::getHonor);
     }
 
     public boolean init() {

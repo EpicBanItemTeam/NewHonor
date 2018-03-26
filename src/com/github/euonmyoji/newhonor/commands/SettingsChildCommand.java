@@ -20,9 +20,9 @@ public class SettingsChildCommand {
                     PlayerData pd = new PlayerData((User) src);
                     pd.showhonor(show);
                     if (show) {
-                        pd.getHonor().ifPresent(text -> NewHonor.usinghonor.put(((User) src).getUniqueId(), text));
+                        pd.getHonor().ifPresent(text -> NewHonor.honorTextCache.put(((User) src).getUniqueId(), text));
                     } else {
-                        NewHonor.usinghonor.remove(((User) src).getUniqueId());
+                        NewHonor.honorTextCache.remove(((User) src).getUniqueId());
                     }
                     src.sendMessage(Text.of("[头衔插件]修改设置成功"));
                     return CommandResult.success();

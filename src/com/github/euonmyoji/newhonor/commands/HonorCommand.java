@@ -21,17 +21,17 @@ public class HonorCommand {
                         if (pd.setUse(args.<String>getOne(Text.of("id")).get())) {
                             src.sendMessage(Text.of("[头衔插件]修改使用头衔成功"));
                             if (pd.isShowHonor()) {
-                                pd.getHonor().ifPresent(text -> NewHonor.usinghonor.put(((User) src).getUniqueId(), text));
+                                pd.getHonor().ifPresent(text -> NewHonor.honorTextCache.put(((User) src).getUniqueId(), text));
                             } else {
-                                NewHonor.usinghonor.remove(((User) src).getUniqueId());
+                                NewHonor.honorTextCache.remove(((User) src).getUniqueId());
                             }
                         } else {
                             src.sendMessage(Text.of("[头衔插件]修改使用头衔失败，可能原因:[头衔未拥有或不存在,储存数据时异常]"));
                             pd.setUse("default");
                             if (pd.isShowHonor()) {
-                                pd.getHonor().ifPresent(text -> NewHonor.usinghonor.put(((User) src).getUniqueId(), text));
+                                pd.getHonor().ifPresent(text -> NewHonor.honorTextCache.put(((User) src).getUniqueId(), text));
                             } else {
-                                NewHonor.usinghonor.remove(((User) src).getUniqueId());
+                                NewHonor.honorTextCache.remove(((User) src).getUniqueId());
                             }
                             src.sendMessage(Text.of("[头衔插件]已修改使用头衔为默认头衔default"));
                         }

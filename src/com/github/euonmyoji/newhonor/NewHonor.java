@@ -1,12 +1,12 @@
 package com.github.euonmyoji.newhonor;
 
 import com.github.euonmyoji.newhonor.commands.HonorCommand;
-import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
-@Plugin(id = "newhonor", name = "New Honor", version = "1.2", authors = "yinyangshi")
+@Plugin(id = "newhonor", name = "New Honor", version = "1.3-beta", authors = "yinyangshi")
 public class NewHonor {
     private NewHonorMessageManage mMessage = new NewHonorMessageManage();
     @Inject
@@ -35,8 +36,8 @@ public class NewHonor {
     public Logger logger;
 
     public static NewHonor plugin;
-    public static HonorData hd;
-    public static HashMap<UUID, Text> usinghonor = new HashMap<>();
+    public static HashMap<UUID, Text> honorTextCache = new HashMap<>();
+    public static HashMap<UUID, List<PotionEffect>> honorEffectCache = new HashMap<>();
 
     @Listener
     public void onStarting(GameStartingServerEvent event) {
@@ -55,7 +56,6 @@ public class NewHonor {
     @Listener
     public void onStarted(GameStartedServerEvent event) {
         plugin = this;
-        hd = new HonorData();
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor");
         logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
     }
@@ -69,9 +69,9 @@ public class NewHonor {
                 logger.error("初始化玩家" + p.getName() + "," + p.getUniqueId() + ",头衔数据失败！");
             }
             if (pd.isShowHonor()) {
-                pd.getHonor().ifPresent(text -> usinghonor.put(p.getUniqueId(), text));
+                pd.getHonor().ifPresent(text -> honorTextCache.put(p.getUniqueId(), text));
             }
-        }).async().delayTicks(20).name("newhonor - init PlayerData").submit(this);
+        }).async().delayTicks(20).name("newhonor - init Player" + p.getName()).submit(this);
         MessageChannel originalChannel = event.getOriginalChannel();
         MessageChannel newChannel = MessageChannel.combined(p.getMessageChannel(), originalChannel,
                 mMessage);
@@ -84,9 +84,9 @@ public class NewHonor {
         PlayerData pd = new PlayerData(p);
         Task.builder().execute(() -> {
             if (pd.isShowHonor()) {
-                pd.getHonor().ifPresent(text -> usinghonor.put(p.getUniqueId(), text));
+                pd.getHonor().ifPresent(text -> honorTextCache.put(p.getUniqueId(), text));
             }
-        }).async().name("newhonor - init PlayerData").submit(this);
+        }).async().name("newhonor - (die) init Player" + p.getName()).submit(this);
         MessageChannel newChannel = MessageChannel.combined(p.getMessageChannel(),
                 mMessage);
         p.setMessageChannel(newChannel);

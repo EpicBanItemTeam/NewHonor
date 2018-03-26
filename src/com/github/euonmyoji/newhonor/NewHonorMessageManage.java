@@ -14,9 +14,9 @@ import java.util.Optional;
 public class NewHonorMessageManage implements MessageChannel {
     @Override
     public Optional<Text> transformMessage(Object sender, MessageReceiver recipient, Text text, ChatType type) {
-        if (sender instanceof Player && NewHonor.usinghonor.containsKey(((Player) sender).getUniqueId())) {
+        if (sender instanceof Player && NewHonor.honorTextCache.containsKey(((Player) sender).getUniqueId())) {
             Player p = (Player) sender;
-            return Optional.of(Text.of(NewHonor.usinghonor.get(p.getUniqueId()), text));
+            return Optional.of(Text.of(NewHonor.honorTextCache.get(p.getUniqueId()), text));
         }
         return Optional.of(text);
     }
