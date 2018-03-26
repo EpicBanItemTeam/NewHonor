@@ -21,11 +21,7 @@ public class HonorCommand {
                         PlayerData pd = new PlayerData((User) src);
                         if (pd.setUse(args.<String>getOne(Text.of("id")).get())) {
                             src.sendMessage(Text.of("[头衔插件]修改使用头衔成功"));
-                            if (pd.isShowHonor()) {
-                                pd.getHonor().ifPresent(text -> NewHonor.honorTextCache.put(((User) src).getUniqueId(), text));
-                            } else {
-                                NewHonor.honorTextCache.remove(((User) src).getUniqueId());
-                            }
+                            NewHonor.doSomething(pd);
                         } else {
                             src.sendMessage(Text.of("[头衔插件]修改使用头衔失败，可能原因:[头衔未拥有或不存在,储存数据时异常]"));
                             pd.setUse("default");
@@ -89,6 +85,7 @@ public class HonorCommand {
             .executor((src, args) -> {
                 src.sendMessage(Text.of("-------------------------------------"));
                 src.sendMessage(Text.of(""));
+                src.sendMessage(Text.of("/honor admin effects <honorID> <effectsID>  给头衔设置药水效果"));
                 src.sendMessage(Text.of("/honor admin add <honorID> <效果>      添加头衔"));
                 src.sendMessage(Text.of("/honor admin set <honorID> <效果>      设置头衔"));
                 src.sendMessage(Text.of("/honor admin delete <honorID>          删除头衔"));
@@ -108,6 +105,24 @@ public class HonorCommand {
             .child(AdminChildCommand.take, "take")
             .child(AdminChildCommand.refresh, "refresh")
             .child(AdminChildCommand.reload, "reload")
+            .child(AdminChildCommand.effects, "effects")
+            .build();
+
+    private static CommandSpec effects = CommandSpec.builder()
+            .permission("newhonor.admin")
+            .executor((src, args) -> {
+                src.sendMessage(Text.of("/effects delete <effectsID>  删除一个药水效果组"));
+                src.sendMessage(Text.of("/effects set <effectID> <seconds> <effectsID> 给一个效果组设置一个药水效果"));
+                src.sendMessage(Text.of("/effects remove <effectID> <effectsID>        移除一个效果组的药水效果"));
+                src.sendMessage(Text.of("/effects info <effectsID>   查看一个药水效果组信息"));
+                src.sendMessage(Text.of("/effects list 查看所有可用药水效果id"));
+                return CommandResult.success();
+            })
+            .child(EffectsCommand.delete, "delete")
+            .child(EffectsCommand.set, "set")
+            .child(EffectsCommand.remove, "remove")
+            .child(EffectsCommand.info, "info")
+            .child(EffectsCommand.list, "list")
             .build();
 
     public static CommandSpec honor = CommandSpec.builder()
@@ -127,6 +142,7 @@ public class HonorCommand {
             .child(admin, "admin")
             .child(use, "use")
             .child(list, "list")
+            .child(effects, "effects")
             .build();
 
 }

@@ -5,7 +5,6 @@ import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
@@ -21,6 +20,15 @@ public class HonorData {
                 .setPath(NewHonor.plugin.cfgDir.resolve("honor.conf")).build();
         cfg = load();
         set("default", cfg.getNode("default", "value").getString("[默认头衔]"));
+    }
+
+    public static boolean effects(String id, String effectsID) {
+        cfg.getNode(id, "effects").setValue(effectsID);
+        return save();
+    }
+
+    public static Optional<String> getEffectsID(String id) {
+        return Optional.ofNullable(cfg.getNode(id, "effects").getString(null));
     }
 
     public static boolean add(String id, String honor) {
@@ -66,11 +74,7 @@ public class HonorData {
         return false;
     }
 
-    public static boolean isExist(String id) {
+    private static boolean isExist(String id) {
         return !cfg.getNode(id).isVirtual();
-    }
-
-    public static boolean addBuff(String honorid, PotionEffect effect) {
-        return save();
     }
 }

@@ -14,18 +14,25 @@ import java.io.IOException;
 import java.util.*;
 
 public class PlayerData {
+    private final UUID uuid;
     private final CommentedConfigurationNode cfg;
     private final TypeToken<String> type = new TypeToken<String>() {
     };
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
+    public UUID getUUID() {
+        return this.uuid;
+    }
+
     public PlayerData(User user) {
+        uuid = user.getUniqueId();
         loader = HoconConfigurationLoader.builder()
                 .setPath((NewHonor.plugin.cfgDir.resolve("PlayerData")).resolve(user.getUniqueId().toString() + ".conf")).build();
         cfg = load();
     }
 
     public PlayerData(UUID uuid) {
+        this.uuid = uuid;
         loader = HoconConfigurationLoader.builder()
                 .setPath((NewHonor.plugin.cfgDir.resolve("PlayerData")).resolve(uuid.toString() + ".conf")).build();
         cfg = load();
@@ -68,9 +75,18 @@ public class PlayerData {
         save();
     }
 
-    public void displayhonor(boolean show) {
-        cfg.getNode("displayhonor").setValue(show);
+    public void displayhonor(boolean display) {
+        cfg.getNode("displayhonor").setValue(display);
         save();
+    }
+
+    public void enableEffects(boolean enable) {
+        cfg.getNode("enableEffects").setValue(enable);
+        save();
+    }
+
+    public boolean isEnableEffects() {
+        return cfg.getNode("enableEffects").getBoolean(true);
     }
 
     public boolean setUse(String id) {
@@ -81,7 +97,7 @@ public class PlayerData {
         return false;
     }
 
-    private String getUse() {
+    public String getUse() {
         return cfg.getNode("using").getString("default");
     }
 

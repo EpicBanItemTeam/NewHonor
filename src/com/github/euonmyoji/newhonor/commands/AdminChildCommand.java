@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.commands;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import org.spongepowered.api.command.CommandResult;
@@ -11,6 +12,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -20,7 +22,7 @@ class AdminChildCommand {
 
     static CommandSpec refresh = CommandSpec.builder()
             .executor((src, args) -> {
-                updateHonor(src);
+                refreshCache(src);
                 return CommandResult.success();
             })
             .build();
@@ -66,7 +68,7 @@ class AdminChildCommand {
                             }
                         });
                     });
-                    updateHonor(src);
+                    refreshCache(src);
                 }).async().name("newhonor - take users honors").submit(NewHonor.plugin);
                 return CommandResult.success();
             })
@@ -88,7 +90,7 @@ class AdminChildCommand {
                 if (HonorData.set(id, honor)) {
                     plugin.logger.info(src.getName() + "设置了头衔" + id);
                     src.sendMessage(Text.of("[头衔插件]设置头衔成功(刷新缓存)"));
-                    updateHonor(src);
+                    refreshCache(src);
                     return CommandResult.success();
                 }
                 src.sendMessage(Text.of("[头衔插件]设置头衔失败"));
@@ -103,7 +105,7 @@ class AdminChildCommand {
                 if (HonorData.delete(id)) {
                     plugin.logger.info(src.getName() + "删除了头衔" + id);
                     src.sendMessage(Text.of("[头衔插件]删除头衔成功(刷新缓存)"));
-                    updateHonor(src);
+                    refreshCache(src);
                     return CommandResult.success();
                 }
                 src.sendMessage(Text.of("[头衔插件]删除头衔失败"));
@@ -126,10 +128,32 @@ class AdminChildCommand {
             })
             .build();
 
+    static CommandSpec effects = CommandSpec.builder()
+            .arguments(GenericArguments.string(Text.of("honorID")),
+                    GenericArguments.string(Text.of("effectsID")))
+            .executor((src, args) -> {
+                String id = args.<String>getOne(Text.of("honorID")).get();
+                String effectsID = args.<String>getOne(Text.of("effectsID")).get();
+                if (Files.exists(EffectsData.getPath(effectsID))) {
+                    if (HonorData.effects(id, effectsID)) {
+                        src.sendMessage(Text.of("[头衔插件]给头衔设置药水效果组成功"));
+                        return CommandResult.success();
+                    }
+                } else {
+                    src.sendMessage(Text.of("[头衔插件]药水效果组" + effectsID + "未找到"));
+                }
+                src.sendMessage(Text.of("[头衔插件]给头衔设置药水效果组失败"));
+                return CommandResult.empty();
+            })
+            .build();
+
     static CommandSpec reload = CommandSpec.builder()
             .executor((src, args) -> {
+                src.sendMessage(Text.of("[头衔插件]开始重载插件配置文件"));
                 HonorData.reload();
-                updateHonor(src);
+                EffectsData.refresh();
+                refreshCache(src);
+                src.sendMessage(Text.of("[头衔插件]重载插件配置文件成功"));
                 return CommandResult.success();
             })
             .build();
@@ -139,7 +163,7 @@ class AdminChildCommand {
      *
      * @param src 谁发起的刷新
      */
-    private static void updateHonor(CommandSource src) {
+    private static void refreshCache(CommandSource src) {
         Task.builder().execute(() -> {
             new HashMap<>(NewHonor.honorTextCache).forEach((uuid, v) -> {
                 PlayerData pd = new PlayerData(uuid);
@@ -152,6 +176,11 @@ class AdminChildCommand {
                     }
                 } else {
                     NewHonor.honorTextCache.remove(uuid);
+                }
+            });
+            new HashMap<>(NewHonor.effectsCache).forEach((s, potionEffects) -> {
+                if (!Files.exists(EffectsData.getPath(s))) {
+                    NewHonor.effectsCache.remove(s);
                 }
             });
             src.sendMessage(Text.of("[头衔插件]缓存刷新完毕"));
