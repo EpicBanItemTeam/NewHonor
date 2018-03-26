@@ -1,9 +1,9 @@
-package moyi.yys;
+package com.github.euonmyoji.newhonor;
 
+import com.github.euonmyoji.newhonor.commands.HonorCommand;
+import com.github.euonmyoji.newhonor.configuration.HonorData;
+import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import com.google.inject.Inject;
-import moyi.yys.commands.HonorCommand;
-import moyi.yys.configuration.HonorData;
-import moyi.yys.configuration.PlayerData;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
@@ -71,7 +71,7 @@ public class NewHonor {
             if (pd.isShowHonor()) {
                 pd.getHonor().ifPresent(text -> usinghonor.put(p.getUniqueId(), text));
             }
-        }).async().delayTicks(20).name("NewHonor - init PlayerData").submit(this);
+        }).async().delayTicks(20).name("newhonor - init PlayerData").submit(this);
         MessageChannel originalChannel = event.getOriginalChannel();
         MessageChannel newChannel = MessageChannel.combined(p.getMessageChannel(), originalChannel,
                 mMessage);
@@ -86,7 +86,7 @@ public class NewHonor {
             if (pd.isShowHonor()) {
                 pd.getHonor().ifPresent(text -> usinghonor.put(p.getUniqueId(), text));
             }
-        }).async().name("NewHonor - init PlayerData").submit(this);
+        }).async().name("newhonor - init PlayerData").submit(this);
         MessageChannel newChannel = MessageChannel.combined(p.getMessageChannel(),
                 mMessage);
         p.setMessageChannel(newChannel);

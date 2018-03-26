@@ -1,7 +1,7 @@
-package moyi.yys.commands;
+package com.github.euonmyoji.newhonor.commands;
 
-import moyi.yys.NewHonor;
-import moyi.yys.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.NewHonor;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;

@@ -1,7 +1,7 @@
-package moyi.yys.commands;
+package com.github.euonmyoji.newhonor.commands;
 
-import moyi.yys.NewHonor;
-import moyi.yys.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -15,9 +15,7 @@ public class HonorCommand {
     private static CommandSpec use = CommandSpec.builder()
             .arguments(GenericArguments.string(Text.of("id")))
             .executor((src, args) -> {
-                if (!(src instanceof Player)) {
-                    src.sendMessage(Text.of("[头衔插件]未知发送者,目前该指令近支持玩家自己发送指令修改自己设置。"));
-                } else {
+                if (src instanceof Player) {
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData((User) src);
                         if (pd.setUse(args.<String>getOne(Text.of("id")).get())) {
@@ -37,7 +35,9 @@ public class HonorCommand {
                             }
                             src.sendMessage(Text.of("[头衔插件]已修改使用头衔为默认头衔default"));
                         }
-                    }).async().name("NewHonor - Player Change Using Honor").submit(NewHonor.plugin);
+                    }).async().name("newhonor - Player Change Using Honor").submit(NewHonor.plugin);
+                } else {
+                    src.sendMessage(Text.of("[头衔插件]未知发送者,目前该指令近支持玩家自己发送指令修改自己设置。"));
                 }
                 return CommandResult.success();
             })
@@ -63,7 +63,7 @@ public class HonorCommand {
                                 pd.setUse("default");
                             }
                         }));
-                    }).async().name("NewHonor - List Player Honors").submit(NewHonor.plugin);
+                    }).async().name("newhonor - List Player Honors").submit(NewHonor.plugin);
                     return CommandResult.success();
                 }
             })

@@ -1,7 +1,7 @@
-package moyi.yys.configuration;
+package com.github.euonmyoji.newhonor.configuration;
 
 import com.google.common.reflect.TypeToken;
-import moyi.yys.NewHonor;
+import com.github.euonmyoji.newhonor.NewHonor;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;

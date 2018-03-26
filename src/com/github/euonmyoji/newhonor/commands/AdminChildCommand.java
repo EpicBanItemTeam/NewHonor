@@ -1,8 +1,8 @@
-package moyi.yys.commands;
+package com.github.euonmyoji.newhonor.commands;
 
-import moyi.yys.NewHonor;
-import moyi.yys.configuration.HonorData;
-import moyi.yys.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.configuration.HonorData;
+import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.NewHonor;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -43,7 +43,7 @@ class AdminChildCommand {
                             plugin.logger.info(src.getName() + "失败:给予" + user.getName() + "头衔:" + id);
                         }
                     });
-                })).async().name("NewHonor - Give Users Honors").submit(NewHonor.plugin);
+                })).async().name("newhonor - Give Users Honors").submit(NewHonor.plugin);
                 return CommandResult.success();
             })
             .build();
@@ -68,7 +68,7 @@ class AdminChildCommand {
                         });
                     });
                     updateHonor(src);
-                }).async().name("NewHonor - take users honors").submit(NewHonor.plugin);
+                }).async().name("newhonor - take users honors").submit(NewHonor.plugin);
                 return CommandResult.success();
             })
             .build();
@@ -156,6 +156,6 @@ class AdminChildCommand {
                 }
             });
             src.sendMessage(Text.of("[头衔插件]缓存刷新完毕"));
-        }).async().name("NewHonor - 更新缓存").submit(NewHonor.plugin);
+        }).async().name("newhonor - 更新缓存").submit(NewHonor.plugin);
     }
 }

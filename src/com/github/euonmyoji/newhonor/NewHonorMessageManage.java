@@ -1,4 +1,4 @@
-package moyi.yys;
+package com.github.euonmyoji.newhonor;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
