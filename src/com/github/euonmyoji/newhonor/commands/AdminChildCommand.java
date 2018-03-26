@@ -7,9 +7,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.effect.potion.PotionEffect;
-import org.spongepowered.api.effect.potion.PotionEffectType;
-import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -20,12 +17,6 @@ import java.util.HashMap;
 @SuppressWarnings("ConstantConditions")
 class AdminChildCommand {
     private static NewHonor plugin = NewHonor.plugin;
-
-    static CommandSpec effect = CommandSpec.builder()
-            .executor((src, args) -> {
-                PotionEffect.builder().potionType(PotionEffectTypes.)
-            })
-            .build();
 
     static CommandSpec refresh = CommandSpec.builder()
             .executor((src, args) -> {

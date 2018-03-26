@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.commands;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -55,8 +56,8 @@ public class HonorCommand {
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData(user);
                         pd.getHonors().ifPresent(ids -> ids.forEach(id -> {
-                            if (NewHonor.hd.getHonor(id).isPresent()) {
-                                src.sendMessage(Text.of("头衔id:" + id + ",效果为:", NewHonor.hd.getHonor(id).get()));
+                            if (HonorData.getHonor(id).isPresent()) {
+                                src.sendMessage(Text.of("头衔id:" + id + ",效果为:", HonorData.getHonor(id).get()));
                             } else {
                                 src.sendMessage(Text.of("你的头衔id:" + id + ",已被服务器删除"));
                                 pd.take(id);
