@@ -74,7 +74,7 @@ public class NewHonor {
                     }
                 });
             });
-        }).delayTicks(20).submit(this);
+        }).name("newhonor - givePlayerEffects").delayTicks(20).submit(this);
         logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
     }
 

@@ -48,7 +48,8 @@ public class EffectsData {
             PotionEffect effect = PotionEffect.builder()
                     .potionType(type).amplifier(level).duration(100).build();
             list.add(effect);
-            cfg.getNode("effects").setValue(list);
+            cfg.getNode("effects").setValue(new TypeToken<List<PotionEffect>>() {
+            }, list);
             return save();
         } catch (ObjectMappingException e) {
             e.printStackTrace();

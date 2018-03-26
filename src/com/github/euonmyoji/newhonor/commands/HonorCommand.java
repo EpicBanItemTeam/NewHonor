@@ -111,11 +111,11 @@ public class HonorCommand {
     private static CommandSpec effects = CommandSpec.builder()
             .permission("newhonor.admin")
             .executor((src, args) -> {
-                src.sendMessage(Text.of("/effects delete <effectsID>  删除一个药水效果组"));
-                src.sendMessage(Text.of("/effects set <effectID> <seconds> <effectsID> 给一个效果组设置一个药水效果"));
-                src.sendMessage(Text.of("/effects remove <effectID> <effectsID>        移除一个效果组的药水效果"));
-                src.sendMessage(Text.of("/effects info <effectsID>   查看一个药水效果组信息"));
-                src.sendMessage(Text.of("/effects list 查看所有可用药水效果id"));
+                src.sendMessage(Text.of("/honor effects delete <effectsID>  删除一个药水效果组"));
+                src.sendMessage(Text.of("/honor effects set <effectID> <effectsID> <level> 给一个效果组设置一个药水效果"));
+                src.sendMessage(Text.of("/honor effects remove <effectID> <effectsID>        移除一个效果组的药水效果"));
+                src.sendMessage(Text.of("/honor effects info <effectsID>   查看一个药水效果组信息"));
+                src.sendMessage(Text.of("/honor effects list 查看所有可用药水效果id"));
                 return CommandResult.success();
             })
             .child(EffectsCommand.delete, "delete")
@@ -135,6 +135,7 @@ public class HonorCommand {
                 src.sendMessage(Text.of("/honor list [用户]     列出拥有的头衔"));
                 src.sendMessage(Text.of("/honor use <honorID>  使用头衔"));
                 src.sendMessage(Text.of("/honor settings        修改设置"));
+                src.sendMessage(Text.of("/honor effects        头衔药水效果"));
                 src.sendMessage(Text.of("-------------------------------------"));
                 return CommandResult.success();
             })
