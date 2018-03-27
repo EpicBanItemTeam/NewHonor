@@ -42,7 +42,7 @@ public class NewHonor {
 
     public static NewHonor plugin;
     public static HashMap<UUID, Text> honorTextCache = new HashMap<>();
-    public static HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
+    private static HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
     public static HashMap<String, List<PotionEffect>> effectsCache = new HashMap<>();
 
     @Listener
@@ -63,18 +63,14 @@ public class NewHonor {
     public void onStarted(GameStartedServerEvent event) {
         plugin = this;
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor");
-        Task.builder().execute(() -> {
-            playerUsingEffectCache.forEach((uuid, s) -> {
-                Sponge.getServer().getPlayer(uuid).ifPresent(player -> {
-                    if (effectsCache.containsKey(s)) {
-                        PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(UNKNOWN::new);
-                        List<PotionEffect> list = effectsCache.get(s);
-                        list.forEach(effects::addElement);
-                        player.offer(effects);
-                    }
-                });
-            });
-        }).name("newhonor - givePlayerEffects").delayTicks(20).submit(this);
+        Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid).ifPresent(player -> {
+            if (effectsCache.containsKey(s)) {
+                PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(UNKNOWN::new);
+                List<PotionEffect> list = effectsCache.get(s);
+                list.forEach(effects::addElement);
+                player.offer(effects);
+            }
+        }))).name("newhonor - givePlayerEffects").delayTicks(20).submit(this);
         logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
     }
 
@@ -110,6 +106,7 @@ public class NewHonor {
             if (pd.isEnableEffects()) {
                 HonorData.getEffectsID(pd.getUse()).ifPresent(s -> {
                     try {
+                        //TODO: not ready yet
                         effectsCache.put(s, new EffectsData(s).getEffects());
                         playerUsingEffectCache.put(pd.getUUID(), s);
                     } catch (ObjectMappingException e) {

@@ -112,7 +112,7 @@ public class HonorCommand {
             .permission("newhonor.admin")
             .executor((src, args) -> {
                 src.sendMessage(Text.of("/honor effects delete <effectsID>  删除一个药水效果组"));
-                src.sendMessage(Text.of("/honor effects set <effectID> <effectsID> <level> 给一个效果组设置一个药水效果"));
+                src.sendMessage(Text.of("/honor effects set <effectsID> <effectID> <level> 给一个效果组设置一个药水效果"));
                 src.sendMessage(Text.of("/honor effects remove <effectID> <effectsID>        移除一个效果组的药水效果"));
                 src.sendMessage(Text.of("/honor effects info <effectsID>   查看一个药水效果组信息"));
                 src.sendMessage(Text.of("/honor effects list 查看所有可用药水效果id"));

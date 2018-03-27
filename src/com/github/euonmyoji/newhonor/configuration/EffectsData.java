@@ -21,13 +21,25 @@ public class EffectsData {
     private CommentedConfigurationNode cfg;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
+    static {
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectory(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public EffectsData(String id) {
         loader = HoconConfigurationLoader.builder()
                 .setPath(path.resolve(id + ".conf")).build();
         reload();
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     public List<PotionEffect> getEffects() throws ObjectMappingException {
+        //TODO: here is a Exception[wait for USTC_ZZZZ]
         return cfg.getNode("effects").getList(TypeToken.of(PotionEffect.class), ArrayList::new);
     }
 
@@ -39,12 +51,7 @@ public class EffectsData {
     public boolean set(PotionEffectType type, int level) {
         try {
             List<PotionEffect> list = getEffects();
-            for (PotionEffect effect : list) {
-                if (effect.getType().equals(type)) {
-                    list.remove(effect);
-                    break;
-                }
-            }
+            new ArrayList<>(list).stream().filter(type::equals).forEach(list::remove);
             PotionEffect effect = PotionEffect.builder()
                     .potionType(type).amplifier(level).duration(100).build();
             list.add(effect);
