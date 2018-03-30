@@ -87,6 +87,7 @@ public class HonorCommand {
             })
             .child(SettingsChildCommand.showhonor, "showhonor")
             .child(SettingsChildCommand.displayhonor, "displayhonor")
+            .child(SettingsChildCommand.enableEffects, "enableeffects")
             .build();
 
     private static CommandSpec admin = CommandSpec.builder()

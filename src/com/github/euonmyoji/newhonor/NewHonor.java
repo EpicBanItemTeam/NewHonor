@@ -63,14 +63,15 @@ public class NewHonor {
     public void onStarted(GameStartedServerEvent event) {
         plugin = this;
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor");
-        Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid).ifPresent(player -> {
-            if (effectsCache.containsKey(s)) {
-                PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(UNKNOWN::new);
-                List<PotionEffect> list = effectsCache.get(s);
-                list.forEach(effects::addElement);
-                player.offer(effects);
-            }
-        }))).name("newhonor - givePlayerEffects").delayTicks(20).submit(this);
+        Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
+                .ifPresent(player -> {
+                    if (effectsCache.containsKey(s)) {
+                        PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(UNKNOWN::new);
+                        List<PotionEffect> list = effectsCache.get(s);
+                        list.forEach(effects::addElement);
+                        player.offer(effects);
+                    }
+                }))).name("newhonor - givePlayerEffects").delayTicks(20).submit(this);
         logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
     }
 
