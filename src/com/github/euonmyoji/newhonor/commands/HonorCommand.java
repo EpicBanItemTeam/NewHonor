@@ -74,7 +74,7 @@ public class HonorCommand {
                     }).async().name("newhonor - List Player Honors").submit(NewHonor.plugin);
                     return CommandResult.success();
                 } else {
-                    src.sendMessage(Text.of("你没有权限查看别人所拥有的权限[权限节点:newhonor.admin"));
+                    src.sendMessage(Text.of("你没有权限查看别人所拥有的权限[权限节点:newhonor.admin]"));
                 }
                 return CommandResult.empty();
             })
@@ -87,6 +87,7 @@ public class HonorCommand {
                 src.sendMessage(Text.of(""));
                 src.sendMessage(Text.of("/honor settings showhonor true/false  显示头衔在聊天栏"));
                 src.sendMessage(Text.of("/honor settings displayhonor true/false  显示头衔在头顶[名字前]"));
+                src.sendMessage(Text.of("/honor settings enableeffects true/false  启用头衔药水效果[名字前]"));
                 src.sendMessage(Text.of("-------------------------------------"));
                 return CommandResult.success();
             })
