@@ -7,6 +7,7 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
@@ -37,31 +38,33 @@ public class EffectsData {
         reload();
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
-    public List<PotionEffect> getEffects() throws ObjectMappingException {
-        //TODO: here is a Exception[wait for USTC_ZZZZ]
-        return cfg.getNode("effects").getList(TypeToken.of(PotionEffect.class), ArrayList::new);
+    public List<String> getEffectsList() throws ObjectMappingException {
+        return cfg.getNode("effects").getList(TypeToken.of(String.class), ArrayList::new);
     }
 
-    public boolean remove(List<PotionEffect> list) {
+    public List<PotionEffect> getEffects() throws ObjectMappingException {
+        List<PotionEffect> list = new ArrayList<>();
+        getEffectsList().forEach(s -> {
+            String[] args = s.split(",", 2);
+            Sponge.getRegistry().getType(PotionEffectType.class, args[0]).ifPresent(type ->
+                    list.add(PotionEffect.builder()
+                            .potionType(type)
+                            .amplifier(Integer.parseInt(args[1]))
+                            .duration(100)
+                            .build()));
+        });
+        return list;
+    }
+
+    public boolean remove(List<String> list) {
         cfg.getNode("effects").setValue(list);
         return save();
     }
 
-    public boolean set(PotionEffectType type, int level) {
-        try {
-            List<PotionEffect> list = getEffects();
-            new ArrayList<>(list).stream().filter(type::equals).forEach(list::remove);
-            PotionEffect effect = PotionEffect.builder()
-                    .potionType(type).amplifier(level).duration(100).build();
-            list.add(effect);
-            cfg.getNode("effects").setValue(new TypeToken<List<PotionEffect>>() {
-            }, list);
-            return save();
-        } catch (ObjectMappingException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean set(List<String> list, String s) {
+        list.add(s);
+        cfg.getNode("effects").setValue(list);
+        return save();
     }
 
     private CommentedConfigurationNode load() {
@@ -88,6 +91,14 @@ public class EffectsData {
 
     public static Path getPath(String id) {
         return path.resolve(id + ".conf");
+    }
+
+    public boolean anyMatchType(List<String> args, PotionEffectType type) {
+        //noinspection ConstantConditions 出问题一定是有人不会用:D
+        return args.stream()
+                .map(s -> Sponge.getRegistry()
+                        .getType(PotionEffectType.class, s.split(",", 2)[0]).get())
+                .anyMatch(type::equals);
     }
 
     public static void refresh() {

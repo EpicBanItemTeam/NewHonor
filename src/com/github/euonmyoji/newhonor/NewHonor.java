@@ -100,13 +100,18 @@ public class NewHonor {
         p.setMessageChannel(newChannel);
     }
 
+    public static void clearCaches() {
+        honorTextCache.clear();
+        effectsCache.clear();
+        playerUsingEffectCache.clear();
+    }
+
     public static void doSomething(PlayerData pd) {
         if (pd.isShowHonor()) {
             pd.getHonor().ifPresent(text -> honorTextCache.put(pd.getUUID(), text));
             if (pd.isEnableEffects()) {
                 HonorData.getEffectsID(pd.getUse()).ifPresent(s -> {
                     try {
-                        //TODO: not ready yet
                         effectsCache.put(s, new EffectsData(s).getEffects());
                         playerUsingEffectCache.put(pd.getUUID(), s);
                     } catch (ObjectMappingException e) {

@@ -11,6 +11,9 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
+import java.util.List;
+import java.util.Optional;
+
 public class HonorCommand {
     @SuppressWarnings("ConstantConditions")
     private static CommandSpec use = CommandSpec.builder()
@@ -45,24 +48,30 @@ public class HonorCommand {
             .arguments(GenericArguments.onlyOne(GenericArguments.userOrSource(Text.of("user"))))
             .executor((src, args) -> {
                 User user = args.<User>getOne(Text.of("user")).get();
-                if (!(user.getName().equals(src.getName())) && !src.hasPermission("newhonor.admin")) {
-                    src.sendMessage(Text.of("你没有权限查看别人所拥有的权限[权限节点:newhonor.admin"));
-                    return CommandResult.empty();
-                } else {
+                if (user.getName().equals(src.getName()) || src.hasPermission("newhonor.admin")) {
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData(user);
-                        pd.getHonors().ifPresent(ids -> ids.forEach(id -> {
-                            if (HonorData.getHonor(id).isPresent()) {
-                                src.sendMessage(Text.of("头衔id:" + id + ",效果为:", HonorData.getHonor(id).get()));
-                            } else {
-                                src.sendMessage(Text.of("你的头衔id:" + id + ",已被服务器删除"));
-                                pd.take(id);
-                                pd.setUse("default");
-                            }
-                        }));
+                        Optional<List<String>> honors = pd.getHonors();
+                        if (honors.isPresent()) {
+                            src.sendMessage(Text.of("---" + user.getName() + "拥有的头衔---"));
+                            honors.get().forEach(id -> {
+                                if (HonorData.getHonor(id).isPresent()) {
+                                    src.sendMessage(Text.of("头衔id:" + id + ",效果为:", HonorData.getHonor(id).get()));
+                                } else {
+                                    src.sendMessage(Text.of("你的头衔id:" + id + ",已被服务器删除"));
+                                    pd.take(id);
+                                    pd.setUse("default");
+                                }
+                            });
+                        } else {
+                            src.sendMessage(Text.of("[头衔插件]你目前没有任何头衔"));
+                        }
                     }).async().name("newhonor - List Player Honors").submit(NewHonor.plugin);
                     return CommandResult.success();
+                } else {
+                    src.sendMessage(Text.of("你没有权限查看别人所拥有的权限[权限节点:newhonor.admin"));
                 }
+                return CommandResult.empty();
             })
             .build();
 

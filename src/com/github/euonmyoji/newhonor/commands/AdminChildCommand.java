@@ -4,17 +4,18 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
 import java.nio.file.Files;
 import java.util.Collection;
-import java.util.HashMap;
 
 @SuppressWarnings("ConstantConditions")
 class AdminChildCommand {
@@ -165,24 +166,10 @@ class AdminChildCommand {
      */
     private static void refreshCache(CommandSource src) {
         Task.builder().execute(() -> {
-            new HashMap<>(NewHonor.honorTextCache).forEach((uuid, v) -> {
-                PlayerData pd = new PlayerData(uuid);
-                if (pd.isShowHonor() && pd.getHonor().isPresent()) {
-                    if (pd.getHonor().isPresent()) {
-                        NewHonor.honorTextCache.put(uuid, pd.getHonor().get());
-                    } else {
-                        pd.setUse("default");
-                        pd.getHonor().ifPresent(text -> NewHonor.honorTextCache.put(uuid, text));
-                    }
-                } else {
-                    NewHonor.honorTextCache.remove(uuid);
-                }
-            });
-            new HashMap<>(NewHonor.effectsCache).forEach((s, potionEffects) -> {
-                if (!Files.exists(EffectsData.getPath(s))) {
-                    NewHonor.effectsCache.remove(s);
-                }
-            });
+            NewHonor.clearCaches();
+            Sponge.getServer().getOnlinePlayers().stream().map(Player::getUniqueId)
+                    .map(PlayerData::new)
+                    .forEach(NewHonor::doSomething);
             src.sendMessage(Text.of("[头衔插件]缓存刷新完毕"));
         }).async().name("newhonor - 更新缓存").submit(NewHonor.plugin);
     }
