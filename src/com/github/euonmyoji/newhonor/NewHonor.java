@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@Plugin(id = "newhonor", name = "New Honor", version = "1.3-beta", authors = "yinyangshi")
+@Plugin(id = "newhonor", name = "New Honor", version = "1.3", authors = "yinyangshi")
 public class NewHonor {
     private NewHonorMessageManage mMessage = new NewHonorMessageManage();
     @Inject
@@ -71,7 +71,7 @@ public class NewHonor {
                         list.forEach(effects::addElement);
                         player.offer(effects);
                     }
-                }))).name("newhonor - givePlayerEffects").delayTicks(20).submit(this);
+                }))).name("newhonor - givePlayerEffects").intervalTicks(20).submit(this);
         logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
     }
 

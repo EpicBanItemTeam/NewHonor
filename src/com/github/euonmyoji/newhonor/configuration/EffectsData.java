@@ -50,7 +50,7 @@ public class EffectsData {
                     list.add(PotionEffect.builder()
                             .potionType(type)
                             .amplifier(Integer.parseInt(args[1]))
-                            .duration(100)
+                            .duration(40)
                             .build()));
         });
         return list;
