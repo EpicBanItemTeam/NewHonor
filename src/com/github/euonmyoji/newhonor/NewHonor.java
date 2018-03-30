@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@Plugin(id = "newhonor", name = "New Honor", version = "1.3", authors = "yinyangshi")
+@Plugin(id = "newhonor", name = "New Honor", version = "1.3.1", authors = "yinyangshi")
 public class NewHonor {
     private NewHonorMessageManage mMessage = new NewHonorMessageManage();
     @Inject

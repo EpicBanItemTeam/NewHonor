@@ -58,10 +58,10 @@ public class HonorCommand {
                             src.sendMessage(Text.of("---" + user.getName() + "拥有的头衔---"));
                             honors.get().forEach(id -> {
                                 if (HonorData.getHonor(id).isPresent()) {
-                                    src.sendMessage(Text.of(
-                                            String.format("头衔id:%s,效果为:%s,药水效果组:%s",
-                                                    id, HonorData.getHonor(id).get(),
-                                                    HonorData.getEffectsID(id).orElse("无"))));
+                                    src.sendMessage(Text.of("头衔id:" + id
+                                            + ",效果为:", HonorData.getHonor(id).get(), ",药水效果组:"
+                                            + HonorData.getEffectsID(id).orElse("无")
+                                    ));
                                 } else {
                                     src.sendMessage(Text.of("你的头衔id:" + id + ",已被服务器删除"));
                                     pd.take(id);
