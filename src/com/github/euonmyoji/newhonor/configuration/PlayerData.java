@@ -12,6 +12,7 @@ import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class PlayerData {
     private final UUID uuid;
@@ -118,6 +119,19 @@ public class PlayerData {
         give("default");
         setUse(getUse());
         return save();
+    }
+
+    public PlayerData ifShowHonor(Consumer<Optional<Text>> f) {
+        if (isShowHonor()) {
+            f.accept(getHonor());
+        }
+        return this;
+    }
+
+    public void orElse(Runnable r) {
+        if (!isShowHonor()) {
+            r.run();
+        }
     }
 
     private boolean save() {

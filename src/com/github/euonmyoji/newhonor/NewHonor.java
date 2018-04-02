@@ -108,8 +108,8 @@ public class NewHonor {
     }
 
     public static void doSomething(PlayerData pd) {
-        if (pd.isShowHonor()) {
-            pd.getHonor().ifPresent(text -> honorTextCache.put(pd.getUUID(), text));
+        pd.ifShowHonor(text -> {
+            text.ifPresent(t -> honorTextCache.put(pd.getUUID(), t));
             if (pd.isEnableEffects()) {
                 HonorData.getEffectsID(pd.getUse()).ifPresent(s -> {
                     try {
@@ -120,6 +120,6 @@ public class NewHonor {
                     }
                 });
             }
-        } else NewHonor.honorTextCache.remove(pd.getUUID());
+        }).orElse(() -> NewHonor.honorTextCache.remove(pd.getUUID()));
     }
 }
