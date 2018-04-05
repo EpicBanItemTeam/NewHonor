@@ -25,17 +25,12 @@ public class HonorCommand {
                         PlayerData pd = new PlayerData((User) src);
                         if (pd.setUse(args.<String>getOne(Text.of("id")).get())) {
                             src.sendMessage(Text.of("[头衔插件]修改使用头衔成功"));
-                            NewHonor.doSomething(pd);
                         } else {
                             src.sendMessage(Text.of("[头衔插件]修改使用头衔失败，可能原因:[头衔未拥有或不存在,储存数据时异常]"));
                             pd.setUse("default");
-                            if (pd.isShowHonor()) {
-                                pd.getHonor().ifPresent(text -> NewHonor.honorTextCache.put(((User) src).getUniqueId(), text));
-                            } else {
-                                NewHonor.honorTextCache.remove(((User) src).getUniqueId());
-                            }
                             src.sendMessage(Text.of("[头衔插件]已修改使用头衔为默认头衔default"));
                         }
+                        NewHonor.doSomething(pd);
                     }).async().name("newhonor - Player Change Using Honor").submit(NewHonor.plugin);
                 } else {
                     src.sendMessage(Text.of("[头衔插件]未知发送者,目前该指令近支持玩家自己发送指令修改自己设置。"));
