@@ -10,6 +10,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,12 +54,12 @@ public class HonorCommand {
                             src.sendMessage(Text.of("---" + user.getName() + "拥有的头衔---"));
                             honors.get().forEach(id -> {
                                 if (HonorData.getHonor(id).isPresent()) {
-                                    src.sendMessage(Text.of("头衔id:" + id
+                                    src.sendMessage(Text.builder().append(Text.of("头衔id:" + id
                                             + ",效果为:", HonorData.getHonor(id).get(), ",药水效果组:"
                                             + HonorData.getEffectsID(id).orElse("无")
-                                    ));
+                                    )).onClick(TextActions.runCommand("honor use " + id)).build());
                                 } else {
-                                    src.sendMessage(Text.of("你的头衔id:" + id + ",已被服务器删除"));
+                                    src.sendMessage(Text.of("注意:你拥有的头衔:" + id + ",已被服务器删除"));
                                     pd.take(id);
                                     pd.setUse("default");
                                 }

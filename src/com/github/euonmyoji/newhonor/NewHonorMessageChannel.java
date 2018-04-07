@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 @SuppressWarnings("NullableProblems")
-public class NewHonorMessageManage implements MessageChannel {
+public class NewHonorMessageChannel implements MessageChannel {
     @Override
     public Optional<Text> transformMessage(Object sender, MessageReceiver recipient, Text text, ChatType type) {
         if (sender instanceof Player && NewHonor.honorTextCache.containsKey(((Player) sender).getUniqueId())) {

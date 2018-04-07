@@ -17,11 +17,11 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.channel.MessageChannel;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,9 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@Plugin(id = "newhonor", name = "New Honor", version = "1.3.2", authors = "yinyangshi")
+@Plugin(id = "newhonor", name = "New Honor", version = "1.4", authors = "yinyangshi")
 public class NewHonor {
-    private NewHonorMessageManage mMessage = new NewHonorMessageManage();
+    private NewHonorMessageChannel mMessage = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
     public Path cfgDir;
@@ -41,7 +41,7 @@ public class NewHonor {
     public Logger logger;
 
     public static NewHonor plugin;
-    public static HashMap<UUID, Text> honorTextCache = new HashMap<>();
+    static HashMap<UUID, Text> honorTextCache = new HashMap<>();
     private static HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
     public static HashMap<String, List<PotionEffect>> effectsCache = new HashMap<>();
 
@@ -85,10 +85,6 @@ public class NewHonor {
             }
             doSomething(pd);
         }).async().delayTicks(20).name("newhonor - init Player" + p.getName()).submit(this);
-        MessageChannel originalChannel = event.getOriginalChannel();
-        MessageChannel newChannel = MessageChannel.combined(p.getMessageChannel(), originalChannel,
-                mMessage);
-        p.setMessageChannel(newChannel);
     }
 
     @Listener
@@ -96,9 +92,11 @@ public class NewHonor {
         Player p = event.getTargetEntity();
         PlayerData pd = new PlayerData(p);
         Task.builder().execute(() -> doSomething(pd)).async().name("newhonor - (die) init Player" + p.getName()).submit(this);
-        MessageChannel newChannel = MessageChannel.combined(p.getMessageChannel(),
-                mMessage);
-        p.setMessageChannel(newChannel);
+    }
+
+    @Listener
+    public void onChat(MessageChannelEvent.Chat event) {
+        event.setChannel(mMessage);
     }
 
     public static void clearCaches() {

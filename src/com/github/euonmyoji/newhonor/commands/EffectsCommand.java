@@ -8,6 +8,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.effect.potion.PotionEffectType;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
@@ -117,7 +118,7 @@ public class EffectsCommand {
                     try {
                         src.sendMessage(Text.of("---------" + effectID + "---------"));
                         new EffectsData(effectID).getEffects().forEach(effect ->
-                                src.sendMessage(Text.of(String.format("id:%s,name:%s,level:%d",
+                                src.sendMessage(Text.of(String.format("id:%s，name:%s，level:%d",
                                         effect.getType().getId(), effect.getType().getName(), effect.getAmplifier()))));
                         return CommandResult.success();
                     } catch (ObjectMappingException e) {
@@ -133,11 +134,11 @@ public class EffectsCommand {
 
     static CommandSpec list = CommandSpec.builder()
             .executor((src, args) -> {
-                src.sendMessage(Text.of("-----支持药水效果-----"));
-                src.sendMessage(Text.of("使用请输入iid(全大写)"));
+                PaginationList.Builder builder = PaginationList.builder();
+                builder.title(Text.of("药水效果标")).padding(Text.of("-")).header(Text.of("使用请输入id(全大写)"));
                 Sponge.getRegistry().getAllOf(PotionEffectType.class).forEach(type ->
-                        src.sendMessage(Text.of(type.getId() + ':' + type.getName())));
-                src.sendMessage(Text.of("---------------------"));
+                        builder.contents(Text.of(type.getId() + "：" + type.getName())));
+                builder.sendTo(src);
                 return CommandResult.success();
             })
             .build();
