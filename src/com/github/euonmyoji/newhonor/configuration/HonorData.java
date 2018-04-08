@@ -1,14 +1,18 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class HonorData {
@@ -69,6 +73,23 @@ public class HonorData {
             loader.save(cfg);
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static List<String> getAllCreatedHonors() throws ObjectMappingException {
+        return cfg.getNode("created-honors").getList(TypeToken.of(String.class), ArrayList::new);
+    }
+
+    public static boolean check(List<String> honors) {
+        try {
+            List<String> list = getAllCreatedHonors();
+            honors.stream().filter(s -> !list.contains(s)).forEach(list::add);
+            cfg.getNode("created-honors").setValue(new TypeToken<List<String>>() {
+            }, list);
+            return save();
+        } catch (ObjectMappingException e) {
             e.printStackTrace();
         }
         return false;

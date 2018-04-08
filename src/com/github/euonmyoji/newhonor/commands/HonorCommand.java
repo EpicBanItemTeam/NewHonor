@@ -109,15 +109,15 @@ public class HonorCommand {
                 src.sendMessage(Text.of("-------------------------------------"));
                 return CommandResult.success();
             })
-            .child(AdminChildCommand.list, "list")
-            .child(AdminChildCommand.add, "add")
-            .child(AdminChildCommand.delete, "delete")
-            .child(AdminChildCommand.set, "set")
-            .child(AdminChildCommand.give, "give")
-            .child(AdminChildCommand.take, "take")
-            .child(AdminChildCommand.refresh, "refresh")
-            .child(AdminChildCommand.reload, "reload")
-            .child(AdminChildCommand.effects, "effects")
+            .child(AdminCommand.list, "list")
+            .child(AdminCommand.add, "add")
+            .child(AdminCommand.delete, "delete")
+            .child(AdminCommand.set, "set")
+            .child(AdminCommand.give, "give")
+            .child(AdminCommand.take, "take")
+            .child(AdminCommand.refresh, "refresh")
+            .child(AdminCommand.reload, "reload")
+            .child(AdminCommand.effects, "effects")
             .build();
 
     private static CommandSpec effects = CommandSpec.builder()

@@ -4,6 +4,9 @@ import com.github.euonmyoji.newhonor.commands.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import com.google.common.base.Charsets;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.omg.CORBA.UNKNOWN;
@@ -22,16 +25,21 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.plugin.meta.version.ComparableVersion;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@Plugin(id = "newhonor", name = "New Honor", version = "1.4", authors = "yinyangshi")
+@Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi")
 public class NewHonor {
+    static final String VERSION = "1.3.5";
     private NewHonorMessageChannel mMessage = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -57,6 +65,28 @@ public class NewHonor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        checkUpdate();
+    }
+
+    private void checkUpdate() {
+        Task.builder().async().name("NewHonor - check for update").execute(() -> {
+            try {
+                URL url = new URL("https://api.github.com/repos/euOnmyoji/NewHonor-SpongePlugin/releases");
+                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.getResponseCode();
+                try (InputStreamReader reader = new InputStreamReader(connection.getInputStream(), Charsets.UTF_8)) {
+                    JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
+                    String version = jsonObject.get("tag_name").getAsString();
+                    if (new ComparableVersion(version).compareTo(new ComparableVersion(VERSION)) > 0) {
+                        logger.info("[NewHonor]found a latest version:" + version);
+                    }
+
+                }
+            } catch (Exception e) {
+                logger.info("[NewHonor]check for updating failed");
+            }
+        }).submit(this);
     }
 
     @Listener

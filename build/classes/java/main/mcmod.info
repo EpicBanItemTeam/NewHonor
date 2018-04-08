@@ -1,0 +1,13 @@
+[
+    {
+        "modid": "newhonor",
+        "name": "New Honor",
+        "version": "1.4",
+        "authorList": [
+            "yinyangshi"
+        ],
+        "requiredMods": [
+            "spongeapi@5.1.0"
+        ]
+    }
+]

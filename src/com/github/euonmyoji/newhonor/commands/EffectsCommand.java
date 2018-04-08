@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
-public class EffectsCommand {
+class EffectsCommand {
     static CommandSpec delete = CommandSpec.builder()
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {

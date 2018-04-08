@@ -18,7 +18,7 @@ import java.nio.file.Files;
 import java.util.Collection;
 
 @SuppressWarnings("ConstantConditions")
-class AdminChildCommand {
+class AdminCommand {
     private static NewHonor plugin = NewHonor.plugin;
 
     static CommandSpec refresh = CommandSpec.builder()

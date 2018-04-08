@@ -111,7 +111,7 @@ public class PlayerData {
         }
     }
 
-    public Optional<Text> getHonor() {
+    private Optional<Text> getHonor() {
         return Optional.ofNullable(cfg.getNode("using").getString("default")).flatMap(HonorData::getHonor);
     }
 
