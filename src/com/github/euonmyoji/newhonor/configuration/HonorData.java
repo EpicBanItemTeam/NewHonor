@@ -12,6 +12,7 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +37,9 @@ public class HonorData {
     }
 
     public static boolean add(String id, String honor) {
-        if (!isExist(id)) {
+        if (isVirtual(id)) {
             cfg.getNode(id, "value").setValue(honor);
+            check(id);
             return save();
         }
         return false;
@@ -49,10 +51,12 @@ public class HonorData {
 
     public static boolean set(String id, String honor) {
         cfg.getNode(id).setValue(honor);
+        check(id);
         return save();
     }
 
     public static boolean delete(String id) {
+        checkDelete(id);
         return cfg.removeChild(id) && save();
     }
 
@@ -86,6 +90,7 @@ public class HonorData {
         try {
             List<String> list = getAllCreatedHonors();
             honors.stream().filter(s -> !list.contains(s)).forEach(list::add);
+            new ArrayList<>(list).stream().filter(HonorData::isVirtual).forEach(list::remove);
             cfg.getNode("created-honors").setValue(new TypeToken<List<String>>() {
             }, list);
             return save();
@@ -95,7 +100,25 @@ public class HonorData {
         return false;
     }
 
-    private static boolean isExist(String id) {
-        return !cfg.getNode(id).isVirtual();
+    private static void check(String... strs) {
+        List<String> list = new ArrayList<>(Arrays.asList(strs));
+        check(list);
+    }
+
+    private static void checkDelete(String honor) {
+        try {
+            List<String> list = getAllCreatedHonors();
+            if (list.contains(honor)) {
+                list.remove(honor);
+                cfg.getNode("created-honors").setValue(new TypeToken<List<String>>() {
+                }, list);
+            }
+        } catch (ObjectMappingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static boolean isVirtual(String id) {
+        return cfg.getNode(id).isVirtual();
     }
 }

@@ -55,6 +55,7 @@ public class NewHonor {
 
     @Listener
     public void onStarting(GameStartingServerEvent event) {
+        plugin = this;
         try {
             if (!Files.exists(cfgDir)) {
                 Files.createDirectory(cfgDir);
@@ -79,9 +80,8 @@ public class NewHonor {
                     JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
                     String version = jsonObject.get("tag_name").getAsString();
                     if (new ComparableVersion(version).compareTo(new ComparableVersion(VERSION)) > 0) {
-                        logger.info("[NewHonor]found a latest version:" + version);
+                        logger.info("[NewHonor]found a latest version:" + version + ".Your version now:" + VERSION);
                     }
-
                 }
             } catch (Exception e) {
                 logger.info("[NewHonor]check for updating failed");
@@ -91,7 +91,6 @@ public class NewHonor {
 
     @Listener
     public void onStarted(GameStartedServerEvent event) {
-        plugin = this;
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor");
         Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
                 .ifPresent(player -> {
