@@ -73,9 +73,6 @@ public class NewHonor {
                     }
                 }))).name("newhonor - givePlayerEffects").intervalTicks(20).submit(this);
         logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
-
-        System.out.println(HonorData.getAllHonors());
-        HonorData.getAllHonors().forEach(o -> System.out.println(o.getNode("value").getString()));
     }
 
     @Listener
