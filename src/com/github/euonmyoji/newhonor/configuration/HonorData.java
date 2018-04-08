@@ -1,14 +1,18 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class HonorData {
@@ -44,7 +48,17 @@ public class HonorData {
     }
 
     public static boolean set(String id, String honor) {
-        cfg.getNode(id, "value").setValue(honor);
+        List<CommentedConfigurationNode> list = getAllHonors();
+        if (list.isEmpty()) {
+            list = new ArrayList<>();
+        }
+        list.add(cfg.getNode(id).setValue(honor));
+        try {
+            cfg.getNode("honors").setValue(new TypeToken<List<CommentedConfigurationNode>>() {
+            }, list);
+        } catch (ObjectMappingException e) {
+            e.printStackTrace();
+        }
         return save();
     }
 
@@ -62,6 +76,11 @@ public class HonorData {
 
     public static void reload() {
         cfg = load();
+    }
+
+    public static List<CommentedConfigurationNode> getAllHonors() {
+        //noinspection unchecked
+        return (List<CommentedConfigurationNode>) cfg.getNode("honors").getChildrenList();
     }
 
     private static boolean save() {
