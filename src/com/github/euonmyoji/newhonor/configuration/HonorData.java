@@ -89,8 +89,8 @@ public class HonorData {
     public static boolean check(List<String> honors) {
         try {
             List<String> list = getAllCreatedHonors();
-            honors.stream().filter(s -> !list.contains(s)).forEach(list::add);
-            new ArrayList<>(list).stream().filter(HonorData::isVirtual).forEach(list::remove);
+            list.addAll(honors);
+            list.removeIf(HonorData::isVirtual);
             cfg.getNode("created-honors").setValue(new TypeToken<List<String>>() {
             }, list);
             return save();
@@ -118,7 +118,7 @@ public class HonorData {
         }
     }
 
-    private static boolean isVirtual(String id) {
+    public static boolean isVirtual(String id) {
         return cfg.getNode(id).isVirtual();
     }
 }
