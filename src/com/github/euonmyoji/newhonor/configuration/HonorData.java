@@ -12,9 +12,9 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class HonorData {
     private static CommentedConfigurationNode cfg;
@@ -45,7 +45,7 @@ public class HonorData {
         return false;
     }
 
-    public static Optional<Text> getHonor(String id) {
+    public static Optional<Text> getHonorText(String id) {
         return Optional.ofNullable(cfg.getNode(id, "value").getString(null)).map(TextSerializers.FORMATTING_CODE::deserializeUnchecked);
     }
 
@@ -82,7 +82,7 @@ public class HonorData {
         return false;
     }
 
-    private static List<String> getAllCreatedHonors() throws ObjectMappingException {
+    public static List<String> getAllCreatedHonors() throws ObjectMappingException {
         return cfg.getNode("created-honors").getList(TypeToken.of(String.class), ArrayList::new);
     }
 
@@ -90,7 +90,9 @@ public class HonorData {
         try {
             List<String> list = getAllCreatedHonors();
             list.addAll(honors);
-            list.removeIf(HonorData::isVirtual);
+            list = list.stream().filter(s -> !HonorData.isVirtual(s))
+                    .distinct()
+                    .collect(Collectors.toList());
             cfg.getNode("created-honors").setValue(new TypeToken<List<String>>() {
             }, list);
             return save();
@@ -101,8 +103,18 @@ public class HonorData {
     }
 
     private static void check(String... strs) {
-        List<String> list = new ArrayList<>(Arrays.asList(strs));
-        check(list);
+        try {
+            List<String> list = getAllCreatedHonors();
+            for (String str : strs) {
+                if (!list.contains(str) && !isVirtual(str)) {
+                    list.add(str);
+                }
+            }
+            cfg.getNode("created-honors").setValue(new TypeToken<List<String>>() {
+            }, list);
+        } catch (ObjectMappingException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void checkDelete(String honor) {
@@ -118,7 +130,7 @@ public class HonorData {
         }
     }
 
-    public static boolean isVirtual(String id) {
+    private static boolean isVirtual(String id) {
         return cfg.getNode(id).isVirtual();
     }
 }

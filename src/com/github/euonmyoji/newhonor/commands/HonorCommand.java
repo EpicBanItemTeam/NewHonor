@@ -53,9 +53,9 @@ public class HonorCommand {
                             src.sendMessage(Text.of(String.format("正在使用的头衔id:%s", pd.getUse())));
                             src.sendMessage(Text.of("---" + user.getName() + "拥有的头衔---"));
                             honors.get().forEach(id -> {
-                                if (HonorData.getHonor(id).isPresent()) {
+                                if (HonorData.getHonorText(id).isPresent()) {
                                     src.sendMessage(Text.builder().append(Text.of("头衔id:" + id
-                                            + ",效果为:", HonorData.getHonor(id).get(), ",药水效果组:"
+                                            + ",效果为:", HonorData.getHonorText(id).get(), ",药水效果组:"
                                             + HonorData.getEffectsID(id).orElse("无")
                                     )).onClick(TextActions.runCommand("honor use " + id)).build());
                                 } else {
@@ -90,6 +90,15 @@ public class HonorCommand {
             .child(SettingsChildCommand.showhonor, "showhonor")
             .child(SettingsChildCommand.displayhonor, "displayhonor")
             .child(SettingsChildCommand.enableEffects, "enableeffects")
+            .build();
+
+    private static CommandSpec stats = CommandSpec.builder()
+            .permission("newhonor.admin")
+            .executor((src, args) -> {
+                src.sendMessage(Text.of("/honor stats allHonors"));
+                return CommandResult.success();
+            })
+            .child(StatsCommand.allHonors, "allHonors")
             .build();
 
     private static CommandSpec admin = CommandSpec.builder()

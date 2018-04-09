@@ -3,7 +3,9 @@ package com.github.euonmyoji.newhonor;
 import com.github.euonmyoji.newhonor.commands.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
+import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.listeners.UChatEventListener;
 import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -17,6 +19,7 @@ import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
@@ -37,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi")
+@Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
     static final String VERSION = "1.3.5";
     private NewHonorMessageChannel mMessage = new NewHonorMessageChannel();
@@ -67,6 +70,8 @@ public class NewHonor {
             e.printStackTrace();
         }
         checkUpdate();
+        NewHonorConfig.getCfg().getNode("compatibleUChat").setValue(NewHonorConfig.getCfg().getNode("compatibleUChat").getBoolean(false));
+        NewHonorConfig.save();
     }
 
     private void checkUpdate() {
@@ -102,6 +107,9 @@ public class NewHonor {
                     }
                 }))).name("newhonor - givePlayerEffects").intervalTicks(20).submit(this);
         logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
+        if (NewHonorConfig.getCfg().getNode("compatibleUChat").getBoolean(false)) {
+            Sponge.getEventManager().registerListeners(this, new UChatEventListener());
+        }
     }
 
     @Listener
@@ -123,7 +131,7 @@ public class NewHonor {
         Task.builder().execute(() -> doSomething(pd)).async().name("newhonor - (die) init Player" + p.getName()).submit(this);
     }
 
-    @Listener
+    @Listener(order = Order.LATE)
     public void onChat(MessageChannelEvent.Chat event) {
         event.setChannel(mMessage);
     }

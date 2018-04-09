@@ -63,7 +63,7 @@ public class PlayerData {
 
     public boolean give(String id) {
         Optional<List<String>> honors = getHonors();
-        if (HonorData.getHonor(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
+        if (HonorData.getHonorText(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
             honors.get().add(id);
             cfg.getNode("honors").setValue(honors.get());
             return save();
@@ -91,7 +91,7 @@ public class PlayerData {
     }
 
     public boolean setUse(String id) {
-        if ((getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || id.equals("default")) && HonorData.getHonor(id).isPresent()) {
+        if ((getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || id.equals("default")) && HonorData.getHonorText(id).isPresent()) {
             cfg.getNode("using").setValue(id);
             return save();
         }
@@ -112,7 +112,7 @@ public class PlayerData {
     }
 
     private Optional<Text> getHonor() {
-        return Optional.ofNullable(cfg.getNode("using").getString("default")).flatMap(HonorData::getHonor);
+        return Optional.ofNullable(cfg.getNode("using").getString("default")).flatMap(HonorData::getHonorText);
     }
 
     public boolean init() {

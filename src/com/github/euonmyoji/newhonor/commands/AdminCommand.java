@@ -4,6 +4,7 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -12,10 +13,13 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 
 import java.nio.file.Files;
 import java.util.Collection;
+
+import static org.spongepowered.api.text.Text.of;
 
 @SuppressWarnings("ConstantConditions")
 class AdminCommand {
@@ -77,7 +81,18 @@ class AdminCommand {
 
     static CommandSpec list = CommandSpec.builder()
             .executor((src, args) -> {
-                src.sendMessage(Text.of("[头衔插件]插件作者技术原因该功能未开放，请自己去配置文件人工查询.jpg"));
+                Task.builder().async().execute(() -> {
+                    PaginationList.Builder builder = PaginationList.builder().title(of("所有记录的创建过的头衔")).padding(of("-"));
+                    try {
+                        HonorData.getAllCreatedHonors()
+                                .forEach(s -> builder
+                                        .contents(of("头衔id：" + s + "，展示效果：", HonorData.getHonorText(s), "，药水效果组：" + HonorData.getEffectsID(s).orElse("无"))));
+                    } catch (ObjectMappingException e) {
+                        e.printStackTrace();
+                        src.sendMessage(of("[NewHonor]Error!"));
+                    }
+                    builder.sendTo(src);
+                }).submit(plugin);
                 return CommandResult.success();
             })
             .build();
