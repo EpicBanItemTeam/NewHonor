@@ -85,8 +85,9 @@ class AdminCommand {
                     PaginationList.Builder builder = PaginationList.builder().title(of("所有记录的创建过的头衔")).padding(of("-"));
                     try {
                         HonorData.getAllCreatedHonors()
-                                .forEach(s -> builder
-                                        .contents(of("头衔id：" + s + "，展示效果：", HonorData.getHonorText(s), "，药水效果组：" + HonorData.getEffectsID(s).orElse("无"))));
+                                .forEach(s -> HonorData.getHonorText(s)
+                                        .ifPresent(text -> builder
+                                                .contents(of("头衔id：" + s + "，展示效果：", text, "，药水效果组：" + HonorData.getEffectsID(s).orElse("无")))));
                     } catch (ObjectMappingException e) {
                         e.printStackTrace();
                         src.sendMessage(of("[NewHonor]Error!"));

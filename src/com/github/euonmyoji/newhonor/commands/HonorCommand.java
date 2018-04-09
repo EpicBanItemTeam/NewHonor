@@ -57,7 +57,8 @@ public class HonorCommand {
                                     src.sendMessage(Text.builder().append(Text.of("头衔id:" + id
                                             + ",效果为:", HonorData.getHonorText(id).get(), ",药水效果组:"
                                             + HonorData.getEffectsID(id).orElse("无")
-                                    )).onClick(TextActions.runCommand("honor use " + id)).build());
+                                    )).onClick(TextActions.runCommand("/honor use " + id))
+                                            .onHover(TextActions.showText(Text.of("左键点击使用头衔" + id))).build());
                                 } else {
                                     src.sendMessage(Text.of("注意:你拥有的头衔:" + id + ",已被服务器删除"));
                                     pd.take(id);
@@ -157,6 +158,7 @@ public class HonorCommand {
                 src.sendMessage(Text.of("/honor use <honorID>  使用头衔"));
                 src.sendMessage(Text.of("/honor settings        修改设置"));
                 src.sendMessage(Text.of("/honor effects        头衔药水效果"));
+                src.sendMessage(Text.of("/honor stats          统计(同步)一些数据 [卡服警告]"));
                 src.sendMessage(Text.of("-------------------------------------"));
                 return CommandResult.success();
             })
@@ -165,6 +167,7 @@ public class HonorCommand {
             .child(use, "use")
             .child(list, "list")
             .child(effects, "effects")
+            .child(stats, "stats")
             .build();
 
 }

@@ -43,7 +43,7 @@ import java.util.UUID;
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
     static final String VERSION = "1.3.5";
-    private NewHonorMessageChannel mMessage = new NewHonorMessageChannel();
+    private static final NewHonorMessageChannel mMessage = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
     public Path cfgDir;
@@ -52,9 +52,9 @@ public class NewHonor {
     public Logger logger;
 
     public static NewHonor plugin;
-    static HashMap<UUID, Text> honorTextCache = new HashMap<>();
-    private static HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
-    public static HashMap<String, List<PotionEffect>> effectsCache = new HashMap<>();
+    public static final HashMap<UUID, Text> honorTextCache = new HashMap<>();
+    private static final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
+    public static final HashMap<String, List<PotionEffect>> effectsCache = new HashMap<>();
 
     @Listener
     public void onStarting(GameStartingServerEvent event) {
