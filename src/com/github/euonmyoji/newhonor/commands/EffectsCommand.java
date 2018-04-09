@@ -138,7 +138,7 @@ class EffectsCommand {
                 builder.title(Text.of("药水效果标")).padding(Text.of("-")).header(Text.of("使用请输入id(全大写)"));
                 Sponge.getRegistry().getAllOf(PotionEffectType.class).forEach(type ->
                         builder.contents(Text.of(type.getId() + "：" + type.getName())));
-                builder.sendTo(src);
+                builder.build().sendTo(src);
                 return CommandResult.success();
             })
             .build();
