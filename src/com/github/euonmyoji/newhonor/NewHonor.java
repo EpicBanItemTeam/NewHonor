@@ -83,8 +83,11 @@ public class NewHonor {
                 try (InputStreamReader reader = new InputStreamReader(connection.getInputStream(), Charsets.UTF_8)) {
                     JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
                     String version = jsonObject.get("tag_name").getAsString();
-                    if (new ComparableVersion(version).compareTo(new ComparableVersion(VERSION)) > 0) {
+                    int c = new ComparableVersion(version).compareTo(new ComparableVersion(VERSION));
+                    if (c > 0) {
                         logger.info("[NewHonor]found a latest version:" + version + ".Your version now:" + VERSION);
+                    } else if (c < 0) {
+                        logger.info("[NewHonor]正在运行未发布的新版本:" + VERSION);
                     }
                 }
             } catch (Exception e) {
