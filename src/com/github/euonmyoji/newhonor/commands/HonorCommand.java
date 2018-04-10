@@ -59,7 +59,7 @@ public class HonorCommand {
                                     src.sendMessage(builder().append(of("头衔：", HonorData.getHonorText(id).get(), ",药水效果组:"
                                             + HonorData.getEffectsID(id).orElse("无")
                                     )).onClick(runCommand("/honor use " + id))
-                                            .onHover(showText(of("左键点击使用头衔" + HonorData.getHonorText(id).get()))).build());
+                                            .onHover(showText(of("左键点击使用头衔" , HonorData.getHonorText(id).get()))).build());
                                 } else {
                                     src.sendMessage(of("注意:你拥有的头衔:" + id + ",已被服务器删除"));
                                     pd.take(id);
