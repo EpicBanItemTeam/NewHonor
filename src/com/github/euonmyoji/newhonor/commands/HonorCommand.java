@@ -88,7 +88,7 @@ public class HonorCommand {
                         .onClick(suggestCommand("/honor settings showhonor ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
                 //src.sendMessage(of("/honor settings displayhonor true/false  显示头衔在头顶[名字前]"));
                 //功能不存在
-                src.sendMessage(builder().append(of("/honor settings enableeffects true/false  启用头衔药水效果[名字前]"))
+                src.sendMessage(builder().append(of("/honor settings enableeffects true/false  启用头衔药水效果"))
                         .onClick(suggestCommand("/honor settings enableeffects ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
