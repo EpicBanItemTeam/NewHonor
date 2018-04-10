@@ -9,14 +9,13 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.spongepowered.api.text.Text.*;
+import static org.spongepowered.api.text.Text.builder;
 import static org.spongepowered.api.text.Text.of;
+import static org.spongepowered.api.text.action.TextActions.*;
 
 public class HonorCommand {
 
@@ -53,15 +52,14 @@ public class HonorCommand {
                         PlayerData pd = new PlayerData(user);
                         Optional<List<String>> honors = pd.getHonors();
                         if (honors.isPresent()) {
-                            src.sendMessage(of(String.format("正在使用的头衔id:%s", pd.getUse())));
+                            src.sendMessage(of(String.format(user.getName() + "正在使用的头衔id:%s", pd.getUse())));
                             src.sendMessage(of("---" + user.getName() + "拥有的头衔---"));
                             honors.get().forEach(id -> {
                                 if (HonorData.getHonorText(id).isPresent()) {
-                                    src.sendMessage(builder().append(of("头衔id:" + id
-                                            + ",效果为:", HonorData.getHonorText(id).get(), ",药水效果组:"
+                                    src.sendMessage(builder().append(of("头衔：", HonorData.getHonorText(id).get(), ",药水效果组:"
                                             + HonorData.getEffectsID(id).orElse("无")
-                                    )).onClick(TextActions.runCommand("/honor use " + id))
-                                            .onHover(TextActions.showText(of("左键点击使用头衔" + id))).build());
+                                    )).onClick(runCommand("/honor use " + id))
+                                            .onHover(showText(of("左键点击使用头衔" + HonorData.getHonorText(id).get()))).build());
                                 } else {
                                     src.sendMessage(of("注意:你拥有的头衔:" + id + ",已被服务器删除"));
                                     pd.take(id);
@@ -84,10 +82,13 @@ public class HonorCommand {
             .permission("newhonor.settings")
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
-                src.sendMessage(of(""));
-                src.sendMessage(of("/honor settings showhonor true/false  显示头衔在聊天栏"));
-                src.sendMessage(of("/honor settings displayhonor true/false  显示头衔在头顶[名字前]"));
-                src.sendMessage(of("/honor settings enableeffects true/false  启用头衔药水效果[名字前]"));
+                src.sendMessage(of("#true为开启 false为关闭"));
+                src.sendMessage(builder().append(of("/honor settings showhonor true/false  显示头衔在聊天栏"))
+                        .onClick(suggestCommand("/honor settings showhonor ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
+                //src.sendMessage(of("/honor settings displayhonor true/false  显示头衔在头顶[名字前]"));
+                //功能不存在
+                src.sendMessage(builder().append(of("/honor settings enableeffects true/false  启用头衔药水效果[名字前]"))
+                        .onClick(suggestCommand("/honor settings enableeffects ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
@@ -154,12 +155,12 @@ public class HonorCommand {
             .permission("newhonor.use")
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
-                src.sendMessage(of("插件已发布在http://www.mcbbs.net/thread-785478-1-1.html"));
                 src.sendMessage(of(""));
                 src.sendMessage(of("/honor admin           管理员用指令"));
-                src.sendMessage(of("/honor list [用户]     列出拥有的头衔"));
-                src.sendMessage(of("/honor use <honorID>  使用头衔"));
-                src.sendMessage(of("/honor settings        修改设置"));
+                src.sendMessage(builder().append(of("/honor list [用户]     列出拥有的头衔")).onClick(runCommand("/honor list")).onHover(showText(of("点击显示自己拥有的头衔"))).build());
+                // 提示取消
+                // src.sendMessage(builder().append(of("/honor use <honorID>  使用头衔")).onHover(showText(of("如有需要点击使用头衔请前往list界面"))).build());
+                src.sendMessage(builder().append(of("/honor settings        修改设置")).onClick(runCommand("/honor settings")).onHover(showText(of("点击执行/honor settings"))).build());
                 src.sendMessage(of("/honor effects        头衔药水效果"));
                 src.sendMessage(of("/honor stats          统计(同步)一些数据 [卡服警告]"));
                 src.sendMessage(of("-------------------------------------"));
