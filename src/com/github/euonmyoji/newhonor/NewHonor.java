@@ -155,6 +155,8 @@ public class NewHonor {
                         e.printStackTrace();
                     }
                 });
+            } else {
+                playerUsingEffectCache.remove(pd.getUUID());
             }
         }).orElse(() -> {
             honorTextCache.remove(pd.getUUID());
