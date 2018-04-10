@@ -22,6 +22,7 @@ public class PlayerData {
     private final TypeToken<String> type = new TypeToken<String>() {
     };
     private ConfigurationLoader<CommentedConfigurationNode> loader;
+    private boolean orelse = false;
 
     public UUID getUUID() {
         return this.uuid;
@@ -132,18 +133,21 @@ public class PlayerData {
     public PlayerData ifShowHonor(Consumer<Optional<Text>> f) {
         if (isShowHonor()) {
             f.accept(getHonor());
+        } else {
+            orelse = true;
         }
         return this;
     }
 
     public void orElse(Runnable r) {
-        if (!isShowHonor()) {
+        if (orelse) {
+            orelse = false;
             r.run();
         }
     }
 
     public void checkUsing() {
-        if(!hasHonor(getUse())){
+        if (!hasHonor(getUse())) {
             setUse("default");
         }
     }
