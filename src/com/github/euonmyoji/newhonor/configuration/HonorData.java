@@ -50,7 +50,7 @@ public class HonorData {
     }
 
     public static boolean set(String id, String honor) {
-        cfg.getNode(id).setValue(honor);
+        cfg.getNode(id, "value").setValue(honor);
         check(id);
         return save();
     }
