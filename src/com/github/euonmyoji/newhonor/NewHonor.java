@@ -85,13 +85,13 @@ public class NewHonor {
                     String version = jsonObject.get("tag_name").getAsString();
                     int c = new ComparableVersion(version).compareTo(new ComparableVersion(VERSION));
                     if (c > 0) {
-                        logger.info("[NewHonor]found a latest version:" + version + ".Your version now:" + VERSION);
+                        logger.info("found a latest version:" + version + ".Your version now:" + VERSION);
                     } else if (c < 0) {
-                        logger.info("[NewHonor]正在运行未发布的新版本:" + VERSION);
+                        logger.info("正在运行未发布的新版本:" + VERSION);
                     }
                 }
             } catch (Exception e) {
-                logger.info("[NewHonor]check for updating failed");
+                logger.info("check for updating failed");
             }
         }).submit(this);
     }
