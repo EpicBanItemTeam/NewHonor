@@ -137,7 +137,7 @@ class EffectsCommand {
     static CommandSpec list = CommandSpec.builder()
             .executor((src, args) -> {
                 PaginationList.Builder builder = PaginationList.builder();
-                builder.title(of("药水效果标")).padding(of("-")).header(of("使用请输入id(全大写)"));
+                builder.title(of("药水效果表")).padding(of("-")).header(of("使用请输入id(全大写)"));
                 builder.contents(Sponge.getRegistry().getAllOf(PotionEffectType.class)
                         .stream().map(type -> of(type.getId() + " : " + type.getName())).collect(Collectors.toList()));
                 builder.build().sendTo(src);
