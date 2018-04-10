@@ -18,6 +18,7 @@ import org.spongepowered.api.text.Text;
 
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static org.spongepowered.api.text.Text.of;
 
@@ -84,10 +85,9 @@ class AdminCommand {
                 Task.builder().async().execute(() -> {
                     PaginationList.Builder builder = PaginationList.builder().title(of("所有记录的创建过的头衔")).padding(of("-"));
                     try {
-                        HonorData.getAllCreatedHonors()
-                                .forEach(s -> HonorData.getHonorText(s)
-                                        .ifPresent(text -> builder
-                                                .contents(of("头衔id：" + s + "，展示效果：", text, "，药水效果组：" + HonorData.getEffectsID(s).orElse("无")))));
+                        builder.contents(HonorData.getAllCreatedHonors().stream().map(s -> of("头衔id:" + s + "，效果："
+                                , HonorData.getHonorText(s).get()
+                                , "，" + "药水效果组：" + HonorData.getEffectsID(s).orElse("无"))).collect(Collectors.toList()));
                     } catch (ObjectMappingException e) {
                         e.printStackTrace();
                         src.sendMessage(of("[NewHonor]Error!"));
