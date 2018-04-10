@@ -7,6 +7,8 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 
@@ -47,7 +49,7 @@ public class PlayerData {
         }
     }
 
-    public boolean isShowHonor() {
+    private boolean isShowHonor() {
         return cfg.getNode("showhonor").getBoolean(true);
     }
 
@@ -66,6 +68,8 @@ public class PlayerData {
         if (HonorData.getHonorText(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
             honors.get().add(id);
             cfg.getNode("honors").setValue(honors.get());
+            Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
+                    HonorData.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
             return save();
         }
         return false;
@@ -91,11 +95,15 @@ public class PlayerData {
     }
 
     public boolean setUse(String id) {
-        if ((getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || id.equals("default")) && HonorData.getHonorText(id).isPresent()) {
+        if (hasHonor(id) && HonorData.getHonorText(id).isPresent()) {
             cfg.getNode("using").setValue(id);
             return save();
         }
         return false;
+    }
+
+    private boolean hasHonor(String id) {
+        return getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || id.equals("default");
     }
 
     public String getUse() {
@@ -131,6 +139,12 @@ public class PlayerData {
     public void orElse(Runnable r) {
         if (!isShowHonor()) {
             r.run();
+        }
+    }
+
+    public void checkUsing() {
+        if(!hasHonor(getUse())){
+            setUse("default");
         }
     }
 

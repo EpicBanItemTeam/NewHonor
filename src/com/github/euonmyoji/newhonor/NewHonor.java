@@ -41,7 +41,7 @@ import java.util.UUID;
 
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
-    static final String VERSION = "1.4";
+    static final String VERSION = "1.4.1";
     public static final NewHonorMessageChannel mMessage = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -143,6 +143,7 @@ public class NewHonor {
     }
 
     public static void doSomething(PlayerData pd) {
+        pd.checkUsing();
         pd.ifShowHonor(text -> {
             text.ifPresent(t -> honorTextCache.put(pd.getUUID(), t));
             if (pd.isEnableEffects()) {

@@ -94,7 +94,7 @@ class AdminCommand {
                         e.printStackTrace();
                         src.sendMessage(of("[NewHonor]Error!"));
                     }
-                    builder.sendTo(src);
+                    builder.build().sendTo(src);
                 }).submit(plugin);
                 return CommandResult.success();
             })

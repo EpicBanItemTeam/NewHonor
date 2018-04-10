@@ -86,6 +86,14 @@ public class HonorData {
         return cfg.getNode("created-honors").getList(TypeToken.of(String.class), ArrayList::new);
     }
 
+    static Optional<Text> getGetMessage(String id, String playername) {
+        //noinspection ConstantConditions 之前有检查
+        return Optional.ofNullable(cfg.getNode(id, "getMessage").getString(null))
+                .map(s -> "&f" + s.replace("{playername}", playername))
+                .map(s -> "&f" + s.replace("{newhonor}", TextSerializers.FORMATTING_CODE.serialize(HonorData.getHonorText(id).get())) + "&f")
+                .map(TextSerializers.FORMATTING_CODE::deserialize);
+    }
+
     public static boolean check(List<String> honors) {
         try {
             List<String> list = getAllCreatedHonors();
