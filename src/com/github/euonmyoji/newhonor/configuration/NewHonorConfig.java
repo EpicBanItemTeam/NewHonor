@@ -27,7 +27,7 @@ public class NewHonorConfig {
     public static void reload() {
         String path = cfg.getNode("player-data-path").getString("default");
         playerdataPath = path.equals("default") ? NewHonor.plugin.cfgDir.resolve("PlayerData") : Paths.get(path);
-        NewHonor.plugin.logger.info("目前正在使用的玩家爱数据路径" + playerdataPath);
+        NewHonor.plugin.logger.info("目前正在使用的玩家数据路径" + playerdataPath);
     }
 
     public static CommentedConfigurationNode getCfg() {
