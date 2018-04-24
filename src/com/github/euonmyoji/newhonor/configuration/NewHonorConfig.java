@@ -13,21 +13,24 @@ import java.nio.file.Paths;
 public class NewHonorConfig {
     private static CommentedConfigurationNode cfg;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
-    public static Path playerdataPath;
+    public static Path cfgDir;
+    public static Path defaultCfgDir;
+    private static final String cfgNodePath = "config-path";
 
-    static {
+    public static void init() {
         loader = HoconConfigurationLoader.builder()
-                .setPath(NewHonor.plugin.cfgDir.resolve("config.conf")).build();
+                .setPath(defaultCfgDir.resolve("config.conf")).build();
         cfg = load();
-        cfg.getNode("player-data-path").getValue(cfg.getNode("player-data-path").getString("default"));
+        cfg.getNode(cfgNodePath).getValue(cfg.getNode(cfgNodePath).getString("default"));
         reload();
         save();
     }
 
     public static void reload() {
-        String path = cfg.getNode("player-data-path").getString("default");
-        playerdataPath = path.equals("default") ? NewHonor.plugin.cfgDir.resolve("PlayerData") : Paths.get(path);
-        NewHonor.plugin.logger.info("目前正在使用的玩家数据路径" + playerdataPath);
+        cfg = load();
+        String path = cfg.getNode(cfgNodePath).getString("default");
+        cfgDir = path.equals("default") ? defaultCfgDir : Paths.get(path);
+        NewHonor.plugin.logger.info("目前正在使用的玩家数据路径" + cfgDir);
     }
 
     public static CommentedConfigurationNode getCfg() {

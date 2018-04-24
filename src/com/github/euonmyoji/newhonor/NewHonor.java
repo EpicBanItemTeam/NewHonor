@@ -45,7 +45,7 @@ public class NewHonor {
     public static final NewHonorMessageChannel mMessage = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
-    public Path cfgDir;
+    private Path cfgDir;
 
     @Inject
     public Logger logger;
@@ -59,16 +59,21 @@ public class NewHonor {
     public void onStarting(GameStartingServerEvent event) {
         plugin = this;
         try {
+            NewHonorConfig.defaultCfgDir = cfgDir;
             if (!Files.exists(cfgDir)) {
                 Files.createDirectory(cfgDir);
+            }
+            cfgDir = null;
+            NewHonorConfig.init();
+            if (!Files.exists(NewHonorConfig.cfgDir)) {
+                Files.createDirectory(NewHonorConfig.cfgDir);
+            }
+            if (!Files.exists(NewHonorConfig.cfgDir.resolve("PlayerData"))) {
+                Files.createDirectory(NewHonorConfig.cfgDir.resolve("PlayerData"));
             }
             checkUpdate();
             NewHonorConfig.getCfg().getNode("compatibleUChat").setValue(NewHonorConfig.getCfg().getNode("compatibleUChat").getBoolean(false));
             NewHonorConfig.save();
-            Path playerdataPath = NewHonorConfig.playerdataPath;
-            if (!Files.exists(playerdataPath)) {
-                Files.createDirectory(playerdataPath);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }

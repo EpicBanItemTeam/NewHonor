@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EffectsData {
-    private static final Path path = NewHonor.plugin.cfgDir.resolve("EffectsData");
+    private static final Path path = NewHonorConfig.cfgDir.resolve("EffectsData");
     private CommentedConfigurationNode cfg;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 

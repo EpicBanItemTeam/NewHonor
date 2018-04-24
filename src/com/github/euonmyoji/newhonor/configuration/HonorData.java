@@ -1,6 +1,5 @@
 package com.github.euonmyoji.newhonor.configuration;
 
-import com.github.euonmyoji.newhonor.NewHonor;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -22,7 +21,7 @@ public class HonorData {
 
     static {
         loader = HoconConfigurationLoader.builder()
-                .setPath(NewHonor.plugin.cfgDir.resolve("honor.conf")).build();
+                .setPath(NewHonorConfig.cfgDir.resolve("honor.conf")).build();
         cfg = load();
         set("default", cfg.getNode("default", "value").getString("[默认头衔]"));
     }
