@@ -30,8 +30,7 @@ public class NewHonorConfig {
         cfg = load();
         String path = cfg.getNode(cfgNodePath).getString("default");
         cfgDir = path.equals("default") ? defaultCfgDir : Paths.get(path);
-        NewHonor.plugin.logger.info("目前正在使用的配置数0." +
-                "据路径" + cfgDir);
+        NewHonor.plugin.logger.info("目前正在使用的配置文件路径" + cfgDir);
     }
 
     public static CommentedConfigurationNode getCfg() {
