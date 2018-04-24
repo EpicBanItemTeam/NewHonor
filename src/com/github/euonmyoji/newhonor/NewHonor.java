@@ -41,7 +41,7 @@ import java.util.UUID;
 
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
-    static final String VERSION = "1.4.1.1";
+    static final String VERSION = "1.4.2";
     public static final NewHonorMessageChannel mMessage = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -62,15 +62,16 @@ public class NewHonor {
             if (!Files.exists(cfgDir)) {
                 Files.createDirectory(cfgDir);
             }
-            if (!Files.exists(cfgDir.resolve("PlayerData"))) {
-                Files.createDirectories(cfgDir.resolve("PlayerData"));
+            checkUpdate();
+            NewHonorConfig.getCfg().getNode("compatibleUChat").setValue(NewHonorConfig.getCfg().getNode("compatibleUChat").getBoolean(false));
+            NewHonorConfig.save();
+            Path playerdataPath = NewHonorConfig.playerdataPath;
+            if (!Files.exists(playerdataPath)) {
+                Files.createDirectory(playerdataPath);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        checkUpdate();
-        NewHonorConfig.getCfg().getNode("compatibleUChat").setValue(NewHonorConfig.getCfg().getNode("compatibleUChat").getBoolean(false));
-        NewHonorConfig.save();
     }
 
     private void checkUpdate() {

@@ -3,6 +3,7 @@ package com.github.euonmyoji.newhonor.commands;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
+import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
@@ -169,6 +170,7 @@ class AdminCommand {
     static CommandSpec reload = CommandSpec.builder()
             .executor((src, args) -> {
                 src.sendMessage(Text.of("[头衔插件]开始重载插件配置文件"));
+                NewHonorConfig.reload();
                 HonorData.reload();
                 EffectsData.refresh();
                 refreshCache(src);

@@ -31,7 +31,7 @@ public class PlayerData {
     public PlayerData(User user) {
         uuid = user.getUniqueId();
         loader = HoconConfigurationLoader.builder()
-                .setPath((NewHonor.plugin.cfgDir.resolve("PlayerData")).resolve(user.getUniqueId().toString() + ".conf")).build();
+                .setPath(NewHonorConfig.playerdataPath.resolve(user.getUniqueId().toString() + ".conf")).build();
         cfg = load();
     }
 
