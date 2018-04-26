@@ -93,7 +93,7 @@ public class NewHonor {
                     if (c > 0) {
                         logger.info("found a latest version:" + version + ".Your version now:" + VERSION);
                     } else if (c < 0) {
-                        logger.info("正在运行未发布的新版本:" + VERSION);
+                        logger.info("the latest version in github:" + version + "[Your:" + VERSION + "]");
                     }
                 }
             } catch (Exception e) {
