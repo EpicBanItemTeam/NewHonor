@@ -1,6 +1,5 @@
 package com.github.euonmyoji.newhonor.configuration;
 
-import com.github.euonmyoji.newhonor.NewHonor;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -40,6 +39,10 @@ public class PlayerData {
         loader = HoconConfigurationLoader.builder()
                 .setPath((NewHonorConfig.cfgDir.resolve("PlayerData")).resolve(uuid.toString() + ".conf")).build();
         cfg = load();
+    }
+
+    public boolean isDisplayHonor() {
+        return cfg.getNode("displayhonor").getBoolean(false);
     }
 
     private CommentedConfigurationNode load() {

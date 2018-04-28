@@ -6,9 +6,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.text.Text;
 
-import static org.spongepowered.api.text.Text.*;
 import static org.spongepowered.api.text.Text.of;
 
 @SuppressWarnings("ConstantConditions")

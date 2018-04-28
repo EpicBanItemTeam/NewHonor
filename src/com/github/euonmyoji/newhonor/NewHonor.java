@@ -41,7 +41,7 @@ import java.util.UUID;
 
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
-    static final String VERSION = "1.4.2";
+    static final String VERSION = "1.5";
     public static final NewHonorMessageChannel mMessage = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -132,6 +132,8 @@ public class NewHonor {
             }
             doSomething(pd);
         }).async().delayTicks(20).name("newhonor - init Player" + p.getName()).submit(this);
+        ScoreBoardManager.initPlayer(p);
+
     }
 
     @Listener
@@ -150,6 +152,7 @@ public class NewHonor {
 
     public static void doSomething(PlayerData pd) {
         pd.checkUsing();
+        Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(ScoreBoardManager::initPlayer);
         pd.ifShowHonor(text -> {
             text.ifPresent(t -> honorTextCache.put(pd.getUUID(), t));
             if (pd.isEnableEffects()) {

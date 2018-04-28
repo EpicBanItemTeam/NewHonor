@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.commands;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.ScoreBoardManager;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
@@ -190,6 +191,7 @@ class AdminCommand {
             Sponge.getServer().getOnlinePlayers().stream().map(Player::getUniqueId)
                     .map(PlayerData::new)
                     .forEach(NewHonor::doSomething);
+            ScoreBoardManager.init();
             src.sendMessage(Text.of("[头衔插件]缓存刷新完毕"));
         }).async().name("newhonor - 更新缓存").submit(NewHonor.plugin);
     }
