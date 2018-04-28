@@ -72,7 +72,12 @@ public class NewHonor {
                 Files.createDirectory(NewHonorConfig.cfgDir.resolve("PlayerData"));
             }
             checkUpdate();
-            NewHonorConfig.getCfg().getNode("compatibleUChat").setValue(NewHonorConfig.getCfg().getNode("compatibleUChat").getBoolean(false));
+            NewHonorConfig.getCfg().getNode("compatibleUChat")
+                    .setValue(NewHonorConfig.getCfg().getNode("compatibleUChat").getBoolean(false))
+                    .setComment("修改后请重启服务器应用更改");
+            NewHonorConfig.getCfg().getNode("displayHonor")
+                    .setValue(NewHonorConfig.getCfg().getNode("displayHonor").getBoolean(false))
+                    .setComment("修改后请重启服务器应用更改");
             NewHonorConfig.save();
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,6 +122,8 @@ public class NewHonor {
         logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
         if (NewHonorConfig.getCfg().getNode("compatibleUChat").getBoolean(false)) {
             Sponge.getEventManager().registerListeners(this, new UChatEventListener());
+        } else if (NewHonorConfig.getCfg().getNode("displayHonor").getBoolean(false)) {
+            ScoreBoardManager.enable = true;
         } else {
             Sponge.getEventManager().registerListeners(this, new NewHonorMessageListener());
         }

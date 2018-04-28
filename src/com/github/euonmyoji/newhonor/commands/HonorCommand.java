@@ -93,9 +93,9 @@ public class HonorCommand {
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
-            .child(SettingsChildCommand.showhonor, "showhonor")
-            .child(SettingsChildCommand.displayhonor, "displayhonor")
-            .child(SettingsChildCommand.enableEffects, "enableeffects")
+            .child(SettingsArgs.showhonor, "showhonor")
+            .child(SettingsArgs.displayhonor, "displayhonor")
+            .child(SettingsArgs.enableEffects, "enableeffects")
             .build();
 
     private static CommandSpec stats = CommandSpec.builder()

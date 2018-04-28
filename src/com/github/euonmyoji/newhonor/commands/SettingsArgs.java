@@ -10,7 +10,7 @@ import org.spongepowered.api.entity.living.player.User;
 import static org.spongepowered.api.text.Text.of;
 
 @SuppressWarnings("ConstantConditions")
-class SettingsChildCommand {
+class SettingsArgs {
 
     static CommandSpec showhonor = CommandSpec.builder()
             .arguments(GenericArguments.bool(of("boolean")))
