@@ -78,6 +78,9 @@ public class NewHonor {
             NewHonorConfig.getCfg().getNode("displayHonor")
                     .setValue(NewHonorConfig.getCfg().getNode("displayHonor").getBoolean(false))
                     .setComment("修改后请重启服务器应用更改");
+            NewHonorConfig.getCfg().getNode("usePAPI")
+                    .setValue(NewHonorConfig.getCfg().getNode("usePAPI").getBoolean(false))
+                    .setComment("修改后请重启服务器应用更改");
             NewHonorConfig.save();
         } catch (IOException e) {
             e.printStackTrace();
@@ -126,6 +129,9 @@ public class NewHonor {
             ScoreBoardManager.enable = true;
         } else {
             Sponge.getEventManager().registerListeners(this, new NewHonorMessageListener());
+        }
+        if (NewHonorConfig.getCfg().getNode("usePAPI").getBoolean(false)) {
+            new PAPIManager();
         }
     }
 

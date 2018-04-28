@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class ScoreBoardManager {
-    public static boolean enable = false;
+    static boolean enable = false;
     private static Scoreboard scoreboard = Scoreboard.builder().build();
 
     public static void init() {
