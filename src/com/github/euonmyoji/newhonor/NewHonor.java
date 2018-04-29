@@ -132,6 +132,7 @@ public class NewHonor {
         }
         if (NewHonorConfig.getCfg().getNode("usePAPI").getBoolean(false)) {
             new PAPIManager();
+            logger.info("enabled PAPI");
         }
     }
 
