@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * @author yinyangshi
+ */
 public class PlayerData {
     private final UUID uuid;
     private final CommentedConfigurationNode cfg;
@@ -107,7 +110,7 @@ public class PlayerData {
     }
 
     private boolean hasHonor(String id) {
-        return getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || id.equals("default");
+        return getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || "default".equals(id);
     }
 
     public String getUse() {

@@ -40,8 +40,8 @@ public class ScoreBoardManager {
                     team.removeMember(p.getTeamRepresentation());
                     return team.getName().equals(p.getName());
                 });
-            } else if (NewHonor.honorTextCache.containsKey(uuid)) {
-                Text text = NewHonor.honorTextCache.get(uuid);
+            } else if (NewHonor.HONOR_TEXT_CACHE.containsKey(uuid)) {
+                Text text = NewHonor.HONOR_TEXT_CACHE.get(uuid);
                 teams.removeIf(team -> team.getName().equals(p.getName()));
                 teams.add(Team.builder().prefix(text).name(p.getName()).build());
             }

@@ -12,7 +12,7 @@ public class NewHonorMessageListener {
     public void onChat(MessageChannelEvent.Chat event) {
         MessageChannel originalChannel = event.getOriginalChannel();
         MessageChannel newChannel = MessageChannel.combined(originalChannel,
-                NewHonor.mMessage);
+                NewHonor.M_MESSAGE);
         event.setChannel(newChannel);
     }
 }

@@ -10,26 +10,29 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * @author yinyangshi
+ */
 public class NewHonorConfig {
     private static CommentedConfigurationNode cfg;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     public static Path cfgDir;
     public static Path defaultCfgDir;
-    private static final String cfgNodePath = "config-path";
+    private static final String CFG_NODE_PATH = "config-path";
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
                 .setPath(defaultCfgDir.resolve("config.conf")).build();
         cfg = load();
-        cfg.getNode(cfgNodePath).getValue(cfg.getNode(cfgNodePath).getString("default"));
+        cfg.getNode(CFG_NODE_PATH).getValue(cfg.getNode(CFG_NODE_PATH).getString("default"));
         reload();
         save();
     }
 
     public static void reload() {
         cfg = load();
-        String path = cfg.getNode(cfgNodePath).getString("default");
-        cfgDir = path.equals("default") ? defaultCfgDir : Paths.get(path);
+        String path = cfg.getNode(CFG_NODE_PATH).getString("default");
+        cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
         NewHonor.plugin.logger.info("目前正在使用的配置文件路径" + cfgDir);
     }
 

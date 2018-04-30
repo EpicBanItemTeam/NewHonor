@@ -103,12 +103,12 @@ public class EffectsData {
 
     public static void refresh() {
         try {
-            NewHonor.effectsCache.clear();
+            NewHonor.EFFECTS_CACHE.clear();
             Files.list(path).forEach(path -> {
                 String id = "" + path.getFileName();
                 EffectsData ed = new EffectsData(id);
                 try {
-                    NewHonor.effectsCache.put(id, ed.getEffects());
+                    NewHonor.EFFECTS_CACHE.put(id, ed.getEffects());
                 } catch (ObjectMappingException e) {
                     e.printStackTrace();
                 }

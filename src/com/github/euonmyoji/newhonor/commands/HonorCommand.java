@@ -17,7 +17,11 @@ import static org.spongepowered.api.text.Text.builder;
 import static org.spongepowered.api.text.Text.of;
 import static org.spongepowered.api.text.action.TextActions.*;
 
+/**
+ * @author yinyangshi
+ */
 public class HonorCommand {
+    private static String ADMIN_PERMISSION = "newhonor.admin";
 
     @SuppressWarnings("ConstantConditions")
     private static CommandSpec use = CommandSpec.builder()
@@ -47,7 +51,7 @@ public class HonorCommand {
             .arguments(GenericArguments.onlyOne(GenericArguments.userOrSource(of("user"))))
             .executor((src, args) -> {
                 User user = args.<User>getOne(of("user")).get();
-                if (user.getName().equals(src.getName()) || src.hasPermission("newhonor.admin")) {
+                if (user.getName().equals(src.getName()) || src.hasPermission(ADMIN_PERMISSION)) {
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData(user);
                         Optional<List<String>> honors = pd.getHonors();
@@ -159,8 +163,6 @@ public class HonorCommand {
                 src.sendMessage(of(""));
                 src.sendMessage(of("/honor admin           管理员用指令"));
                 src.sendMessage(builder().append(of("/honor list [用户]     列出拥有的头衔")).onClick(runCommand("/honor list")).onHover(showText(of("点击显示自己拥有的头衔"))).build());
-                // 提示取消
-                // src.sendMessage(builder().append(of("/honor use <honorID>  使用头衔")).onHover(showText(of("如有需要点击使用头衔请前往list界面"))).build());
                 src.sendMessage(builder().append(of("/honor settings        修改设置")).onClick(runCommand("/honor settings")).onHover(showText(of("点击执行/honor settings"))).build());
                 src.sendMessage(of("/honor effects        头衔药水效果"));
                 src.sendMessage(of("/honor stats          统计(同步)一些数据 [卡服警告]"));
