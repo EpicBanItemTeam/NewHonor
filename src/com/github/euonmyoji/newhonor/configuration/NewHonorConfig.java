@@ -18,20 +18,20 @@ public class NewHonorConfig {
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     public static Path cfgDir;
     public static Path defaultCfgDir;
-    private static final String CFG_NODE_PATH = "config-path";
+    private static final String DATA_PATH_NODE = "data-dir-path";
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
-                .setPath(defaultCfgDir.resolve("config.conf")).build();
+                .setPath(defaultCfgDir.resolve("data.conf")).build();
         cfg = load();
-        cfg.getNode(CFG_NODE_PATH).getValue(cfg.getNode(CFG_NODE_PATH).getString("default"));
+        cfg.getNode(DATA_PATH_NODE).setValue(cfg.getNode(DATA_PATH_NODE).getString("default"));
         reload();
         save();
     }
 
     public static void reload() {
         cfg = load();
-        String path = cfg.getNode(CFG_NODE_PATH).getString("default");
+        String path = cfg.getNode(DATA_PATH_NODE).getString("default");
         cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
         NewHonor.plugin.logger.info("目前正在使用的配置文件路径" + cfgDir);
     }
