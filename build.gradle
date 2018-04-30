@@ -4,6 +4,8 @@ apply plugin: 'java'
 
 sourceCompatibility = '1.8'
 
+defaultTasks 'clean', 'build'
+
 repositories {
     mavenCentral()
     maven {

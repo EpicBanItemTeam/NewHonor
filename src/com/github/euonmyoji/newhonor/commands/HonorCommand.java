@@ -102,15 +102,6 @@ public class HonorCommand {
             .child(SettingsArgs.enableEffects, "enableeffects")
             .build();
 
-    private static CommandSpec stats = CommandSpec.builder()
-            .permission(ADMIN_PERMISSION)
-            .executor((src, args) -> {
-                src.sendMessage(of("/honor stats allHonors"));
-                return CommandResult.success();
-            })
-            .child(StatsCommand.allHonors, "allHonors")
-            .build();
-
     private static CommandSpec admin = CommandSpec.builder()
             .permission(ADMIN_PERMISSION)
             .executor((src, args) -> {
@@ -175,7 +166,6 @@ public class HonorCommand {
             .child(use, "use")
             .child(list, "list")
             .child(effects, "effects")
-            .child(stats, "stats")
             .build();
 
 }
