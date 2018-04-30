@@ -105,7 +105,7 @@ public class NewHonor {
                 connection.getResponseCode();
                 try (InputStreamReader reader = new InputStreamReader(connection.getInputStream(), Charsets.UTF_8)) {
                     JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
-                    String version = jsonObject.get("tag_name").getAsString();
+                    String version = jsonObject.get("tag_name").getAsString().replace("v", "");
                     int c = new ComparableVersion(version).compareTo(new ComparableVersion(VERSION));
                     if (c > 0) {
                         logger.info("found a latest version:" + version + ".Your version now:" + VERSION);
