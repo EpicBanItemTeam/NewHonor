@@ -53,14 +53,17 @@ public class PlayerData {
         return cfg.getNode("usehonor").getBoolean(true);
     }
 
-    public boolean take(String id) {
-        Optional<List<String>> honors = getHonors();
-        if (honors.isPresent() && honors.get().stream().anyMatch(id::equals)) {
-            honors.get().remove(id);
-            cfg.getNode("honors").setValue(honors.get());
-            return save();
+    public boolean take(String... ids) {
+        boolean took = false;
+        for (String id : ids) {
+            Optional<List<String>> honors = getHonors();
+            if (honors.isPresent() && honors.get().stream().anyMatch(id::equals)) {
+                honors.get().remove(id);
+                cfg.getNode("honors").setValue(honors.get());
+                took = true;
+            }
         }
-        return false;
+        return took && save();
     }
 
     public boolean give(String id) {

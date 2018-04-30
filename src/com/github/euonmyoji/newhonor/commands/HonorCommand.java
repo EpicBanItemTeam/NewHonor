@@ -9,9 +9,11 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.service.pagination.PaginationList;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.spongepowered.api.text.Text.builder;
 import static org.spongepowered.api.text.Text.of;
@@ -56,21 +58,22 @@ public class HonorCommand {
                         PlayerData pd = new PlayerData(user);
                         Optional<List<String>> honors = pd.getHonors();
                         if (honors.isPresent()) {
-                            HonorData.getHonorText(pd.getUse()).ifPresent(text ->
-                                    src.sendMessage(of(user.getName() + "正在使用的头衔:", text)));
-                            src.sendMessage(of("---" + user.getName() + "拥有的头衔---"));
-                            honors.get().forEach(id -> {
-                                if (HonorData.getHonorText(id).isPresent()) {
-                                    src.sendMessage(builder().append(of("头衔：", HonorData.getHonorText(id).get(), ",药水效果组:"
-                                            + HonorData.getEffectsID(id).orElse("无")
-                                    )).onClick(runCommand("/honor use " + id))
-                                            .onHover(showText(of("左键点击使用头衔", HonorData.getHonorText(id).get()))).build());
-                                } else {
-                                    src.sendMessage(of("注意:你拥有的头衔:" + id + ",已被服务器删除"));
-                                    pd.take(id);
-                                    pd.setUse("default");
-                                }
-                            });
+                            PaginationList.Builder builder = PaginationList.builder();
+                            builder.title(of("拥有的头衔")).padding(of("-"));
+                            HonorData.getHonorText(pd.getUse())
+                                    .ifPresent(text -> builder.header(of(String.format("%s正在使用的头衔:", user.getName()), text)));
+                            builder.contents(honors.get().stream()
+                                    .map(HonorData::getHonorText)
+                                    .filter(Optional::isPresent)
+                                    .map(Optional::get)
+                                    .collect(Collectors.toList()));
+                            builder.build().sendTo(src);
+                            Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
+                                    .execute(() -> honors.get().forEach(s -> {
+                                        if (!HonorData.getHonorText(s).isPresent()) {
+                                            pd.take(s);
+                                        }
+                                    })).submit(NewHonor.plugin);
                         } else {
                             src.sendMessage(of("[头衔插件]你目前没有任何头衔"));
                         }
