@@ -155,7 +155,7 @@ public class HonorCommand {
             .build();
 
     public static CommandSpec honor = CommandSpec.builder()
-            .permission(ADMIN_PERMISSION)
+            .permission("newhonor.use")
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
                 src.sendMessage(of(""));
