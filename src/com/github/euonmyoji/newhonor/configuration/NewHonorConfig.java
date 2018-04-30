@@ -22,7 +22,7 @@ public class NewHonorConfig {
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
-                .setPath(defaultCfgDir.resolve("data.conf")).build();
+                .setPath(defaultCfgDir.resolve("config.conf")).build();
         cfg = load();
         cfg.getNode(DATA_PATH_NODE).setValue(cfg.getNode(DATA_PATH_NODE).getString("default"));
         reload();
