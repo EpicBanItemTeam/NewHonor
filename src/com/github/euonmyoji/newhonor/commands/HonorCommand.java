@@ -88,22 +88,19 @@ public class HonorCommand {
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
                 src.sendMessage(of("#true为开启 false为关闭"));
-                src.sendMessage(builder().append(of("/honor settings showhonor true/false  显示头衔在聊天栏"))
-                        .onClick(suggestCommand("/honor settings showhonor ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
-                src.sendMessage(builder().append(of("/honor settings displayhonor true/false  显示头衔在头顶"))
-                        .onClick(suggestCommand("/honor settings displayhonor ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
+                src.sendMessage(builder().append(of("/honor settings usehonor true/false  是否使用头衔"))
+                        .onClick(suggestCommand("/honor settings usehonor ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
                 src.sendMessage(builder().append(of("/honor settings enableeffects true/false  启用头衔药水效果"))
                         .onClick(suggestCommand("/honor settings enableeffects ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
-            .child(SettingsArgs.showhonor, "showhonor")
-            .child(SettingsArgs.displayhonor, "displayhonor")
+            .child(SettingsArgs.usehonor, "usehonor")
             .child(SettingsArgs.enableEffects, "enableeffects")
             .build();
 
     private static CommandSpec stats = CommandSpec.builder()
-            .permission("newhonor.admin")
+            .permission(ADMIN_PERMISSION)
             .executor((src, args) -> {
                 src.sendMessage(of("/honor stats allHonors"));
                 return CommandResult.success();
@@ -112,7 +109,7 @@ public class HonorCommand {
             .build();
 
     private static CommandSpec admin = CommandSpec.builder()
-            .permission("newhonor.admin")
+            .permission(ADMIN_PERMISSION)
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
                 src.sendMessage(of(""));
@@ -140,7 +137,7 @@ public class HonorCommand {
             .build();
 
     private static CommandSpec effects = CommandSpec.builder()
-            .permission("newhonor.admin")
+            .permission(ADMIN_PERMISSION)
             .executor((src, args) -> {
                 src.sendMessage(of("/honor effects delete <effectsID>  删除一个药水效果组"));
                 src.sendMessage(of("/honor effects set <effectsID> <effectID> <level> 给一个效果组设置一个药水效果"));
@@ -157,7 +154,7 @@ public class HonorCommand {
             .build();
 
     public static CommandSpec honor = CommandSpec.builder()
-            .permission("newhonor.use")
+            .permission(ADMIN_PERMISSION)
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
                 src.sendMessage(of(""));

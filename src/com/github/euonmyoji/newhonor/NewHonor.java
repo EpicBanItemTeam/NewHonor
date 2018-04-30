@@ -25,7 +25,6 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.plugin.meta.version.ComparableVersion;
@@ -45,17 +44,11 @@ import java.util.UUID;
  */
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
-    static final String VERSION = "1.5";
+    static final String VERSION = "1.5.1";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path cfgDir;
-
-    @Inject
-    @ConfigDir(sharedRoot = true)
-    private Path sharedRootConfigDir;
-    @Inject
-    private PluginContainer pluginContainer;
 
     @Inject
     public Logger logger;
@@ -186,24 +179,21 @@ public class NewHonor {
 
     public static void doSomething(PlayerData pd) {
         pd.checkUsing();
-        Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(ScoreBoardManager::initPlayer);
-        pd.ifShowHonor(text -> {
-            text.ifPresent(t -> HONOR_TEXT_CACHE.put(pd.getUUID(), t));
+        PLAYER_USING_EFFECT_CACHE.remove(pd.getUUID());
+        HONOR_TEXT_CACHE.remove(pd.getUUID());
+        if (pd.isUseHonor()) {
+            pd.getHonor().ifPresent(text -> HONOR_TEXT_CACHE.put(pd.getUUID(), text));
             if (pd.isEnableEffects()) {
                 HonorData.getEffectsID(pd.getUse()).ifPresent(s -> {
                     try {
                         EFFECTS_CACHE.put(s, new EffectsData(s).getEffects());
                         PLAYER_USING_EFFECT_CACHE.put(pd.getUUID(), s);
                     } catch (ObjectMappingException e) {
-                        e.printStackTrace();
+                        NewHonor.plugin.logger.warn("解析头衔效果组" + s + "配置文件时出错", e);
                     }
                 });
-            } else {
-                PLAYER_USING_EFFECT_CACHE.remove(pd.getUUID());
             }
-        }).orElse(() -> {
-            HONOR_TEXT_CACHE.remove(pd.getUUID());
-            PLAYER_USING_EFFECT_CACHE.remove(pd.getUUID());
-        });
+        }
+        Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(ScoreBoardManager::initPlayer);
     }
 }

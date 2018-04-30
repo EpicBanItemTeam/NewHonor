@@ -13,7 +13,6 @@ import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * @author yinyangshi
@@ -21,10 +20,8 @@ import java.util.function.Consumer;
 public class PlayerData {
     private final UUID uuid;
     private final CommentedConfigurationNode cfg;
-    private final TypeToken<String> type = new TypeToken<String>() {
-    };
+    private final TypeToken<String> type = TypeToken.of(String.class);
     private ConfigurationLoader<CommentedConfigurationNode> loader;
-    private boolean orelse = false;
 
     public UUID getUUID() {
         return this.uuid;
@@ -44,10 +41,6 @@ public class PlayerData {
         cfg = load();
     }
 
-    public boolean isDisplayHonor() {
-        return cfg.getNode("displayhonor").getBoolean(false);
-    }
-
     private CommentedConfigurationNode load() {
         try {
             return loader.load();
@@ -56,8 +49,8 @@ public class PlayerData {
         }
     }
 
-    private boolean isShowHonor() {
-        return cfg.getNode("showhonor").getBoolean(true);
+    public boolean isUseHonor() {
+        return cfg.getNode("usehonor").getBoolean(true);
     }
 
     public boolean take(String id) {
@@ -82,13 +75,8 @@ public class PlayerData {
         return false;
     }
 
-    public void showhonor(boolean show) {
-        cfg.getNode("showhonor").setValue(show);
-        save();
-    }
-
-    public void displayhonor(boolean display) {
-        cfg.getNode("displayhonor").setValue(display);
+    public void usehonor(boolean use) {
+        cfg.getNode("usehonor").setValue(use);
         save();
     }
 
@@ -126,7 +114,7 @@ public class PlayerData {
         }
     }
 
-    private Optional<Text> getHonor() {
+    public Optional<Text> getHonor() {
         return Optional.ofNullable(cfg.getNode("using").getString("default")).flatMap(HonorData::getHonorText);
     }
 
@@ -134,22 +122,6 @@ public class PlayerData {
         give("default");
         setUse(getUse());
         return save();
-    }
-
-    public PlayerData ifShowHonor(Consumer<Optional<Text>> f) {
-        if (isShowHonor()) {
-            f.accept(getHonor());
-        } else {
-            orelse = true;
-        }
-        return this;
-    }
-
-    public void orElse(Runnable r) {
-        if (orelse) {
-            orelse = false;
-            r.run();
-        }
     }
 
     public void checkUsing() {
