@@ -12,6 +12,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * @author yinyangshi
+ */
 public class ScoreBoardManager {
     static boolean enable = false;
     private static Scoreboard scoreboard = Scoreboard.builder().build();
