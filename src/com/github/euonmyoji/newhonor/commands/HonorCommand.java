@@ -15,7 +15,6 @@ import org.spongepowered.api.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.spongepowered.api.text.Text.builder;
 import static org.spongepowered.api.text.Text.of;
@@ -68,7 +67,7 @@ public class HonorCommand {
                             for (String id : honors.get()) {
                                 HonorData.getHonorText(id).ifPresent(text -> texts.add(
                                         Text.builder()
-                                                .append(text)
+                                                .append(of("头衔:"), text, of("，药水效果组:" + HonorData.getEffectsID(id).orElse("无")))
                                                 .onHover(showText(of("点击使用头衔", text)))
                                                 .onClick(runCommand("/honor use " + id))
                                                 .build()));

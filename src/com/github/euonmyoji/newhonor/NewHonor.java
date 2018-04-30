@@ -140,6 +140,7 @@ public class NewHonor {
             Sponge.getEventManager().registerListeners(this, new UltimateChatEventListener());
         } else if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
             ScoreBoardManager.enable = true;
+            logger.info("displayHonor enabled");
         } else {
             Sponge.getEventManager().registerListeners(this, new NewHonorMessageListener());
         }

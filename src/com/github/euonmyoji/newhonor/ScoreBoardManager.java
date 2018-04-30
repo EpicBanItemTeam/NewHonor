@@ -46,7 +46,10 @@ public class ScoreBoardManager {
             } else if (NewHonor.HONOR_TEXT_CACHE.containsKey(uuid)) {
                 Text text = NewHonor.HONOR_TEXT_CACHE.get(uuid);
                 teams.removeIf(team -> team.getName().equals(p.getName()));
-                teams.add(Team.builder().displayName(Text.builder().append(text, Text.of(p.getName())).build()).name(p.getName()).build());
+                teams.add(Team.builder()
+                        .name(p.getName())
+                        .prefix(text)
+                        .build());
             }
             scoreboard = Scoreboard.builder().teams(new ArrayList<>(teams)).build();
             scoreboard.getTeam(p.getName()).ifPresent(team -> team.addMember(p.getTeamRepresentation()));
