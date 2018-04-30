@@ -38,7 +38,7 @@ public class ScoreBoardManager {
             PlayerData pd = new PlayerData(p);
             Set<Team> teams = new HashSet<>();
             scoreboard.getTeams().forEach(team -> teams.add(Team.builder().from(team).build()));
-            if (!pd.isDisplayHonor()) {
+            if (!pd.isUseHonor()) {
                 teams.removeIf(team -> {
                     team.removeMember(p.getTeamRepresentation());
                     return team.getName().equals(p.getName());
