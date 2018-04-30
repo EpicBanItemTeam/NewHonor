@@ -10,7 +10,9 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
+import org.spongepowered.api.text.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,11 +64,16 @@ public class HonorCommand {
                             builder.title(of("拥有的头衔")).padding(of("-"));
                             HonorData.getHonorText(pd.getUse())
                                     .ifPresent(text -> builder.header(of(String.format("%s正在使用的头衔:", user.getName()), text)));
-                            builder.contents(honors.get().stream()
-                                    .map(HonorData::getHonorText)
-                                    .filter(Optional::isPresent)
-                                    .map(Optional::get)
-                                    .collect(Collectors.toList()));
+                            List<Text> texts = new ArrayList<>();
+                            for (String id : honors.get()) {
+                                HonorData.getHonorText(id).ifPresent(text -> texts.add(
+                                        Text.builder()
+                                                .append(text)
+                                                .onHover(showText(of("点击使用头衔", text)))
+                                                .onClick(runCommand("/honor use " + id))
+                                                .build()));
+                            }
+                            builder.contents(texts);
                             builder.build().sendTo(src);
                             Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
                                     .execute(() -> honors.get().forEach(s -> {
