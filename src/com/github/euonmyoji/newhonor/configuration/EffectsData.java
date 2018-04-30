@@ -16,16 +16,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * @author yinyangshi
+ */
 public class EffectsData {
-    private static final Path path = NewHonorConfig.cfgDir.resolve("EffectsData");
+    private static final Path PATH = NewHonorConfig.cfgDir.resolve("EffectsData");
     private CommentedConfigurationNode cfg;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
     static {
-        if (!Files.exists(path)) {
+        if (!Files.exists(PATH)) {
             try {
-                Files.createDirectory(path);
+                Files.createDirectory(PATH);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -34,7 +38,7 @@ public class EffectsData {
 
     public EffectsData(String id) {
         loader = HoconConfigurationLoader.builder()
-                .setPath(path.resolve(id + ".conf")).build();
+                .setPath(PATH.resolve(id + ".conf")).build();
         reload();
     }
 
@@ -90,7 +94,7 @@ public class EffectsData {
     }
 
     public static Path getPath(String id) {
-        return path.resolve(id + ".conf");
+        return PATH.resolve(id + ".conf");
     }
 
     public boolean anyMatchType(List<String> args, PotionEffectType type) {
@@ -104,8 +108,7 @@ public class EffectsData {
     public static void refresh() {
         try {
             NewHonor.EFFECTS_CACHE.clear();
-            Files.list(path).forEach(path -> {
-                String id = "" + path.getFileName();
+            getCreatedEffects().forEach(id -> {
                 EffectsData ed = new EffectsData(id);
                 try {
                     NewHonor.EFFECTS_CACHE.put(id, ed.getEffects());
@@ -116,5 +119,9 @@ public class EffectsData {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static List<String> getCreatedEffects() throws IOException {
+        return Files.list(PATH).map(Path::getFileName).map(Path::toString).collect(Collectors.toList());
     }
 }

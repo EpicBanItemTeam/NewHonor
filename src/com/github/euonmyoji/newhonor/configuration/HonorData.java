@@ -1,18 +1,15 @@
 package com.github.euonmyoji.newhonor.configuration;
 
-import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +38,6 @@ public class HonorData {
     public static boolean add(String id, String honor) {
         if (isVirtual(id)) {
             cfg.getNode(id, "value").setValue(honor);
-            check(id);
             return save();
         }
         return false;
@@ -53,12 +49,10 @@ public class HonorData {
 
     public static boolean set(String id, String honor) {
         cfg.getNode(id, "value").setValue(honor);
-        check(id);
         return save();
     }
 
     public static boolean delete(String id) {
-        checkDelete(id);
         return cfg.removeChild(id) && save();
     }
 
@@ -84,8 +78,8 @@ public class HonorData {
         return false;
     }
 
-    public static List<String> getAllCreatedHonors() throws ObjectMappingException {
-        return cfg.getNode("created-honors").getList(TypeToken.of(String.class), ArrayList::new);
+    public static Set<String> getAllCreatedHonors() {
+        return cfg.getChildrenMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
     }
 
     static Optional<Text> getGetMessage(String id, String playername) {
@@ -94,50 +88,6 @@ public class HonorData {
                 .map(s -> "&f" + s.replace("{playername}", playername))
                 .map(s -> "&f" + s.replace("{newhonor}", TextSerializers.FORMATTING_CODE.serialize(HonorData.getHonorText(id).get())) + "&f")
                 .map(TextSerializers.FORMATTING_CODE::deserialize);
-    }
-
-    public static boolean check(List<String> honors) {
-        try {
-            List<String> list = getAllCreatedHonors();
-            list.addAll(honors);
-            list = list.stream().filter(s -> !HonorData.isVirtual(s))
-                    .distinct()
-                    .collect(Collectors.toList());
-            cfg.getNode("created-honors").setValue(new TypeToken<List<String>>() {
-            }, list);
-            return save();
-        } catch (ObjectMappingException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private static void check(String... strs) {
-        try {
-            List<String> list = getAllCreatedHonors();
-            for (String str : strs) {
-                if (!list.contains(str) && !isVirtual(str)) {
-                    list.add(str);
-                }
-            }
-            cfg.getNode("created-honors").setValue(new TypeToken<List<String>>() {
-            }, list);
-        } catch (ObjectMappingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void checkDelete(String honor) {
-        try {
-            List<String> list = getAllCreatedHonors();
-            if (list.contains(honor)) {
-                list.remove(honor);
-                cfg.getNode("created-honors").setValue(new TypeToken<List<String>>() {
-                }, list);
-            }
-        } catch (ObjectMappingException e) {
-            e.printStackTrace();
-        }
     }
 
     private static boolean isVirtual(String id) {

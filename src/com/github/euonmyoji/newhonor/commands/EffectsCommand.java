@@ -9,6 +9,7 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.service.pagination.PaginationList;
+import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -134,10 +135,26 @@ class EffectsCommand {
             })
             .build();
 
-    static CommandSpec list = CommandSpec.builder()
+    static CommandSpec listAllCreatedEffects = CommandSpec.builder()
+            .executor((src, args) -> {
+                PaginationList.Builder builder = PaginationList.builder()
+                        .title(of("已创建的药水效果组")).padding(of("-"));
+                try {
+                    builder.contents(EffectsData.getCreatedEffects().stream().map(Text::of).collect(Collectors.toList()));
+                    builder.build().sendTo(src);
+                    return CommandResult.success();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    src.sendMessage(of("[NewHonor]IOE!"));
+                }
+                return CommandResult.empty();
+            })
+            .build();
+
+    static CommandSpec listAllPotionEffects = CommandSpec.builder()
             .executor((src, args) -> {
                 PaginationList.Builder builder = PaginationList.builder();
-                builder.title(of("药水效果表")).padding(of("-")).header(of("使用请输入id(全大写)"));
+                builder.title(of("药水效果表")).padding(of("-")).header(of("使用请输入id(冒号左边为id)"));
                 builder.contents(Sponge.getRegistry().getAllOf(PotionEffectType.class)
                         .stream().map(type -> of(type.getId() + " : " + type.getName())).collect(Collectors.toList()));
                 builder.build().sendTo(src);
