@@ -8,6 +8,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,6 +25,8 @@ public class HonorData {
                 .setPath(NewHonorConfig.cfgDir.resolve("honor.conf")).build();
         cfg = load();
         set("default", cfg.getNode("default", "value").getString("[默认头衔]"));
+        cfg.removeChild("created-honors");
+        save();
     }
 
     public static boolean effects(String id, String effectsID) {
@@ -79,7 +82,11 @@ public class HonorData {
     }
 
     public static Set<String> getAllCreatedHonors() {
-        return cfg.getChildrenMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
+        return getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
+    }
+
+    private static Map<Object, ? extends CommentedConfigurationNode> getHonorsMap() {
+        return cfg.getChildrenMap();
     }
 
     static Optional<Text> getGetMessage(String id, String playername) {

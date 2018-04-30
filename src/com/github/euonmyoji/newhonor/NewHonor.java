@@ -147,7 +147,6 @@ public class NewHonor {
             new PlaceHolderManager();
             logger.info("enabled PAPI");
         }
-        System.out.println(HonorData.getAllCreatedHonors());
     }
 
     @Listener

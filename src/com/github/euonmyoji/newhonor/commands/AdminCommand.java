@@ -84,7 +84,7 @@ class AdminCommand {
     static CommandSpec list = CommandSpec.builder()
             .executor((src, args) -> {
                 Task.builder().async().execute(() -> {
-                    PaginationList.Builder builder = PaginationList.builder().title(of("所有记录的创建过的头衔")).padding(of("-"));
+                    PaginationList.Builder builder = PaginationList.builder().title(of("所有创建的头衔")).padding(of("-"));
                     builder.contents(HonorData.getAllCreatedHonors().stream().map(s -> of("头衔id:" + s + "，效果："
                             , HonorData.getHonorText(s).orElse(of("there is something wrong"))
                             , "，" + "药水效果组：" + HonorData.getEffectsID(s).orElse("无")))
