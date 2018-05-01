@@ -27,8 +27,8 @@ public class NewHonorConfig {
         cfg = load();
         cfg.getNode(DATA_PATH_NODE).setValue(cfg.getNode(DATA_PATH_NODE).getString("default"));
         cfg.getNode(CHECK_UPDATE_NODE_PATH).setValue(cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false));
-        reload();
         save();
+        reload();
     }
 
     public static boolean isCheckUpdate() {
