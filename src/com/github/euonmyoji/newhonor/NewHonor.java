@@ -44,7 +44,7 @@ import java.util.UUID;
  */
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
-    static final String VERSION = "1.5.2";
+    static final String VERSION = "1.5.3";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -121,7 +121,6 @@ public class NewHonor {
         }).submit(this);
     }
 
-    @SuppressWarnings("unused")
     @Inject
     private Metrics metrics;
 
@@ -146,10 +145,14 @@ public class NewHonor {
         } else {
             Sponge.getEventManager().registerListeners(this, new NewHonorMessageListener());
         }
-        if (NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false)) {
+        boolean usePAPI = NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false);
+        if (usePAPI) {
             new PlaceHolderManager();
             logger.info("enabled PAPI");
         }
+        metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EFFECTS_CACHE.size() > 0 ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("usepapi", () -> usePAPI ? "true" : "false"));
     }
 
     @Listener
