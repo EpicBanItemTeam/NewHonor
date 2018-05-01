@@ -27,7 +27,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * bStats collects some data for plugin authors.
  *
- * @author unknown  //not yinyangshi
+ * @author bstats team
  * Check out https://bStats.org/ to learn more about bStats!
  */
 @SuppressWarnings("all")
