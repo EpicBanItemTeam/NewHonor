@@ -40,6 +40,11 @@ class AdminCommand {
             .executor((src, args) -> {
                 Collection<User> users = args.getAll(Text.of("user"));
                 Collection<String> ids = args.getAll(Text.of("id"));
+                if (users.isEmpty() || ids.isEmpty()) {
+                    src.sendMessage(of("[头衔插件]用户是否为空:" + users.isEmpty() + ",头衔id是否为空:" + ids.isEmpty()));
+                    src.sendMessage(of("[头衔插件]给予用户头衔失败"));
+                    return CommandResult.empty();
+                }
                 Task.builder().execute(() -> users.forEach(user -> {
                     PlayerData pd = new PlayerData(user);
                     ids.forEach(id -> {

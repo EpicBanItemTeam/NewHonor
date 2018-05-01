@@ -44,7 +44,7 @@ import java.util.UUID;
  */
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
-    static final String VERSION = "1.5.1.1";
+    static final String VERSION = "1.5.2";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -80,7 +80,9 @@ public class NewHonor {
             if (!Files.exists(NewHonorConfig.cfgDir.resolve(playerData))) {
                 Files.createDirectory(NewHonorConfig.cfgDir.resolve(playerData));
             }
-            checkUpdate();
+            if (NewHonorConfig.isCheckUpdate()) {
+                checkUpdate();
+            }
             NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH)
                     .setValue(NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false))
                     .setComment("修改后请重启服务器应用更改");
@@ -110,7 +112,7 @@ public class NewHonor {
                     if (c > 0) {
                         logger.info("found a latest version:" + version + ".Your version now:" + VERSION);
                     } else if (c < 0) {
-                        logger.info("the latest version in github:" + version + "[Your:" + VERSION + "]");
+                        logger.info("the latest version in github:" + version + "[Your version:" + VERSION + "]");
                     }
                 }
             } catch (Exception e) {

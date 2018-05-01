@@ -6,6 +6,9 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.text.channel.MessageChannel;
 
+/**
+ * @author yinyangshi
+ */
 public class NewHonorMessageListener {
 
     @Listener(order = Order.LATE)
