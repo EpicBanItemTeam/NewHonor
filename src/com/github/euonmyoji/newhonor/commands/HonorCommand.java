@@ -51,10 +51,16 @@ public class HonorCommand {
 
     @SuppressWarnings("ConstantConditions")
     private static CommandSpec list = CommandSpec.builder()
-            .arguments(GenericArguments.onlyOne(GenericArguments.userOrSource(of("user"))))
+            .arguments(GenericArguments.optional(GenericArguments.user(of("user"))))
             .executor((src, args) -> {
-                User user = args.<User>getOne(of("user")).get();
-                if (user.getName().equals(src.getName()) || src.hasPermission(ADMIN_PERMISSION)) {
+                Optional<User> optionalUser = args.getOne(of("user"));
+                boolean typedUser = optionalUser.isPresent();
+                boolean pass = src.getName().equals(optionalUser.map(User::getName).orElse(null))
+                        || src.hasPermission(ADMIN_PERMISSION);
+                User user = typedUser ? optionalUser.get()
+                        : src instanceof User ? (User) src : null;
+                boolean execute = typedUser ? pass : user != null;
+                if (execute) {
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData(user);
                         Optional<List<String>> honors = pd.getHonors();
