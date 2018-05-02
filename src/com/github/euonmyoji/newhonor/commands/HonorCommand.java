@@ -66,7 +66,7 @@ public class HonorCommand {
                         Optional<List<String>> honors = pd.getHonors();
                         if (honors.isPresent()) {
                             PaginationList.Builder builder = PaginationList.builder();
-                            builder.title(of("拥有的头衔")).padding(of("-"));
+                            builder.title(of(user.getName() + "拥有的头衔")).padding(of("-"));
                             HonorData.getHonorText(pd.getUse())
                                     .ifPresent(text -> builder.header(of(String.format("%s正在使用的头衔:", user.getName()), text)));
                             List<Text> texts = new ArrayList<>();
