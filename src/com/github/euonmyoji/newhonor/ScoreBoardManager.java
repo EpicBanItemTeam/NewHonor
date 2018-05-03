@@ -7,9 +7,7 @@ import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -36,36 +34,30 @@ public class ScoreBoardManager {
         if (enable) {
             UUID uuid = p.getUniqueId();
             PlayerData pd = new PlayerData(p);
-            Set<Team> teams = new HashSet<>();
-            scoreboard.getTeams().forEach(team -> teams.add(Team.builder().from(team).build()));
-            if (!pd.isUseHonor()) {
-                teams.removeIf(team -> {
-                    team.removeMember(p.getTeamRepresentation());
-                    return team.getName().equals(p.getName());
-                });
-            } else if (NewHonor.HONOR_TEXT_CACHE.containsKey(uuid)) {
-                Text text = NewHonor.HONOR_TEXT_CACHE.get(uuid);
-                teams.removeIf(team -> team.getName().equals(p.getName()));
-                teams.add(Team.builder()
-                        .name(p.getName())
-                        .prefix(text)
-                        .build());
+            Optional<Team> optionalTeam = scoreboard.getTeam(p.getName());
+            boolean isTeamPresent = optionalTeam.isPresent();
+            if (pd.isUseHonor()) {
+                if (NewHonor.HONOR_TEXT_CACHE.containsKey(uuid)) {
+                    Text prefix = NewHonor.HONOR_TEXT_CACHE.get(uuid);
+                    if (isTeamPresent) {
+                        optionalTeam.get().setPrefix(prefix);
+                    } else {
+                        optionalTeam = Optional.of(Team.builder()
+                                .name(p.getName())
+                                .prefix(prefix)
+                                .build());
+                        scoreboard.registerTeam(optionalTeam.get());
+                    }
+                }
             }
-            scoreboard = Scoreboard.builder().teams(new ArrayList<>(teams)).build();
-            scoreboard.getTeam(p.getName()).ifPresent(team -> team.addMember(p.getTeamRepresentation()));
-            setAllPlayerScoreBoard();
+            optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
+            setPlayerScoreBoard(p);
         }
     }
 
     private static void setPlayerScoreBoard(Player p) {
         if (enable) {
             p.setScoreboard(scoreboard);
-        }
-    }
-
-    private static void setAllPlayerScoreBoard() {
-        if (enable) {
-            Sponge.getServer().getOnlinePlayers().forEach(ScoreBoardManager::setPlayerScoreBoard);
         }
     }
 

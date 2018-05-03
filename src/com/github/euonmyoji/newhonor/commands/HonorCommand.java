@@ -163,8 +163,7 @@ public class HonorCommand {
     public static CommandSpec honor = CommandSpec.builder()
             .permission("newhonor.use")
             .executor((src, args) -> {
-                src.sendMessage(of("-------------------------------------"));
-                src.sendMessage(of(""));
+                src.sendMessage(of("----------NewHonorV" + NewHonor.VERSION + "----------"));
                 src.sendMessage(of("/honor admin           管理员用指令"));
                 src.sendMessage(builder().append(of("/honor list [用户]     列出拥有的头衔")).onClick(runCommand("/honor list")).onHover(showText(of("点击显示自己拥有的头衔"))).build());
                 src.sendMessage(builder().append(of("/honor settings        修改设置")).onClick(runCommand("/honor settings")).onHover(showText(of("点击执行/honor settings"))).build());
