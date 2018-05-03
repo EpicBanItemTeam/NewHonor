@@ -82,6 +82,8 @@ public class NewHonor {
             }
             if (NewHonorConfig.isCheckUpdate()) {
                 checkUpdate();
+            } else {
+                logger.info("check update was canceled");
             }
             NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH)
                     .setValue(NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false))
