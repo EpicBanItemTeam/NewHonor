@@ -38,7 +38,8 @@ public class ScoreBoardManager {
         if (enable) {
             UUID uuid = p.getUniqueId();
             PlayerData pd = new PlayerData(p);
-            Optional<Team> optionalTeam = scoreboard.getTeam(p.getName());
+            String honorID = pd.getUsingHonorID();
+            Optional<Team> optionalTeam = scoreboard.getTeam(honorID);
             boolean isTeamPresent = optionalTeam.isPresent();
             if (pd.isUseHonor()) {
                 if (NewHonor.HONOR_TEXT_CACHE.containsKey(uuid)) {
@@ -47,7 +48,7 @@ public class ScoreBoardManager {
                         optionalTeam.get().setPrefix(prefix);
                     } else {
                         optionalTeam = Optional.of(Team.builder()
-                                .name(p.getName())
+                                .name(honorID)
                                 .prefix(prefix)
                                 .build());
                         scoreboard.registerTeam(optionalTeam.get());

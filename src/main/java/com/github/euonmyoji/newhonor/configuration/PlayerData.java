@@ -104,7 +104,7 @@ public class PlayerData {
         return getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || "default".equals(id);
     }
 
-    public String getUse() {
+    public String getUsingHonorID() {
         return cfg.getNode("using").getString("default");
     }
 
@@ -123,12 +123,12 @@ public class PlayerData {
 
     public boolean init() {
         give("default");
-        setUse(getUse());
+        setUse(getUsingHonorID());
         return save();
     }
 
     public void checkUsing() {
-        if (!hasHonor(getUse())) {
+        if (!hasHonor(getUsingHonorID())) {
             setUse("default");
         }
     }

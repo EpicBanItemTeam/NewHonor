@@ -62,6 +62,7 @@ public class NewHonor {
     private static final String COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
     private static final String DISPLAY_HONOR_NODE_PATH = "displayHonor";
     private static final String USE_PAPI_NODE_PATH = "usePAPI";
+    private static final String FORCE_ENABLE_DEFAULT_LISTENER = "force-enable-default-listener";
 
     private final UltimateChatEventListener UChatListener = new UltimateChatEventListener();
     private final NewHonorMessageListener NewHonorListener = new NewHonorMessageListener();
@@ -95,6 +96,8 @@ public class NewHonor {
                     .setValue(NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false));
             NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH)
                     .setValue(NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false));
+            NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER)
+                    .setValue(NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
             NewHonorConfig.save();
         } catch (IOException e) {
             e.printStackTrace();
@@ -130,7 +133,7 @@ public class NewHonor {
 
     @Listener
     public void onStarted(GameStartedServerEvent event) {
-        Sponge.getCommandManager().register(this, HonorCommand.honor, "honor");
+        Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour");
         Task.builder().execute(() -> PLAYER_USING_EFFECT_CACHE.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
                 .ifPresent(player -> {
                     if (EFFECTS_CACHE.containsKey(s)) {
@@ -189,6 +192,9 @@ public class NewHonor {
             ScoreBoardManager.enable = true;
             ScoreBoardManager.init();
             logger.info("displayHonor mode enabled");
+            if (NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean()) {
+                Sponge.getEventManager().registerListeners(this, NewHonorListener);
+            }
         } else {
             Sponge.getEventManager().registerListeners(this, NewHonorListener);
         }
@@ -206,7 +212,7 @@ public class NewHonor {
         if (pd.isUseHonor()) {
             pd.getHonor().ifPresent(text -> HONOR_TEXT_CACHE.put(pd.getUUID(), text));
             if (pd.isEnableEffects()) {
-                HonorData.getEffectsID(pd.getUse()).ifPresent(s -> {
+                HonorData.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> {
                     try {
                         EFFECTS_CACHE.put(s, new EffectsData(s).getEffects());
                         PLAYER_USING_EFFECT_CACHE.put(pd.getUUID(), s);

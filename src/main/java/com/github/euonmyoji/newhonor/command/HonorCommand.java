@@ -68,7 +68,7 @@ public class HonorCommand {
                         if (honors.isPresent()) {
                             PaginationList.Builder builder = PaginationList.builder()
                                     .title(of(user.getName() + "拥有的头衔")).padding(of("-"));
-                            HonorData.getHonorText(pd.getUse())
+                            HonorData.getHonorText(pd.getUsingHonorID())
                                     .ifPresent(text -> builder.header(of(String.format("%s正在使用的头衔:", user.getName()), text)));
                             List<Text> texts = honors.get().stream()
                                     .map(id -> HonorData.getHonorText(id).map(text -> Text.builder()
