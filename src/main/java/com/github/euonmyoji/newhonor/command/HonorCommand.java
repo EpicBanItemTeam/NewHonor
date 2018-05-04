@@ -66,12 +66,13 @@ public class HonorCommand {
                         PlayerData pd = new PlayerData(user);
                         Optional<List<String>> honors = pd.getHonors();
                         if (honors.isPresent()) {
-                            PaginationList.Builder builder = PaginationList.builder();
-                            builder.title(of(user.getName() + "拥有的头衔")).padding(of("-"));
+                            PaginationList.Builder builder = PaginationList.builder()
+                                    .title(of(user.getName() + "拥有的头衔")).padding(of("-"));
                             HonorData.getHonorText(pd.getUse())
                                     .ifPresent(text -> builder.header(of(String.format("%s正在使用的头衔:", user.getName()), text)));
                             List<Text> texts = honors.get().stream()
                                     .map(id -> HonorData.getHonorText(id).map(text -> Text.builder()
+                                            //显示头衔 药水效果组
                                             .append(of("头衔:"), text,
                                                     of("，药水效果组:" + HonorData.getEffectsID(id).orElse("无")))
                                             .onHover(showText(of("点击使用头衔", text)))
@@ -80,8 +81,7 @@ public class HonorCommand {
                                     .filter(Optional::isPresent)
                                     .map(Optional::get)
                                     .collect(Collectors.toList());
-                            builder.contents(texts);
-                            builder.build().sendTo(src);
+                            builder.contents(texts).build().sendTo(src);
                             Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
                                     .execute(() -> honors.get().forEach(s -> {
                                         if (!HonorData.getHonorText(s).isPresent()) {
@@ -182,5 +182,4 @@ public class HonorCommand {
             .child(list, "list")
             .child(effects, "effects")
             .build();
-
 }
