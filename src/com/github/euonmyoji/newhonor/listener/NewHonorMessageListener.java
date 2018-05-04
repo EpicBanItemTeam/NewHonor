@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.listeners;
+package com.github.euonmyoji.newhonor.listener;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import org.spongepowered.api.event.Listener;

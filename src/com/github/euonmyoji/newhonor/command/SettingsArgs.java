@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.commands;
+package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;

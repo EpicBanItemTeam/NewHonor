@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.listeners;
+package com.github.euonmyoji.newhonor.listener;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import com.github.euonmyoji.newhonor.NewHonor;

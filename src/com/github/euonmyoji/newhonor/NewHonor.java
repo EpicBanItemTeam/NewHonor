@@ -1,12 +1,12 @@
 package com.github.euonmyoji.newhonor;
 
-import com.github.euonmyoji.newhonor.commands.HonorCommand;
+import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
-import com.github.euonmyoji.newhonor.listeners.NewHonorMessageListener;
-import com.github.euonmyoji.newhonor.listeners.UltimateChatEventListener;
+import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
+import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
 import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
