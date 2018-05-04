@@ -42,7 +42,7 @@ import java.util.UUID;
 /**
  * @author yinyangshi
  */
-@Plugin(id = "com/github/euonmyoji/newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
+@Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
     public static final String VERSION = "1.5.4";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
