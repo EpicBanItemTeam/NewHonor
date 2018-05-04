@@ -13,9 +13,9 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.spongepowered.api.text.Text.of;
 import static org.spongepowered.api.text.action.TextActions.runCommand;
@@ -70,15 +70,16 @@ public class HonorCommand {
                             builder.title(of(user.getName() + "拥有的头衔")).padding(of("-"));
                             HonorData.getHonorText(pd.getUse())
                                     .ifPresent(text -> builder.header(of(String.format("%s正在使用的头衔:", user.getName()), text)));
-                            List<Text> texts = new ArrayList<>();
-                            for (String id : honors.get()) {
-                                HonorData.getHonorText(id).ifPresent(text -> texts.add(
-                                        Text.builder()
-                                                .append(of("头衔:"), text, of("，药水效果组:" + HonorData.getEffectsID(id).orElse("无")))
-                                                .onHover(showText(of("点击使用头衔", text)))
-                                                .onClick(runCommand("/honor use " + id))
-                                                .build()));
-                            }
+                            List<Text> texts = honors.get().stream()
+                                    .map(id -> HonorData.getHonorText(id).map(text -> Text.builder()
+                                            .append(of("头衔:"), text,
+                                                    of("，药水效果组:" + HonorData.getEffectsID(id).orElse("无")))
+                                            .onHover(showText(of("点击使用头衔", text)))
+                                            .onClick(runCommand("/honor use " + id))
+                                            .build()))
+                                    .filter(Optional::isPresent)
+                                    .map(Optional::get)
+                                    .collect(Collectors.toList());
                             builder.contents(texts);
                             builder.build().sendTo(src);
                             Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
