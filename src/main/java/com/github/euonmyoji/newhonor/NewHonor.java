@@ -181,11 +181,13 @@ public class NewHonor {
         eventManager.unregisterListeners(UChatListener);
         eventManager.unregisterListeners(NewHonorListener);
         ScoreBoardManager.enable = false;
+        ScoreBoardManager.clear();
         if (NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false)) {
             Sponge.getEventManager().registerListeners(this, UChatListener);
             logger.info("uchat mode enabled");
         } else if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
             ScoreBoardManager.enable = true;
+            ScoreBoardManager.init();
             logger.info("displayHonor mode enabled");
         } else {
             Sponge.getEventManager().registerListeners(this, NewHonorListener);

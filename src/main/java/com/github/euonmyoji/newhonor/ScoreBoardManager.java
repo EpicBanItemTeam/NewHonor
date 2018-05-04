@@ -20,8 +20,12 @@ public class ScoreBoardManager {
     public static void init() {
         if (enable) {
             scoreboard = Scoreboard.builder().build();
-            initAllPlayer();
+            initAllPlayers();
         }
+    }
+
+    static void clear() {
+        scoreboard.getTeams().forEach(team -> team.getMembers().forEach(team::removeMember));
     }
 
     static void initPlayer(Player p) {
@@ -62,7 +66,7 @@ public class ScoreBoardManager {
     }
 
 
-    private static void initAllPlayer() {
+    private static void initAllPlayers() {
         if (enable) {
             Sponge.getServer().getOnlinePlayers().forEach(ScoreBoardManager::initPlayer);
         }
