@@ -19,6 +19,7 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -44,7 +45,7 @@ import java.util.UUID;
  */
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
-    public static final String VERSION = "1.5.4";
+    public static final String VERSION = "1.5.5";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -61,6 +62,9 @@ public class NewHonor {
     private static final String COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
     private static final String DISPLAY_HONOR_NODE_PATH = "displayHonor";
     private static final String USE_PAPI_NODE_PATH = "usePAPI";
+
+    private final UltimateChatEventListener UChatListener = new UltimateChatEventListener();
+    private final NewHonorMessageListener NewHonorListener = new NewHonorMessageListener();
 
 
     @Listener
@@ -86,14 +90,11 @@ public class NewHonor {
                 logger.info("check update was canceled");
             }
             NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH)
-                    .setValue(NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false))
-                    .setComment("修改后请重启服务器应用更改");
+                    .setValue(NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false));
             NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH)
-                    .setValue(NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false))
-                    .setComment("修改后请重启服务器应用更改");
+                    .setValue(NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false));
             NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH)
-                    .setValue(NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false))
-                    .setComment("修改后请重启服务器应用更改");
+                    .setValue(NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false));
             NewHonorConfig.save();
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,7 +110,8 @@ public class NewHonor {
                 connection.getResponseCode();
                 try (InputStreamReader reader = new InputStreamReader(connection.getInputStream(), Charsets.UTF_8)) {
                     JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
-                    String version = jsonObject.get("tag_name").getAsString().replace("v", "");
+                    String version = jsonObject.get("tag_name").getAsString().replace("v", "")
+                            .replace("version", "");
                     int c = new ComparableVersion(version).compareTo(new ComparableVersion(VERSION));
                     if (c > 0) {
                         logger.info("found a latest version:" + version + ".Your version now:" + VERSION);
@@ -139,22 +141,11 @@ public class NewHonor {
                     }
                 }))).name("newhonor - givePlayerEffects").intervalTicks(20).submit(this);
         logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
-        if (NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false)) {
-            Sponge.getEventManager().registerListeners(this, new UltimateChatEventListener());
-        } else if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
-            ScoreBoardManager.enable = true;
-            logger.info("displayHonor enabled");
-        } else {
-            Sponge.getEventManager().registerListeners(this, new NewHonorMessageListener());
-        }
-        boolean usePAPI = NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false);
-        if (usePAPI) {
-            new PlaceHolderManager();
-            logger.info("enabled PAPI");
-        }
+        choosePluginMode();
         metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EFFECTS_CACHE.size() > 0 ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("usepapi", () -> usePAPI ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("usepapi",
+                () -> NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean() ? "true" : "false"));
     }
 
     @Listener
@@ -183,6 +174,27 @@ public class NewHonor {
         HONOR_TEXT_CACHE.clear();
         EFFECTS_CACHE.clear();
         PLAYER_USING_EFFECT_CACHE.clear();
+    }
+
+    public void choosePluginMode() {
+        EventManager eventManager = Sponge.getEventManager();
+        eventManager.unregisterListeners(UChatListener);
+        eventManager.unregisterListeners(NewHonorListener);
+        ScoreBoardManager.enable = false;
+        if (NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false)) {
+            Sponge.getEventManager().registerListeners(this, UChatListener);
+            logger.info("uchat mode enabled");
+        } else if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
+            ScoreBoardManager.enable = true;
+            logger.info("displayHonor mode enabled");
+        } else {
+            Sponge.getEventManager().registerListeners(this, NewHonorListener);
+        }
+        boolean usePAPI = NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false);
+        if (usePAPI) {
+            PlaceHolderManager.create();
+            logger.info("enabled PAPI");
+        }
     }
 
     public static void doSomething(PlayerData pd) {

@@ -14,13 +14,20 @@ import org.spongepowered.api.text.Text;
 @Listening
 public class PlaceHolderManager {
     private static final String HONOR_ID = "newhonor";
+    private static PlaceHolderManager instance;
+
+    static void create() {
+        if (instance == null) {
+            instance = new PlaceHolderManager();
+        }
+    }
 
     @Placeholder(id = "newhonor")
     public Text getNewHonorText(@Source Player p) {
         return NewHonor.HONOR_TEXT_CACHE.get(p.getUniqueId());
     }
 
-    PlaceHolderManager() {
+    private PlaceHolderManager() {
         PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
         service.loadAll(this, NewHonor.plugin).forEach(builder -> {
             if (HONOR_ID.equals(builder.getId())) {

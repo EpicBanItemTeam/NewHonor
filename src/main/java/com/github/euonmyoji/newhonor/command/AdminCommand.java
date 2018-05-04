@@ -1,11 +1,11 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.configuration.HonorData;
-import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import com.github.euonmyoji.newhonor.ScoreBoardManager;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
+import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
+import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -20,8 +20,6 @@ import org.spongepowered.api.text.Text;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.stream.Collectors;
-
-import static org.spongepowered.api.text.Text.of;
 
 @SuppressWarnings("ConstantConditions")
 class AdminCommand {
@@ -190,6 +188,7 @@ class AdminCommand {
             Sponge.getServer().getOnlinePlayers().stream().map(Player::getUniqueId)
                     .map(PlayerData::new)
                     .forEach(NewHonor::doSomething);
+            NewHonor.plugin.choosePluginMode();
             ScoreBoardManager.init();
             src.sendMessage(Text.of("[头衔插件]缓存刷新完毕"));
         }).async().name("newhonor - 更新缓存").submit(NewHonor.plugin);
