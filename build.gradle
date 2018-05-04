@@ -13,7 +13,7 @@ repositories {
         url = 'https://repo.spongepowered.org/maven'
     }
     maven {
-        url = "https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/"
+        url = "https://raw.com.github.com/FabioZumbi12/UltimateChat/mvn-repo/"
     }
     maven {
         url = 'https://jitpack.io'
@@ -26,7 +26,7 @@ tasks.withType(JavaCompile) {
 
 sourceSets {
     main {
-        java.srcDir 'src/'
+        java.srcDir 'src/java'
     }
 }
 
@@ -34,5 +34,5 @@ sourceSets {
 dependencies {
     compile 'org.spongepowered:spongeapi:5.1.0'
     compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-5.0-6.0:1.8.5'
-    compile 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
+    compile 'com.com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
 }

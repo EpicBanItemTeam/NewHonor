@@ -1,11 +1,11 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.configuration.HonorData;
+import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import com.github.euonmyoji.newhonor.ScoreBoardManager;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
-import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
-import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -41,8 +41,8 @@ class AdminCommand {
                 Collection<User> users = args.getAll(Text.of("user"));
                 Collection<String> ids = args.getAll(Text.of("id"));
                 if (users.isEmpty() || ids.isEmpty()) {
-                    src.sendMessage(of("[头衔插件]用户是否为空:" + users.isEmpty() + ",头衔id是否为空:" + ids.isEmpty()));
-                    src.sendMessage(of("[头衔插件]给予用户头衔失败"));
+                    src.sendMessage(Text.of("[头衔插件]用户是否为空:" + users.isEmpty() + ",头衔id是否为空:" + ids.isEmpty()));
+                    src.sendMessage(Text.of("[头衔插件]给予用户头衔失败"));
                     return CommandResult.empty();
                 }
                 Task.builder().execute(() -> users.forEach(user -> {
@@ -89,9 +89,9 @@ class AdminCommand {
     static CommandSpec list = CommandSpec.builder()
             .executor((src, args) -> {
                 Task.builder().async().execute(() -> {
-                    PaginationList.Builder builder = PaginationList.builder().title(of("所有创建的头衔")).padding(of("-"));
-                    builder.contents(HonorData.getAllCreatedHonors().stream().map(s -> of("头衔id:" + s + "，效果："
-                            , HonorData.getHonorText(s).orElse(of("there is something wrong"))
+                    PaginationList.Builder builder = PaginationList.builder().title(Text.of("所有创建的头衔")).padding(Text.of("-"));
+                    builder.contents(HonorData.getAllCreatedHonors().stream().map(s -> Text.of("头衔id:" + s + "，效果："
+                            , HonorData.getHonorText(s).orElse(Text.of("there is something wrong"))
                             , "，" + "药水效果组：" + HonorData.getEffectsID(s).orElse("无")))
                             .filter(text -> !text.toString().contains("there is something wrong"))
                             .collect(Collectors.toList()));

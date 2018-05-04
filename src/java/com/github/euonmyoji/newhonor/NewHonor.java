@@ -42,7 +42,7 @@ import java.util.UUID;
 /**
  * @author yinyangshi
  */
-@Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
+@Plugin(id = "com/github/euonmyoji/newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
     public static final String VERSION = "1.5.4";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
@@ -68,16 +68,16 @@ public class NewHonor {
         plugin = this;
         try {
             NewHonorConfig.defaultCfgDir = cfgDir;
-            if (!Files.exists(cfgDir)) {
+            if (Files.notExists(cfgDir)) {
                 Files.createDirectory(cfgDir);
             }
             cfgDir = null;
             NewHonorConfig.init();
-            if (!Files.exists(NewHonorConfig.cfgDir)) {
+            if (Files.notExists(NewHonorConfig.cfgDir)) {
                 Files.createDirectory(NewHonorConfig.cfgDir);
             }
             final String playerData = "PlayerData";
-            if (!Files.exists(NewHonorConfig.cfgDir.resolve(playerData))) {
+            if (Files.notExists(NewHonorConfig.cfgDir.resolve(playerData))) {
                 Files.createDirectory(NewHonorConfig.cfgDir.resolve(playerData));
             }
             if (NewHonorConfig.isCheckUpdate()) {
@@ -103,7 +103,7 @@ public class NewHonor {
     private void checkUpdate() {
         Task.builder().async().name("NewHonor - check for update").execute(() -> {
             try {
-                URL url = new URL("https://api.github.com/repos/euOnmyoji/NewHonor-SpongePlugin/releases");
+                URL url = new URL("https://api.com.github.com/repos/euOnmyoji/NewHonor-SpongePlugin/releases");
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.getResponseCode();
@@ -114,7 +114,7 @@ public class NewHonor {
                     if (c > 0) {
                         logger.info("found a latest version:" + version + ".Your version now:" + VERSION);
                     } else if (c < 0) {
-                        logger.info("the latest version in github:" + version + "[Your version:" + VERSION + "]");
+                        logger.info("the latest version in com.github:" + version + "[Your version:" + VERSION + "]");
                     }
                 }
             } catch (Exception e) {

@@ -13,9 +13,9 @@ import org.spongepowered.api.text.Text;
  */
 @Listening
 public class PlaceHolderManager {
-    private static final String HONOR_ID = "newhonor";
+    private static final String HONOR_ID = "com/github/euonmyoji/newhonor";
 
-    @Placeholder(id = "newhonor")
+    @Placeholder(id = "com/github/euonmyoji/newhonor")
     public Text getNewHonorText(@Source Player p) {
         return NewHonor.HONOR_TEXT_CACHE.get(p.getUniqueId());
     }

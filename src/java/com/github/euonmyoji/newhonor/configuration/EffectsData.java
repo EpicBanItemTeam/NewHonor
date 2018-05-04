@@ -1,6 +1,5 @@
 package com.github.euonmyoji.newhonor.configuration;
 
-import com.github.euonmyoji.newhonor.Metrics;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
@@ -17,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**

@@ -22,76 +22,76 @@ import static org.spongepowered.api.text.Text.of;
 
 class EffectsCommand {
     static CommandSpec delete = CommandSpec.builder()
-            .arguments(GenericArguments.onlyOne(GenericArguments.string(of("effectsID"))))
+            .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {
-                String effectsID = args.<String>getOne(of("effectsID")).orElseThrow(UNKNOWN::new);
+                String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(UNKNOWN::new);
                 Path path = EffectsData.getPath(effectsID);
                 if (Files.exists(path)) {
                     try {
                         Files.delete(path);
-                        src.sendMessage(of("[头衔插件]删除药水效果组成功"));
+                        src.sendMessage(Text.of("[头衔插件]删除药水效果组成功"));
                     } catch (IOException e) {
                         e.printStackTrace();
-                        src.sendMessage(of("[头衔插件]删除时发生IOE"));
+                        src.sendMessage(Text.of("[头衔插件]删除时发生IOE"));
                     }
                 } else {
-                    src.sendMessage(of("[头衔插件]未发现药水效果组" + effectsID));
+                    src.sendMessage(Text.of("[头衔插件]未发现药水效果组" + effectsID));
                 }
                 return CommandResult.success();
             })
             .build();
 
     static CommandSpec set = CommandSpec.builder()
-            .arguments(GenericArguments.onlyOne(GenericArguments.string(of("effectsID"))),
-                    GenericArguments.onlyOne(GenericArguments.string(of("effectID"))),
-                    GenericArguments.onlyOne(GenericArguments.integer(of("level"))))
+            .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))),
+                    GenericArguments.onlyOne(GenericArguments.string(Text.of("effectID"))),
+                    GenericArguments.onlyOne(GenericArguments.integer(Text.of("level"))))
             .executor((src, args) -> {
-                String effectID = args.<String>getOne(of("effectID")).orElseThrow(UNKNOWN::new);
+                String effectID = args.<String>getOne(Text.of("effectID")).orElseThrow(UNKNOWN::new);
                 Optional<PotionEffectType> type = Sponge.getRegistry().getType(PotionEffectType.class, effectID);
                 if (type.isPresent()) {
-                    String effectsID = args.<String>getOne(of("effectsID")).orElseThrow(UNKNOWN::new);
-                    int level = args.<Integer>getOne(of("level")).orElseThrow(UNKNOWN::new);
+                    String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(UNKNOWN::new);
+                    int level = args.<Integer>getOne(Text.of("level")).orElseThrow(UNKNOWN::new);
                     EffectsData ed = new EffectsData(effectsID);
                     try {
                         List<String> edArgs = ed.getEffectsList();
                         if (ed.anyMatchType(edArgs, type.get())) {
-                            src.sendMessage(of("[头衔插件]该药水效果已存在"));
+                            src.sendMessage(Text.of("[头衔插件]该药水效果已存在"));
                         } else if (ed.set(edArgs, type.get().getId() + "," + level)) {
-                            src.sendMessage(of("[头衔插件]修改药水效果组成功"));
+                            src.sendMessage(Text.of("[头衔插件]修改药水效果组成功"));
                             return CommandResult.success();
                         } else {
-                            src.sendMessage(of("[头衔插件]保存药水效果组更改事发生错误"));
+                            src.sendMessage(Text.of("[头衔插件]保存药水效果组更改事发生错误"));
                         }
                     } catch (ObjectMappingException e) {
                         e.printStackTrace();
-                        src.sendMessage(of("[头衔插件]修改时发生错误，详情请看报错。"));
+                        src.sendMessage(Text.of("[头衔插件]修改时发生错误，详情请看报错。"));
                     }
                 } else {
-                    src.sendMessage(of("[头衔插件]未知药水效果"));
+                    src.sendMessage(Text.of("[头衔插件]未知药水效果"));
                 }
-                src.sendMessage(of("[头衔插件]修改药水效果组失败"));
+                src.sendMessage(Text.of("[头衔插件]修改药水效果组失败"));
                 return CommandResult.empty();
 
             })
             .build();
 
     static CommandSpec remove = CommandSpec.builder()
-            .arguments(GenericArguments.onlyOne(GenericArguments.string(of("effectsID"))),
-                    GenericArguments.onlyOne(GenericArguments.string(of("effectID"))))
+            .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))),
+                    GenericArguments.onlyOne(GenericArguments.string(Text.of("effectID"))))
             .executor((src, args) -> {
-                String effectID = args.<String>getOne(of("effectID")).orElseThrow(UNKNOWN::new);
-                String effectsID = args.<String>getOne(of("effectsID")).orElseThrow(UNKNOWN::new);
+                String effectID = args.<String>getOne(Text.of("effectID")).orElseThrow(UNKNOWN::new);
+                String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(UNKNOWN::new);
                 Optional<PotionEffectType> type = Sponge.getRegistry().getType(PotionEffectType.class, effectID);
                 if (!type.isPresent()) {
-                    src.sendMessage(of("[头衔插件]未知药水效果"));
+                    src.sendMessage(Text.of("[头衔插件]未知药水效果"));
                 } else if (!Files.exists(EffectsData.getPath(effectsID))) {
-                    src.sendMessage(of("[头衔插件]未找到该药水效果组"));
+                    src.sendMessage(Text.of("[头衔插件]未找到该药水效果组"));
                 } else {
                     EffectsData ed = new EffectsData(effectsID);
                     try {
                         List<String> list = ed.getEffectsList();
                         if (ed.anyMatchType(list, type.get())) {
-                            src.sendMessage(of("[头衔插件]该药水效果组未发现该药水效果"));
+                            src.sendMessage(Text.of("[头衔插件]该药水效果组未发现该药水效果"));
                         } else {
                             for (String s : ed.getEffectsList()) {
                                 Sponge.getRegistry().getType(PotionEffectType.class, s.split(",", 2)[0])
@@ -99,37 +99,37 @@ class EffectsCommand {
                                         .ifPresent(t -> list.remove(s));
                             }
                             if (ed.remove(list)) {
-                                src.sendMessage(of("[头衔插件]移除药水效果组中" + effectID + "药水效果成功"));
+                                src.sendMessage(Text.of("[头衔插件]移除药水效果组中" + effectID + "药水效果成功"));
                                 return CommandResult.success();
                             }
                         }
                     } catch (ObjectMappingException e) {
                         e.printStackTrace();
-                        src.sendMessage(of("[头衔插件]获取数据时发生ObjectMappingException错误"));
+                        src.sendMessage(Text.of("[头衔插件]获取数据时发生ObjectMappingException错误"));
                     }
                 }
-                src.sendMessage(of("[头衔插件]移除药水效果组中药水效果失败"));
+                src.sendMessage(Text.of("[头衔插件]移除药水效果组中药水效果失败"));
                 return CommandResult.empty();
             })
             .build();
 
     static CommandSpec info = CommandSpec.builder()
-            .arguments(GenericArguments.onlyOne(GenericArguments.string(of("effectsID"))))
+            .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {
-                String effectID = args.<String>getOne(of("effectsID")).orElseThrow(UNKNOWN::new);
+                String effectID = args.<String>getOne(Text.of("effectsID")).orElseThrow(UNKNOWN::new);
                 if (Files.exists(EffectsData.getPath(effectID))) {
                     try {
-                        src.sendMessage(of("---------" + effectID + "---------"));
+                        src.sendMessage(Text.of("---------" + effectID + "---------"));
                         new EffectsData(effectID).getEffects().forEach(effect ->
-                                src.sendMessage(of(String.format("id:%s，name:%s，level:%d",
+                                src.sendMessage(Text.of(String.format("id:%s，name:%s，level:%d",
                                         effect.getType().getId(), effect.getType().getName(), effect.getAmplifier()))));
                         return CommandResult.success();
                     } catch (ObjectMappingException e) {
                         e.printStackTrace();
-                        src.sendMessage(of("[头衔插件]获取数据时发生异常"));
+                        src.sendMessage(Text.of("[头衔插件]获取数据时发生异常"));
                     }
                 } else {
-                    src.sendMessage(of("[头衔插件]药水效果组" + effectID + "不存在"));
+                    src.sendMessage(Text.of("[头衔插件]药水效果组" + effectID + "不存在"));
                 }
                 return CommandResult.empty();
             })
@@ -138,14 +138,14 @@ class EffectsCommand {
     static CommandSpec listAllCreatedEffects = CommandSpec.builder()
             .executor((src, args) -> {
                 PaginationList.Builder builder = PaginationList.builder()
-                        .title(of("已创建的药水效果组")).padding(of("-"));
+                        .title(Text.of("已创建的药水效果组")).padding(Text.of("-"));
                 try {
                     builder.contents(EffectsData.getCreatedEffects().stream().map(Text::of).collect(Collectors.toList()));
                     builder.build().sendTo(src);
                     return CommandResult.success();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    src.sendMessage(of("[NewHonor]IOE!"));
+                    src.sendMessage(Text.of("[NewHonor]IOE!"));
                 }
                 return CommandResult.empty();
             })
@@ -154,9 +154,9 @@ class EffectsCommand {
     static CommandSpec listAllPotionEffects = CommandSpec.builder()
             .executor((src, args) -> {
                 PaginationList.Builder builder = PaginationList.builder();
-                builder.title(of("药水效果表")).padding(of("-")).header(of("使用请输入id(冒号左边为id)"));
+                builder.title(Text.of("药水效果表")).padding(Text.of("-")).header(Text.of("使用请输入id(冒号左边为id)"));
                 builder.contents(Sponge.getRegistry().getAllOf(PotionEffectType.class)
-                        .stream().map(type -> of(type.getId() + " : " + type.getName())).collect(Collectors.toList()));
+                        .stream().map(type -> Text.of(type.getId() + " : " + type.getName())).collect(Collectors.toList()));
                 builder.build().sendTo(src);
                 return CommandResult.success();
             })
