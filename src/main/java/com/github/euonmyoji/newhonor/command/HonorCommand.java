@@ -90,7 +90,7 @@ public class HonorCommand {
                         } else {
                             src.sendMessage(of("[头衔插件]你目前没有任何头衔"));
                         }
-                    }).async().name("newhonor - List Player Honors").submit(NewHonor.plugin);
+                    }).async().name("newhonor - List Player" + user.getName() + " Honors").submit(NewHonor.plugin);
                     return CommandResult.success();
                 } else {
                     src.sendMessage(of("你没有权限查看别人所拥有的权限[权限节点:newhonor.admin]"));
