@@ -29,14 +29,13 @@ import static org.spongepowered.api.text.serializer.TextSerializers.FORMATTING_C
 public class HonorCommand {
     private static String ADMIN_PERMISSION = "newhonor.admin";
 
-    @SuppressWarnings("ConstantConditions")
     private static CommandSpec use = CommandSpec.builder()
             .arguments(GenericArguments.string(of("id")))
             .executor((src, args) -> {
                 if (src instanceof Player) {
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData((User) src);
-                        if (pd.setUse(args.<String>getOne(of("id")).get())) {
+                        if (pd.setUse(args.<String>getOne(of("id")).orElseThrow(NoSuchFieldError::new))) {
                             src.sendMessage(getText("newhonor.changehonor.succeed"));
                         } else {
                             pd.setUse("default");
@@ -51,7 +50,6 @@ public class HonorCommand {
             })
             .build();
 
-    @SuppressWarnings("ConstantConditions")
     private static CommandSpec list = CommandSpec.builder()
             .arguments(GenericArguments.optional(GenericArguments.user(of("user"))))
             .executor((src, args) -> {

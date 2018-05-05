@@ -9,14 +9,13 @@ import org.spongepowered.api.entity.living.player.User;
 
 import static org.spongepowered.api.text.Text.of;
 
-@SuppressWarnings("ConstantConditions")
 class SettingsArgs {
 
     static CommandSpec usehonor = CommandSpec.builder()
             .arguments(GenericArguments.bool(of("boolean")))
             .executor((src, args) -> {
                 if (src instanceof User) {
-                    boolean use = args.<Boolean>getOne(of("boolean")).get();
+                    boolean use = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
                     PlayerData pd = new PlayerData((User) src);
                     pd.usehonor(use);
                     NewHonor.doSomething(pd);
@@ -32,7 +31,7 @@ class SettingsArgs {
             .arguments(GenericArguments.bool(of("boolean")))
             .executor((src, args) -> {
                 if (src instanceof User) {
-                    boolean enable = args.<Boolean>getOne(of("boolean")).get();
+                    boolean enable = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
                     PlayerData pd = new PlayerData((User) src);
                     pd.enableEffects(enable);
                     NewHonor.doSomething(pd);

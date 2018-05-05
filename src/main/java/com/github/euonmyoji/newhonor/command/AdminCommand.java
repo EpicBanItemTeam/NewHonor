@@ -24,7 +24,6 @@ import static com.github.euonmyoji.newhonor.configuration.LanguageManager.langBu
 import static org.spongepowered.api.text.Text.of;
 import static org.spongepowered.api.text.serializer.TextSerializers.FORMATTING_CODE;
 
-@SuppressWarnings("ConstantConditions")
 class AdminCommand {
     private static NewHonor plugin = NewHonor.plugin;
 
@@ -108,8 +107,8 @@ class AdminCommand {
             .arguments(GenericArguments.string(of("honorID")),
                     GenericArguments.string(of("honor")))
             .executor((src, args) -> {
-                String id = args.<String>getOne(of("honorID")).get();
-                String honor = args.<String>getOne(of("honor")).get();
+                String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
+                String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
                 if (HonorData.set(id, honor)) {
                     plugin.logger.info(src.getName() + "set a honor" + id);
                     src.sendMessage(of("[NewHonor]set a honor successful(start refresh)"));
@@ -124,7 +123,7 @@ class AdminCommand {
     static CommandSpec delete = CommandSpec.builder()
             .arguments(GenericArguments.string(of("honorID")))
             .executor((src, args) -> {
-                String id = args.<String>getOne(of("honorID")).get();
+                String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 if (HonorData.delete(id)) {
                     plugin.logger.info(src.getName() + "deleted a honor" + id);
                     src.sendMessage(of("[NewHonor]deleted a honor successful(start refresh)"));
@@ -140,8 +139,8 @@ class AdminCommand {
             .arguments(GenericArguments.string(of("honorID")),
                     GenericArguments.string(of("honor")))
             .executor((src, args) -> {
-                String id = args.<String>getOne(of("honorID")).get();
-                String honor = args.<String>getOne(of("honor")).get();
+                String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
+                String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
                 if (HonorData.add(id, honor)) {
                     plugin.logger.info(src.getName() + "add a honor :" + id);
                     src.sendMessage(of("[NewHonor]add a honor successful"));
@@ -155,8 +154,8 @@ class AdminCommand {
             .arguments(GenericArguments.string(of("honorID")),
                     GenericArguments.string(of("effectsID")))
             .executor((src, args) -> {
-                String id = args.<String>getOne(of("honorID")).get();
-                String effectsID = args.<String>getOne(of("effectsID")).get();
+                String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
+                String effectsID = args.<String>getOne(of("effectsID")).orElseThrow(NoSuchFieldError::new);
                 if (Files.exists(EffectsData.getPath(effectsID))) {
                     if (HonorData.effects(id, effectsID)) {
                         src.sendMessage(of("[NewHonor]set honor effects successful"));

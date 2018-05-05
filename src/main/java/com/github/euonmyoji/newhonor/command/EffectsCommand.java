@@ -3,7 +3,6 @@ package com.github.euonmyoji.newhonor.command;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.omg.CORBA.UNKNOWN;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -23,7 +22,7 @@ class EffectsCommand {
     static CommandSpec delete = CommandSpec.builder()
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {
-                String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(UNKNOWN::new);
+                String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(NoSuchFieldError::new);
                 Path path = EffectsData.getPath(effectsID);
                 if (Files.exists(path)) {
                     try {
@@ -45,11 +44,11 @@ class EffectsCommand {
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("effectID"))),
                     GenericArguments.onlyOne(GenericArguments.integer(Text.of("level"))))
             .executor((src, args) -> {
-                String effectID = args.<String>getOne(Text.of("effectID")).orElseThrow(UNKNOWN::new);
+                String effectID = args.<String>getOne(Text.of("effectID")).orElseThrow(NoSuchFieldError::new);
                 Optional<PotionEffectType> type = Sponge.getRegistry().getType(PotionEffectType.class, effectID);
                 if (type.isPresent()) {
-                    String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(UNKNOWN::new);
-                    int level = args.<Integer>getOne(Text.of("level")).orElseThrow(UNKNOWN::new);
+                    String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(NoSuchFieldError::new);
+                    int level = args.<Integer>getOne(Text.of("level")).orElseThrow(NoSuchFieldError::new);
                     EffectsData ed = new EffectsData(effectsID);
                     try {
                         List<String> edArgs = ed.getEffectsList();
@@ -78,8 +77,8 @@ class EffectsCommand {
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))),
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("effectID"))))
             .executor((src, args) -> {
-                String effectID = args.<String>getOne(Text.of("effectID")).orElseThrow(UNKNOWN::new);
-                String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(UNKNOWN::new);
+                String effectID = args.<String>getOne(Text.of("effectID")).orElseThrow(NoSuchFieldError::new);
+                String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(NoSuchFieldError::new);
                 Optional<PotionEffectType> type = Sponge.getRegistry().getType(PotionEffectType.class, effectID);
                 if (!type.isPresent()) {
                     src.sendMessage(Text.of("[NewHonor]Unknown PotionEffect"));
@@ -115,7 +114,7 @@ class EffectsCommand {
     static CommandSpec info = CommandSpec.builder()
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {
-                String effectID = args.<String>getOne(Text.of("effectsID")).orElseThrow(UNKNOWN::new);
+                String effectID = args.<String>getOne(Text.of("effectsID")).orElseThrow(NoSuchFieldError::new);
                 if (Files.exists(EffectsData.getPath(effectID))) {
                     try {
                         src.sendMessage(Text.of("---------" + effectID + "---------"));
