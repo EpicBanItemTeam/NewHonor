@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
  */
 public class LanguageManager {
     private static Locale locale = NewHonorConfig.getUsingLang();
-    private static Path langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(locale.getCountry() + ".lang");
+    private static Path langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(locale.toString() + ".lang");
     private static ResourceBundle res;
     private String value;
 
@@ -57,14 +57,14 @@ public class LanguageManager {
             }
             try {
                 if (Files.notExists(langFile)) {
-                    Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/" + locale.getCountry() + ".lang")
+                    Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/" + locale.toString() + ".lang")
                             .orElseThrow(() -> new FileNotFoundException("asset didn't found locale language file!"))
                             .copyToFile(langFile);
                 }
             } catch (FileNotFoundException ignore) {
                 NewHonor.plugin.logger.info("locale language file not found");
-                langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(Locale.US.getCountry() + ".lang");
-                Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/" + Locale.US.getCountry() + ".lang")
+                langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(Locale.US.toString() + ".lang");
+                Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/" + Locale.US.toString() + ".lang")
                         .orElseThrow(() -> new IOException("asset didn't found language file!"))
                         .copyToFile(langFile);
             }
@@ -76,7 +76,7 @@ public class LanguageManager {
     public static void reload() {
         try {
             locale = NewHonorConfig.getUsingLang();
-            langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(locale.getCountry() + ".lang");
+            langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(locale.toString() + ".lang");
             init();
             res = new PropertyResourceBundle(new InputStreamReader(Files.newInputStream(langFile), Charsets.UTF_8));
         } catch (IOException e) {
