@@ -96,7 +96,7 @@ public class NewHonor {
             NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER)
                     .setValue(NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
             NewHonorConfig.save();
-            LanguageManager.init();
+            LanguageManager.reload();
         } catch (IOException e) {
             e.printStackTrace();
         }

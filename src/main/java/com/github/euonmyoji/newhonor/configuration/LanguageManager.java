@@ -19,8 +19,8 @@ import java.util.ResourceBundle;
  * @author yinyangshi
  */
 public class LanguageManager {
-    private static Locale locale = NewHonorConfig.getUsingLang();
-    private static Path langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(locale.toString() + ".lang");
+    private static Locale locale;
+    private static Path langFile;
     private static ResourceBundle res;
     private String value;
 
@@ -50,7 +50,7 @@ public class LanguageManager {
         return TextSerializers.FORMATTING_CODE.deserialize(getStringSafely("newhonor.command.describe." + commandName));
     }
 
-    public static void init() {
+    private static void init() {
         try {
             if (Files.notExists(NewHonorConfig.cfgDir.resolve("lang"))) {
                 Files.createDirectory(NewHonorConfig.cfgDir.resolve("lang"));
