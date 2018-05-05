@@ -3,6 +3,7 @@ package com.github.euonmyoji.newhonor;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
@@ -36,27 +37,30 @@ public class ScoreBoardManager {
 
     private static void execute(Player p) {
         if (enable) {
-            UUID uuid = p.getUniqueId();
-            PlayerData pd = new PlayerData(p);
-            String honorID = pd.getUsingHonorID();
-            Optional<Team> optionalTeam = scoreboard.getTeam(honorID);
-            boolean isTeamPresent = optionalTeam.isPresent();
-            if (pd.isUseHonor()) {
-                if (NewHonor.HONOR_TEXT_CACHE.containsKey(uuid)) {
-                    Text prefix = NewHonor.HONOR_TEXT_CACHE.get(uuid);
-                    if (isTeamPresent) {
-                        optionalTeam.get().setPrefix(prefix);
-                    } else {
-                        optionalTeam = Optional.of(Team.builder()
-                                .name(honorID)
-                                .prefix(prefix)
-                                .build());
-                        scoreboard.registerTeam(optionalTeam.get());
+            Task.builder().execute(() -> {
+                UUID uuid = p.getUniqueId();
+                PlayerData pd = new PlayerData(p);
+                String honorID = pd.getUsingHonorID();
+                Optional<Team> optionalTeam = scoreboard.getTeam(honorID);
+                boolean isTeamPresent = optionalTeam.isPresent();
+                optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
+                if (pd.isUseHonor()) {
+                    if (NewHonor.HONOR_TEXT_CACHE.containsKey(uuid)) {
+                        Text prefix = NewHonor.HONOR_TEXT_CACHE.get(uuid);
+                        if (isTeamPresent) {
+                            optionalTeam.get().setPrefix(prefix);
+                        } else {
+                            optionalTeam = Optional.of(Team.builder()
+                                    .name(honorID)
+                                    .prefix(prefix)
+                                    .build());
+                            scoreboard.registerTeam(optionalTeam.get());
+                        }
                     }
                 }
-            }
-            optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
-            setPlayerScoreBoard(p);
+                optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
+                setPlayerScoreBoard(p);
+            }).async().name("NewHonor - execute" + p.getName()).submit(NewHonor.plugin);
         }
     }
 
