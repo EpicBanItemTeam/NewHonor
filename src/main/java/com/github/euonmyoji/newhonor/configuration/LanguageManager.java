@@ -79,7 +79,6 @@ public class LanguageManager {
             langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(locale.toString() + ".lang");
             init();
             res = new PropertyResourceBundle(new InputStreamReader(Files.newInputStream(langFile), Charsets.UTF_8));
-            System.out.println(res.getString("test"));
         } catch (IOException e) {
             NewHonor.plugin.logger.error("reload language file error!", e);
         }
