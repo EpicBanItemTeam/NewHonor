@@ -35,7 +35,7 @@ public class NewHonorConfig {
     }
 
     static Locale getUsingLang() {
-        String[] args = cfg.getNode(LANGUAGE).getString().split("_", 2);
+        String[] args = cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()).split("_", 2);
         return new Locale(args[0], args[1]);
     }
 
