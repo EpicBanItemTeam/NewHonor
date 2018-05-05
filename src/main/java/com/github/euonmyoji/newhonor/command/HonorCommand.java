@@ -115,10 +115,10 @@ public class HonorCommand {
             .permission("newhonor.settings")
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
-                src.sendMessage(Text.builder().append(of("/honor settings usehonor true/false ", getCommandDescribe("settings.usehonor")))
-                        .onClick(TextActions.suggestCommand("/honor settings usehonor ")).onHover(showText(getText("newhonor.hovermessage.settings.usehonor"))).build());
-                src.sendMessage(Text.builder().append(of("/honor settings enableeffects true/false ", getCommandDescribe("settings.enableeffects")))
-                        .onClick(TextActions.suggestCommand("/honor settings enableeffects ")).onHover(showText(getText("newhonor.hovermessage.settings.enableeffects"))).build());
+                src.sendMessage(Text.builder().append(of("/honor settings usehonor true/false -", getCommandDescribe("settings.usehonor")))
+                        .onClick(TextActions.suggestCommand("/honor settings usehonor -")).onHover(showText(getText("newhonor.hovermessage.settings.usehonor"))).build());
+                src.sendMessage(Text.builder().append(of("/honor settings enableeffects true/false -", getCommandDescribe("settings.enableeffects")))
+                        .onClick(TextActions.suggestCommand("/honor settings enableeffects -")).onHover(showText(getText("newhonor.hovermessage.settings.enableeffects"))).build());
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
@@ -131,15 +131,15 @@ public class HonorCommand {
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
                 src.sendMessage(of(""));
-                src.sendMessage(of("/honor admin effects <honorID> <effectsID> ", getCommandDescribe("admin.effects")));
-                src.sendMessage(of("/honor admin add <honorID> <honor> ", getCommandDescribe("admin.add")));
-                src.sendMessage(of("/honor admin set <honorID> <honor> ", getCommandDescribe("admin.set")));
-                src.sendMessage(of("/honor admin delete <honorID> ", getCommandDescribe("admin.delete")));
-                src.sendMessage(of("/honor admin give <user(s)> <honorID> ", getCommandDescribe("admin.give")));
-                src.sendMessage(of("/honor admin take <user(s)> <honorID> ", getCommandDescribe("admin.take")));
-                src.sendMessage(of("/honor admin list ", getCommandDescribe("admin.list")));
-                src.sendMessage(of("/honor admin reload ", getCommandDescribe("admin.reload")));
-                src.sendMessage(of("/honor admin refresh ", getCommandDescribe("admin.refresh")));
+                src.sendMessage(of("/honor admin effects <honorID> <effectsID> -", getCommandDescribe("admin.effects")));
+                src.sendMessage(of("/honor admin add <honorID> <honor> -", getCommandDescribe("admin.add")));
+                src.sendMessage(of("/honor admin set <honorID> <honor> -", getCommandDescribe("admin.set")));
+                src.sendMessage(of("/honor admin delete <honorID> -", getCommandDescribe("admin.delete")));
+                src.sendMessage(of("/honor admin give <user(s)> <honorID> -", getCommandDescribe("admin.give")));
+                src.sendMessage(of("/honor admin take <user(s)> <honorID> -", getCommandDescribe("admin.take")));
+                src.sendMessage(of("/honor admin list -", getCommandDescribe("admin.list")));
+                src.sendMessage(of("/honor admin reload -", getCommandDescribe("admin.reload")));
+                src.sendMessage(of("/honor admin refresh -", getCommandDescribe("admin.refresh")));
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
@@ -157,12 +157,12 @@ public class HonorCommand {
     private static CommandSpec effects = CommandSpec.builder()
             .permission(ADMIN_PERMISSION)
             .executor((src, args) -> {
-                src.sendMessage(of("/honor effects set <effectsID> <PotionEffectID> <level>", getCommandDescribe("effects.set")));
-                src.sendMessage(of("/honor effects delete <effectsID>", getCommandDescribe("effects.delete")));
-                src.sendMessage(of("/honor effects remove <PotionEffectID> <effectsID>", getCommandDescribe("effects.remove")));
-                src.sendMessage(of("/honor effects info <effectsID>", getCommandDescribe("effects.info")));
-                src.sendMessage(of("/honor effects listAllPotionEffects", getCommandDescribe("effects.listAllPotionEffects")));
-                src.sendMessage(of("/honor effects listAllCreatedEffects", getCommandDescribe("effects.listAllCreatedEffects")));
+                src.sendMessage(of("/honor effects set <effectsID> <PotionEffectID> <level> -", getCommandDescribe("effects.set")));
+                src.sendMessage(of("/honor effects delete <effectsID> -", getCommandDescribe("effects.delete")));
+                src.sendMessage(of("/honor effects remove <PotionEffectID> <effectsID> -", getCommandDescribe("effects.remove")));
+                src.sendMessage(of("/honor effects info <effectsID> -", getCommandDescribe("effects.info")));
+                src.sendMessage(of("/honor effects listAllPotionEffects -", getCommandDescribe("effects.listAllPotionEffects")));
+                src.sendMessage(of("/honor effects listAllCreatedEffects -", getCommandDescribe("effects.listAllCreatedEffects")));
                 return CommandResult.success();
             })
             .child(EffectsCommand.delete, "delete")
@@ -177,12 +177,12 @@ public class HonorCommand {
             .permission("newhonor.use")
             .executor((src, args) -> {
                 src.sendMessage(of("----------NewHonorV" + NewHonor.VERSION + "----------"));
-                src.sendMessage(of("/honor admin  ", getCommandDescribe("admin")));
-                src.sendMessage(Text.builder().append(of("/honor list [User]   ", getCommandDescribe("list")))
+                src.sendMessage(of("/honor admin  -", getCommandDescribe("admin")));
+                src.sendMessage(Text.builder().append(of("/honor list [User]   -", getCommandDescribe("list")))
                         .onClick(runCommand("/honor list")).onHover(showText(getText("newhonor.command.hovermessage.list"))).build());
-                src.sendMessage(Text.builder().append(of("/honor settings    ", getCommandDescribe("settings")))
+                src.sendMessage(Text.builder().append(of("/honor settings    -", getCommandDescribe("settings")))
                         .onClick(runCommand("/honor settings")).onHover(showText(getText("newhonor.command.hovermessage.settings"))).build());
-                src.sendMessage(of("/honor effects    ", getCommandDescribe("effects")));
+                src.sendMessage(of("/honor effects    -", getCommandDescribe("effects")));
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
