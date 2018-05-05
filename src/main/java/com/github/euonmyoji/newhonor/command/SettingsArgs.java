@@ -20,10 +20,10 @@ class SettingsArgs {
                     PlayerData pd = new PlayerData((User) src);
                     pd.usehonor(use);
                     NewHonor.doSomething(pd);
-                    src.sendMessage(of("[头衔插件]修改设置成功"));
+                    src.sendMessage(of("[NewHonor]change settings successful"));
                     return CommandResult.success();
                 }
-                src.sendMessage(of("[头衔插件]未知发送者,目前该指令仅支持玩家自己发送指令修改自己设置。"));
+                src.sendMessage(of("[NewHonor]You are not a user"));
                 return CommandResult.empty();
             })
             .build();
@@ -36,10 +36,10 @@ class SettingsArgs {
                     PlayerData pd = new PlayerData((User) src);
                     pd.enableEffects(enable);
                     NewHonor.doSomething(pd);
-                    src.sendMessage(of("[头衔插件]修改设置成功"));
+                    src.sendMessage(of("[NewHonor]change settings successful"));
                     return CommandResult.success();
                 }
-                src.sendMessage(of("[头衔插件]未知发送者,目前该指令仅支持玩家自己发送指令修改自己设置。"));
+                src.sendMessage(of("[NewHonor]You are not a user"));
                 return CommandResult.empty();
             })
             .build();

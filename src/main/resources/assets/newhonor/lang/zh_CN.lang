@@ -1,0 +1,43 @@
+newhonor.command.describe.admin = 管理指令
+newhonor.command.describe.list = 列出拥有的头衔
+newhonor.command.describe.settings = 个人头衔设置
+newhonor.command.describe.effects = 头衔药水效果组指令
+
+newhonor.command.describe.admin.effects = 给头衔设置药水效果组
+newhonor.command.describe.admin.add = 添加头衔
+newhonor.command.describe.admin.set = 设置头衔
+newhonor.command.describe.admin.delete = 删除头衔
+newhonor.command.describe.admin.give = 给予玩家头衔
+newhonor.command.describe.admin.take = 移除玩家的头衔
+newhonor.command.describe.admin.list = 显示已创建的头衔
+newhonor.command.describe.admin.reload = 重载插件配置文件
+newhonor.command.describe.admin.refresh = 刷新插件缓存
+
+newhonor.command.describe.settings.usehonor = 使用头衔
+newhonor.command.describe.settings.enableeffects = 使用头衔药水buff
+
+newhonor.command.describe.effects.set = 设置一个药水效果组的一个药水效果
+newhonor.command.describe.effects.delete = 删除一个药水效果组
+newhonor.command.describe.effects.remove = 移除一个药水效果组的一个药水效果
+newhonor.command.describe.effects.info = 查看一个药水效果组详细药水效果
+newhonor.command.describe.effects.listAllPotionEffects = 查看所有支持的药水效果
+newhonor.command.describe.effects.listAllCreatedEffects = 列出所有创建的药水效果组
+
+newhonor.command.hovermessage.list = 点击显示自己拥有的头衔
+newhonor.command.hovermessage.settings = 点击进入修改设置界面
+newhonor.hovermessage.settings.usehonor = 左键后输入true或者false更改设置
+newhonor.hovermessage.settings.enableeffects = 左键后输入true或者false更改设置
+
+newhonor.changehonor.succeed = [头衔插件]修改使用头衔成功
+newhonor.changehonor.failed = [头衔插件]修改使用头衔失败，已将头衔改成默认头衔。
+newhonor.changehonor.unknownsource = [头衔插件]未知发送者
+
+newhonor.listhonors.title = %ownername%拥有的头衔
+newhonor.listhonors.header = %ownername%正在使用的头衔%honor%，药水效果组:%effectsID%
+newhonor.listhonors.contexts = 头衔:%honor%，药水效果组:%effectsID%
+newhonor.listhonors.clickuse = 点击使用头衔%honor
+newhonor.listhonors.empty = [头衔插件]你目前没有任何头衔
+newhonor.listhonors.nopermission = [头衔插件]你目前没有权限newhonor.admin来查看别人拥有的头衔
+
+newhonor.listcreatedhonors.title = 所有创建的头衔
+newhonor.listcreatedhonors.contexts = 头衔id:%honorid%，头衔:%honor%，药水效果组:%effectsID%

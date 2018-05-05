@@ -4,7 +4,6 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.ScoreBoardManager;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
-import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -15,11 +14,15 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
-import org.spongepowered.api.text.Text;
 
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import static com.github.euonmyoji.newhonor.configuration.LanguageManager.getText;
+import static com.github.euonmyoji.newhonor.configuration.LanguageManager.langBuilder;
+import static org.spongepowered.api.text.Text.of;
+import static org.spongepowered.api.text.serializer.TextSerializers.FORMATTING_CODE;
 
 @SuppressWarnings("ConstantConditions")
 class AdminCommand {
@@ -33,25 +36,25 @@ class AdminCommand {
             .build();
 
     static CommandSpec give = CommandSpec.builder()
-            .arguments(GenericArguments.user(Text.of("user")),
-                    GenericArguments.string(Text.of("id")))
+            .arguments(GenericArguments.user(of("user")),
+                    GenericArguments.string(of("id")))
             .executor((src, args) -> {
-                Collection<User> users = args.getAll(Text.of("user"));
-                Collection<String> ids = args.getAll(Text.of("id"));
+                Collection<User> users = args.getAll(of("user"));
+                Collection<String> ids = args.getAll(of("id"));
                 if (users.isEmpty() || ids.isEmpty()) {
-                    src.sendMessage(Text.of("[头衔插件]用户是否为空:" + users.isEmpty() + ",头衔id是否为空:" + ids.isEmpty()));
-                    src.sendMessage(Text.of("[头衔插件]给予用户头衔失败"));
+                    src.sendMessage(of("[NewHonor]users is empty:" + users.isEmpty() + ",honorID is empty:" + ids.isEmpty()));
+                    src.sendMessage(of("[NewHonor]give honor failed"));
                     return CommandResult.empty();
                 }
                 Task.builder().execute(() -> users.forEach(user -> {
                     PlayerData pd = new PlayerData(user);
                     ids.forEach(id -> {
                         if (pd.give(id)) {
-                            src.sendMessage(Text.of("[头衔插件]成功:给予" + user.getName() + "头衔" + id));
-                            plugin.logger.info(src.getName() + "成功:给予" + user.getName() + "头衔:" + id);
+                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + "honor" + id + "successful"));
+                            plugin.logger.info(src.getName() + "gave" + user.getName() + "honor:" + id + "successful");
                         } else {
-                            src.sendMessage(Text.of("[头衔插件]失败:给予" + user.getName() + "头衔" + id));
-                            plugin.logger.info(src.getName() + "失败:给予" + user.getName() + "头衔:" + id);
+                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + "honor" + id + "failed"));
+                            plugin.logger.info(src.getName() + "gave " + user.getName() + "honor:" + id + "failed");
                         }
                     });
                 })).async().name("newhonor - Give Users Honors").submit(NewHonor.plugin);
@@ -60,21 +63,21 @@ class AdminCommand {
             .build();
 
     static CommandSpec take = CommandSpec.builder()
-            .arguments(GenericArguments.user(Text.of("user")),
-                    GenericArguments.string(Text.of("id")))
+            .arguments(GenericArguments.user(of("user")),
+                    GenericArguments.string(of("id")))
             .executor((src, args) -> {
-                Collection<User> users = args.getAll(Text.of("user"));
-                Collection<String> ids = args.getAll(Text.of("id"));
+                Collection<User> users = args.getAll(of("user"));
+                Collection<String> ids = args.getAll(of("id"));
                 Task.builder().execute(() -> {
                     users.forEach(user -> {
                         PlayerData pd = new PlayerData(user);
                         ids.forEach(id -> {
                             if (pd.take(id)) {
-                                src.sendMessage(Text.of("[头衔插件]成功:移除" + user.getName() + "头衔" + id));
-                                plugin.logger.info(src.getName() + "成功:移除" + user.getName() + "头衔:" + id);
+                                src.sendMessage(of("[NewHonor]took user " + user.getName() + "honor" + id + "successful"));
+                                plugin.logger.info(src.getName() + "took" + user.getName() + "honor:" + id + "successful");
                             } else {
-                                src.sendMessage(Text.of("[头衔插件]失败:移除" + user.getName() + "头衔" + id));
-                                plugin.logger.info(src.getName() + "失败:移除" + user.getName() + "头衔:" + id);
+                                src.sendMessage(of("[NewHonor]took user " + user.getName() + "honor" + id + "failed"));
+                                plugin.logger.info(src.getName() + "took" + user.getName() + "honor:" + id + "failed");
                             }
                         });
                     });
@@ -87,10 +90,12 @@ class AdminCommand {
     static CommandSpec list = CommandSpec.builder()
             .executor((src, args) -> {
                 Task.builder().async().execute(() -> {
-                    PaginationList.Builder builder = PaginationList.builder().title(Text.of("所有创建的头衔")).padding(Text.of("-"));
-                    builder.contents(HonorData.getAllCreatedHonors().stream().map(s -> Text.of("头衔id:" + s + "，效果："
-                            , HonorData.getHonorText(s).orElse(Text.of("there is something wrong"))
-                            , "，" + "药水效果组：" + HonorData.getEffectsID(s).orElse("无")))
+                    PaginationList.Builder builder = PaginationList.builder().title(getText("newhonor.listcreatedhonors.title")).padding(of("-"));
+                    builder.contents(HonorData.getAllCreatedHonors().stream().map(id -> langBuilder("newhonor.listcreatedhonors.contexts")
+                            .replace("%honorid", id)
+                            .replace("%honor%", FORMATTING_CODE.serialize(HonorData.getHonorText(id).orElse(of("there is something wrong"))))
+                            .replace("%effectsID%", HonorData.getEffectsID(id).orElse("null"))
+                            .build())
                             .filter(text -> !text.toString().contains("there is something wrong"))
                             .collect(Collectors.toList()));
                     builder.build().sendTo(src);
@@ -100,46 +105,46 @@ class AdminCommand {
             .build();
 
     static CommandSpec set = CommandSpec.builder()
-            .arguments(GenericArguments.string(Text.of("honorID")),
-                    GenericArguments.string(Text.of("honor")))
+            .arguments(GenericArguments.string(of("honorID")),
+                    GenericArguments.string(of("honor")))
             .executor((src, args) -> {
-                String id = args.<String>getOne(Text.of("honorID")).get();
-                String honor = args.<String>getOne(Text.of("honor")).get();
+                String id = args.<String>getOne(of("honorID")).get();
+                String honor = args.<String>getOne(of("honor")).get();
                 if (HonorData.set(id, honor)) {
-                    plugin.logger.info(src.getName() + "设置了头衔" + id);
-                    src.sendMessage(Text.of("[头衔插件]设置头衔成功(刷新缓存)"));
+                    plugin.logger.info(src.getName() + "set a honor" + id);
+                    src.sendMessage(of("[NewHonor]set a honor successful(start refresh)"));
                     refreshCache(src);
                     return CommandResult.success();
                 }
-                src.sendMessage(Text.of("[头衔插件]设置头衔失败"));
+                src.sendMessage(of("[NewHonor]set a honor failed"));
                 return CommandResult.empty();
             })
             .build();
 
     static CommandSpec delete = CommandSpec.builder()
-            .arguments(GenericArguments.string(Text.of("honorID")))
+            .arguments(GenericArguments.string(of("honorID")))
             .executor((src, args) -> {
-                String id = args.<String>getOne(Text.of("honorID")).get();
+                String id = args.<String>getOne(of("honorID")).get();
                 if (HonorData.delete(id)) {
-                    plugin.logger.info(src.getName() + "删除了头衔" + id);
-                    src.sendMessage(Text.of("[头衔插件]删除头衔成功(刷新缓存)"));
+                    plugin.logger.info(src.getName() + "deleted a honor" + id);
+                    src.sendMessage(of("[NewHonor]deleted a honor successful(start refresh)"));
                     refreshCache(src);
                     return CommandResult.success();
                 }
-                src.sendMessage(Text.of("[头衔插件]删除头衔失败"));
+                src.sendMessage(of("[NewHonor]delete a honor failed"));
                 return CommandResult.empty();
             })
             .build();
 
     static CommandSpec add = CommandSpec.builder()
-            .arguments(GenericArguments.string(Text.of("honorID")),
-                    GenericArguments.string(Text.of("honor")))
+            .arguments(GenericArguments.string(of("honorID")),
+                    GenericArguments.string(of("honor")))
             .executor((src, args) -> {
-                String id = args.<String>getOne(Text.of("honorID")).get();
-                String honor = args.<String>getOne(Text.of("honor")).get();
+                String id = args.<String>getOne(of("honorID")).get();
+                String honor = args.<String>getOne(of("honor")).get();
                 if (HonorData.add(id, honor)) {
-                    plugin.logger.info(src.getName() + "添加了头衔" + id);
-                    src.sendMessage(Text.of("[头衔插件]添加头衔成功"));
+                    plugin.logger.info(src.getName() + "add a honor :" + id);
+                    src.sendMessage(of("[NewHonor]add a honor successful"));
                     return CommandResult.success();
                 }
                 return CommandResult.empty();
@@ -147,32 +152,30 @@ class AdminCommand {
             .build();
 
     static CommandSpec effects = CommandSpec.builder()
-            .arguments(GenericArguments.string(Text.of("honorID")),
-                    GenericArguments.string(Text.of("effectsID")))
+            .arguments(GenericArguments.string(of("honorID")),
+                    GenericArguments.string(of("effectsID")))
             .executor((src, args) -> {
-                String id = args.<String>getOne(Text.of("honorID")).get();
-                String effectsID = args.<String>getOne(Text.of("effectsID")).get();
+                String id = args.<String>getOne(of("honorID")).get();
+                String effectsID = args.<String>getOne(of("effectsID")).get();
                 if (Files.exists(EffectsData.getPath(effectsID))) {
                     if (HonorData.effects(id, effectsID)) {
-                        src.sendMessage(Text.of("[头衔插件]给头衔设置药水效果组成功"));
+                        src.sendMessage(of("[NewHonor]set honor effects successful"));
                         return CommandResult.success();
                     }
                 } else {
-                    src.sendMessage(Text.of("[头衔插件]药水效果组" + effectsID + "未找到"));
+                    src.sendMessage(of("[NewHonor]Effects:" + effectsID + "not found"));
                 }
-                src.sendMessage(Text.of("[头衔插件]给头衔设置药水效果组失败"));
+                src.sendMessage(of("[NewHonor]set honor effects failed"));
                 return CommandResult.empty();
             })
             .build();
 
     static CommandSpec reload = CommandSpec.builder()
             .executor((src, args) -> {
-                src.sendMessage(Text.of("[头衔插件]开始重载插件配置文件"));
-                NewHonorConfig.reload();
-                HonorData.reload();
-                EffectsData.refresh();
+                src.sendMessage(of("[NewHonor]start reload"));
+                NewHonor.plugin.reload();
                 refreshCache(src);
-                src.sendMessage(Text.of("[头衔插件]重载插件配置文件成功"));
+                src.sendMessage(of("[NewHonor]reloaded successful"));
                 return CommandResult.success();
             })
             .build();
@@ -190,7 +193,7 @@ class AdminCommand {
                     .forEach(NewHonor::doSomething);
             NewHonor.plugin.choosePluginMode();
             ScoreBoardManager.init();
-            src.sendMessage(Text.of("[头衔插件]缓存刷新完毕"));
-        }).async().name("newhonor - 更新缓存").submit(NewHonor.plugin);
+            src.sendMessage(of("[NewHonor]refresh finished"));
+        }).async().name("newhonor - refresh").submit(NewHonor.plugin);
     }
 }

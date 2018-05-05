@@ -1,0 +1,43 @@
+newhonor.command.describe.admin = admin commands
+newhonor.command.describe.list = list all honors that you have
+newhonor.command.describe.settings = personal honor settings
+newhonor.command.describe.effects = effects commands
+
+newhonor.command.describe.admin.effects = set a honor effects
+newhonor.command.describe.admin.add = add a honor
+newhonor.command.describe.admin.set = set a honor
+newhonor.command.describe.admin.delete = delete a honor
+newhonor.command.describe.admin.give = give player(s) honor
+newhonor.command.describe.admin.take = take player(s) honor
+newhonor.command.describe.admin.list = list created honors
+newhonor.command.describe.admin.reload = reload the configs
+newhonor.command.describe.admin.refresh = refresh the plugin memory
+
+newhonor.command.describe.settings.usehonor = use honor
+newhonor.command.describe.settings.enableeffects = enable honor effect buff
+
+newhonor.command.describe.effects.set = set a effects PotionEffect
+newhonor.command.describe.effects.delete = delete a effects
+newhonor.command.describe.effects.remove = remove a PotionEffect from a effects
+newhonor.command.describe.effects.info = get the info of a effects
+newhonor.command.describe.effects.listAllPotionEffects = list all PotionEffects
+newhonor.command.describe.effects.listAllCreatedEffects = list all created effects
+
+newhonor.command.hovermessage.list = click to list your honors
+newhonor.command.hovermessage.settings = click to see settings
+newhonor.hovermessage.settings.usehonor = click and type true/false to change settings
+newhonor.hovermessage.settings.enableeffects = click and type true/false to change settings
+
+newhonor.changehonor.succeed = [NewHonor]Change using honor successful
+newhonor.changehonor.failed = [NewHonor]Change using honor failed.Set using honor to default
+newhonor.changehonor.unknownsource = [NewHonor]You are not a user
+
+newhonor.listhonors.title = %ownername%'s honors
+newhonor.listhonors.header = %ownername% is using %honor%，effects:%effectsID%
+newhonor.listhonors.contexts = honor:%honor%，effects:%effectsID%
+newhonor.listhonors.clickuse = click to using %honor
+newhonor.listhonors.empty = [NewHonor]You don't have any honor
+newhonor.listhonors.nopermission = [NewHonor]You don't have permission to list other user's honors
+
+newhonor.listcreatedhonors.title = all created honor
+newhonor.listcreatedhonors.contexts = honorid:%honorid%，text:%honor%，effectsID:%effectsID%

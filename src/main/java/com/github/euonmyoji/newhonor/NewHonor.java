@@ -1,10 +1,7 @@
 package com.github.euonmyoji.newhonor;
 
 import com.github.euonmyoji.newhonor.command.HonorCommand;
-import com.github.euonmyoji.newhonor.configuration.EffectsData;
-import com.github.euonmyoji.newhonor.configuration.HonorData;
-import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
-import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.configuration.*;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
 import com.google.common.base.Charsets;
@@ -45,7 +42,7 @@ import java.util.UUID;
  */
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin")
 public class NewHonor {
-    public static final String VERSION = "1.5.5";
+    public static final String VERSION = "1.6";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -99,6 +96,7 @@ public class NewHonor {
             NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER)
                     .setValue(NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
             NewHonorConfig.save();
+            LanguageManager.init();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -143,7 +141,7 @@ public class NewHonor {
                         player.offer(effects);
                     }
                 }))).name("newhonor - givePlayerEffects").intervalTicks(20).submit(this);
-        logger.info("NewHonor插件作者邮箱:1418780411@qq.com");
+        logger.info("NewHonor author email:1418780411@qq.com");
         choosePluginMode();
         metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EFFECTS_CACHE.size() > 0 ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
@@ -157,7 +155,7 @@ public class NewHonor {
         PlayerData pd = new PlayerData(p);
         Task.builder().execute(() -> {
             if (!pd.init()) {
-                logger.error("初始化玩家" + p.getName() + "," + p.getUniqueId() + ",头衔数据失败！");
+                logger.error("init Player" + p.getName() + "," + p.getUniqueId() + "Data failed");
             }
             doSomething(pd);
         }).async().delayTicks(20).name("newhonor - init Player" + p.getName()).submit(this);
@@ -205,6 +203,13 @@ public class NewHonor {
         }
     }
 
+    public void reload() {
+        NewHonorConfig.reload();
+        LanguageManager.reload();
+        HonorData.reload();
+        EffectsData.refresh();
+    }
+
     public static void doSomething(PlayerData pd) {
         pd.checkUsing();
         PLAYER_USING_EFFECT_CACHE.remove(pd.getUUID());
@@ -217,7 +222,7 @@ public class NewHonor {
                         EFFECTS_CACHE.put(s, new EffectsData(s).getEffects());
                         PLAYER_USING_EFFECT_CACHE.put(pd.getUUID(), s);
                     } catch (ObjectMappingException e) {
-                        NewHonor.plugin.logger.warn("解析头衔效果组" + s + "配置文件时出错", e);
+                        NewHonor.plugin.logger.warn("parse effects" + s + "failed", e);
                     }
                 });
             }

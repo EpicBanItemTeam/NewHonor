@@ -24,7 +24,7 @@ public class HonorData {
         loader = HoconConfigurationLoader.builder()
                 .setPath(NewHonorConfig.cfgDir.resolve("honor.conf")).build();
         cfg = load();
-        set("default", cfg.getNode("default", "value").getString("[默认头衔]"));
+        set("default", cfg.getNode("default", "value").getString("[default]"));
         cfg.removeChild("created-honors");
         save();
     }

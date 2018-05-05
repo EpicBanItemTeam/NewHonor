@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.github.euonmyoji.newhonor.configuration.LanguageManager.*;
 import static org.spongepowered.api.text.Text.of;
 import static org.spongepowered.api.text.action.TextActions.runCommand;
 import static org.spongepowered.api.text.action.TextActions.showText;
+import static org.spongepowered.api.text.serializer.TextSerializers.FORMATTING_CODE;
 
 /**
  * @author yinyangshi
@@ -35,16 +37,15 @@ public class HonorCommand {
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData((User) src);
                         if (pd.setUse(args.<String>getOne(of("id")).get())) {
-                            src.sendMessage(of("[头衔插件]修改使用头衔成功"));
+                            src.sendMessage(getText("newhonor.changehonor.succeed"));
                         } else {
-                            src.sendMessage(of("[头衔插件]修改使用头衔失败，可能原因:[头衔未拥有或不存在,储存数据时异常]"));
                             pd.setUse("default");
-                            src.sendMessage(of("[头衔插件]已修改使用头衔为默认头衔default"));
+                            src.sendMessage(getText("newhonor.changehonor.failed"));
                         }
                         NewHonor.doSomething(pd);
                     }).async().name("newhonor - Player Change Using Honor").submit(NewHonor.plugin);
                 } else {
-                    src.sendMessage(of("[头衔插件]未知发送者,目前该指令近支持玩家自己发送指令修改自己设置。"));
+                    src.sendMessage(getText("newhonor.changehonor.unknownsource"));
                 }
                 return CommandResult.success();
             })
@@ -67,15 +68,25 @@ public class HonorCommand {
                         Optional<List<String>> honors = pd.getHonors();
                         if (honors.isPresent()) {
                             PaginationList.Builder builder = PaginationList.builder()
-                                    .title(of(user.getName() + "拥有的头衔")).padding(of("-"));
+                                    .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
                             HonorData.getHonorText(pd.getUsingHonorID())
-                                    .ifPresent(text -> builder.header(of(String.format("%s正在使用的头衔:", user.getName()), text)));
+                                    .ifPresent(text -> builder.header(langBuilder("newhonor.listhonors.header")
+                                            .replace("%ownername", user.getName())
+                                            .replace("%honor%", FORMATTING_CODE.serialize(text))
+                                            .replace("%effectsID%", HonorData.getEffectsID(pd.getUsingHonorID()).orElse("null"))
+                                            .build()));
                             List<Text> texts = honors.get().stream()
-                                    .map(id -> HonorData.getHonorText(id).map(text -> Text.builder()
+                                    .map(id -> HonorData.getHonorText(id).map(honor -> Text.builder()
                                             //显示头衔 药水效果组
-                                            .append(of("头衔:"), text,
-                                                    of("，药水效果组:" + HonorData.getEffectsID(id).orElse("无")))
-                                            .onHover(showText(of("点击使用头衔", text)))
+                                            .append(langBuilder("newhonor.listhonors.contexts")
+                                                    .replace("%honorid%", id)
+                                                    .replace("%honor%", FORMATTING_CODE.serialize(honor))
+                                                    .replace("%effectsID%", HonorData.getEffectsID(id).orElse("null"))
+                                                    .build())
+                                            .onHover(showText(langBuilder("newhonor.listhonors.clickuse")
+                                                    .replace("%honor%", FORMATTING_CODE.serialize(honor))
+                                                    .replace("%honorid%", id)
+                                                    .build()))
                                             .onClick(runCommand("/honor use " + id))
                                             .build()))
                                     .filter(Optional::isPresent)
@@ -89,12 +100,12 @@ public class HonorCommand {
                                         }
                                     })).submit(NewHonor.plugin);
                         } else {
-                            src.sendMessage(of("[头衔插件]你目前没有任何头衔"));
+                            src.sendMessage(getText("newhonor.listhonors.empty"));
                         }
                     }).async().name("newhonor - List Player" + user.getName() + " Honors").submit(NewHonor.plugin);
                     return CommandResult.success();
                 } else {
-                    src.sendMessage(of("你没有权限查看别人所拥有的权限[权限节点:newhonor.admin]"));
+                    src.sendMessage(getText("newhonor.listhonors.nopermission"));
                 }
                 return CommandResult.empty();
             })
@@ -104,11 +115,10 @@ public class HonorCommand {
             .permission("newhonor.settings")
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
-                src.sendMessage(of("#true为开启 false为关闭"));
-                src.sendMessage(Text.builder().append(of("/honor settings usehonor true/false  是否使用头衔"))
-                        .onClick(TextActions.suggestCommand("/honor settings usehonor ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
-                src.sendMessage(Text.builder().append(of("/honor settings enableeffects true/false  启用头衔药水效果"))
-                        .onClick(TextActions.suggestCommand("/honor settings enableeffects ")).onHover(showText(of("左键后输入true或者false更改设置"))).build());
+                src.sendMessage(Text.builder().append(of("/honor settings usehonor true/false ", getCommandDescribe("settings.usehonor")))
+                        .onClick(TextActions.suggestCommand("/honor settings usehonor ")).onHover(showText(getText("newhonor.hovermessage.settings.usehonor"))).build());
+                src.sendMessage(Text.builder().append(of("/honor settings enableeffects true/false ", getCommandDescribe("settings.enableeffects")))
+                        .onClick(TextActions.suggestCommand("/honor settings enableeffects ")).onHover(showText(getText("newhonor.hovermessage.settings.enableeffects"))).build());
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
@@ -121,15 +131,15 @@ public class HonorCommand {
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
                 src.sendMessage(of(""));
-                src.sendMessage(of("/honor admin effects <honorID> <effectsID>  给头衔设置药水效果"));
-                src.sendMessage(of("/honor admin add <honorID> <效果>      添加头衔"));
-                src.sendMessage(of("/honor admin set <honorID> <效果>      设置头衔"));
-                src.sendMessage(of("/honor admin delete <honorID>          删除头衔"));
-                src.sendMessage(of("/honor admin give <玩家(们)> <honorID> 给予玩家(们)头衔 "));
-                src.sendMessage(of("/honor admin take <玩家(们)> <honorID> 拿走玩家(们)头衔 "));
-                src.sendMessage(of("/honor admin list              [假功能]显示全部已添加头衔"));
-                src.sendMessage(of("/honor admin reload            重载配置文件并更新缓存"));
-                src.sendMessage(of("/honor admin refresh           更新缓存"));
+                src.sendMessage(of("/honor admin effects <honorID> <effectsID> ", getCommandDescribe("admin.effects")));
+                src.sendMessage(of("/honor admin add <honorID> <honor> ", getCommandDescribe("admin.add")));
+                src.sendMessage(of("/honor admin set <honorID> <honor> ", getCommandDescribe("admin.set")));
+                src.sendMessage(of("/honor admin delete <honorID> ", getCommandDescribe("admin.delete")));
+                src.sendMessage(of("/honor admin give <user(s)> <honorID> ", getCommandDescribe("admin.give")));
+                src.sendMessage(of("/honor admin take <user(s)> <honorID> ", getCommandDescribe("admin.take")));
+                src.sendMessage(of("/honor admin list ", getCommandDescribe("admin.list")));
+                src.sendMessage(of("/honor admin reload ", getCommandDescribe("admin.reload")));
+                src.sendMessage(of("/honor admin refresh ", getCommandDescribe("admin.refresh")));
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
@@ -147,11 +157,12 @@ public class HonorCommand {
     private static CommandSpec effects = CommandSpec.builder()
             .permission(ADMIN_PERMISSION)
             .executor((src, args) -> {
-                src.sendMessage(of("/honor effects delete <effectsID>  删除一个药水效果组"));
-                src.sendMessage(of("/honor effects set <effectsID> <effectID> <level> 给一个效果组设置一个药水效果"));
-                src.sendMessage(of("/honor effects remove <effectID> <effectsID>        移除一个效果组的药水效果"));
-                src.sendMessage(of("/honor effects info <effectsID>   查看一个药水效果组信息"));
-                src.sendMessage(of("/honor effects list 查看所有可用药水效果id"));
+                src.sendMessage(of("/honor effects set <effectsID> <PotionEffectID> <level>", getCommandDescribe("effects.set")));
+                src.sendMessage(of("/honor effects delete <effectsID>", getCommandDescribe("effects.delete")));
+                src.sendMessage(of("/honor effects remove <PotionEffectID> <effectsID>", getCommandDescribe("effects.remove")));
+                src.sendMessage(of("/honor effects info <effectsID>", getCommandDescribe("effects.info")));
+                src.sendMessage(of("/honor effects listAllPotionEffects", getCommandDescribe("effects.listAllPotionEffects")));
+                src.sendMessage(of("/honor effects listAllCreatedEffects", getCommandDescribe("effects.listAllCreatedEffects")));
                 return CommandResult.success();
             })
             .child(EffectsCommand.delete, "delete")
@@ -166,13 +177,12 @@ public class HonorCommand {
             .permission("newhonor.use")
             .executor((src, args) -> {
                 src.sendMessage(of("----------NewHonorV" + NewHonor.VERSION + "----------"));
-                src.sendMessage(of("/honor admin           管理员用指令"));
-                src.sendMessage(Text.builder().append(of("/honor list [用户]     列出拥有的头衔"))
-                        .onClick(runCommand("/honor list")).onHover(showText(of("点击显示自己拥有的头衔"))).build());
-                src.sendMessage(Text.builder().append(of("/honor settings        修改设置"))
-                        .onClick(runCommand("/honor settings")).onHover(showText(of("点击执行/honor settings"))).build());
-                src.sendMessage(of("/honor effects        头衔药水效果"));
-                src.sendMessage(of("/honor stats          统计(同步)一些数据 [卡服警告]"));
+                src.sendMessage(of("/honor admin  ", getCommandDescribe("admin")));
+                src.sendMessage(Text.builder().append(of("/honor list [User]   ", getCommandDescribe("list")))
+                        .onClick(runCommand("/honor list")).onHover(showText(getText("newhonor.command.hovermessage.list"))).build());
+                src.sendMessage(Text.builder().append(of("/honor settings    ", getCommandDescribe("settings")))
+                        .onClick(runCommand("/honor settings")).onHover(showText(getText("newhonor.command.hovermessage.settings"))).build());
+                src.sendMessage(of("/honor effects    ", getCommandDescribe("effects")));
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
