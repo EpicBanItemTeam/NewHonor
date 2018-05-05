@@ -69,7 +69,7 @@ public class LanguageManager {
                         .copyToFile(langFile);
             }
         } catch (IOException e) {
-            NewHonor.plugin.logger.error("No language file found", e);
+            NewHonor.plugin.logger.error("IOE", e);
         }
     }
 

@@ -35,7 +35,7 @@ newhonor.changehonor.unknownsource = [头衔插件]未知发送者
 newhonor.listhonors.title = %ownername%拥有的头衔
 newhonor.listhonors.header = %ownername%正在使用的头衔%honor%，药水效果组:%effectsID%
 newhonor.listhonors.contexts = 头衔:%honor%，药水效果组:%effectsID%
-newhonor.listhonors.clickuse = 点击使用头衔%honor
+newhonor.listhonors.clickuse = 点击使用头衔%honor%
 newhonor.listhonors.empty = [头衔插件]你目前没有任何头衔
 newhonor.listhonors.nopermission = [头衔插件]你目前没有权限newhonor.admin来查看别人拥有的头衔
 

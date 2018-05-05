@@ -49,11 +49,11 @@ class AdminCommand {
                     PlayerData pd = new PlayerData(user);
                     ids.forEach(id -> {
                         if (pd.give(id)) {
-                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + "honor" + id + "successful"));
-                            plugin.logger.info(src.getName() + "gave" + user.getName() + "honor:" + id + "successful");
+                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " successful"));
+                            plugin.logger.info(src.getName() + "gave " + user.getName() + " honor: " + id + " successful");
                         } else {
-                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + "honor" + id + "failed"));
-                            plugin.logger.info(src.getName() + "gave " + user.getName() + "honor:" + id + "failed");
+                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed"));
+                            plugin.logger.info(src.getName() + "gave " + user.getName() + " honor: " + id + " failed");
                         }
                     });
                 })).async().name("newhonor - Give Users Honors").submit(NewHonor.plugin);
@@ -72,11 +72,11 @@ class AdminCommand {
                         PlayerData pd = new PlayerData(user);
                         ids.forEach(id -> {
                             if (pd.take(id)) {
-                                src.sendMessage(of("[NewHonor]took user " + user.getName() + "honor" + id + "successful"));
-                                plugin.logger.info(src.getName() + "took" + user.getName() + "honor:" + id + "successful");
+                                src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " successful"));
+                                plugin.logger.info(src.getName() + "took " + user.getName() + " honor:" + id + " successful");
                             } else {
-                                src.sendMessage(of("[NewHonor]took user " + user.getName() + "honor" + id + "failed"));
-                                plugin.logger.info(src.getName() + "took" + user.getName() + "honor:" + id + "failed");
+                                src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " failed"));
+                                plugin.logger.info(src.getName() + "took " + user.getName() + " honor:" + id + " failed");
                             }
                         });
                     });
@@ -91,7 +91,7 @@ class AdminCommand {
                 Task.builder().async().execute(() -> {
                     PaginationList.Builder builder = PaginationList.builder().title(getText("newhonor.listcreatedhonors.title")).padding(of("-"));
                     builder.contents(HonorData.getAllCreatedHonors().stream().map(id -> langBuilder("newhonor.listcreatedhonors.contexts")
-                            .replace("%honorid", id)
+                            .replace("%honorid%", id)
                             .replace("%honor%", FORMATTING_CODE.serialize(HonorData.getHonorText(id).orElse(of("there is something wrong"))))
                             .replace("%effectsID%", HonorData.getEffectsID(id).orElse("null"))
                             .build())
@@ -174,7 +174,7 @@ class AdminCommand {
                 src.sendMessage(of("[NewHonor]start reload"));
                 NewHonor.plugin.reload();
                 refreshCache(src);
-                src.sendMessage(of("[NewHonor]reloaded successful"));
+                src.sendMessage(of("[NewHonor]reload successful"));
                 return CommandResult.success();
             })
             .build();
@@ -186,13 +186,14 @@ class AdminCommand {
      */
     private static void refreshCache(CommandSource src) {
         Task.builder().execute(() -> {
+            src.sendMessage(of("[NewHonor]start refresh"));
             NewHonor.clearCaches();
             Sponge.getServer().getOnlinePlayers().stream().map(Player::getUniqueId)
                     .map(PlayerData::new)
                     .forEach(NewHonor::doSomething);
             NewHonor.plugin.choosePluginMode();
             ScoreBoardManager.init();
-            src.sendMessage(of("[NewHonor]refresh finished"));
+            src.sendMessage(of("[NewHonor]refresh successful"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);
     }
 }

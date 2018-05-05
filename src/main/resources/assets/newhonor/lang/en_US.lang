@@ -35,7 +35,7 @@ newhonor.changehonor.unknownsource = [NewHonor]You are not a user
 newhonor.listhonors.title = %ownername%'s honors
 newhonor.listhonors.header = %ownername% is using %honor%，effects:%effectsID%
 newhonor.listhonors.contexts = honor:%honor%，effects:%effectsID%
-newhonor.listhonors.clickuse = click to using %honor%
+newhonor.listhonors.clickuse = click to use honor:%honor%
 newhonor.listhonors.empty = [NewHonor]You don't have any honor
 newhonor.listhonors.nopermission = [NewHonor]You don't have permission to list other user's honors
 

@@ -102,7 +102,7 @@ class EffectsCommand {
                             }
                         }
                     } catch (ObjectMappingException e) {
-                        NewHonor.plugin.logger.warn("ObjectMappingException while getting EffectsData");
+                        NewHonor.plugin.logger.warn("ObjectMappingException while getting EffectsData", e);
                         src.sendMessage(Text.of("[NewHonor]ObjectMappingException while getting EffectsData"));
                     }
                 }
