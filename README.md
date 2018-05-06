@@ -1,4 +1,4 @@
-#NewHonor —— SpongePlugin
+#NewHonor
 
 基本权限节点\
 newhonor.use\
