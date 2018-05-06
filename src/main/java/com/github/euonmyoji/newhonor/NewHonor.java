@@ -185,18 +185,23 @@ public class NewHonor {
         eventManager.unregisterListeners(NewHonorListener);
         ScoreBoardManager.enable = false;
         ScoreBoardManager.clear();
+        boolean allowForce = true;
         if (NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false)) {
             Sponge.getEventManager().registerListeners(this, UChatListener);
             logger.info("uchat mode enabled");
-        } else if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
+            allowForce = false;
+        }
+        if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
             ScoreBoardManager.enable = true;
             ScoreBoardManager.init();
             logger.info("displayHonor mode enabled");
-            if (NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean()) {
+            if (NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean() && allowForce) {
                 Sponge.getEventManager().registerListeners(this, NewHonorListener);
             }
         } else {
-            Sponge.getEventManager().registerListeners(this, NewHonorListener);
+            if (allowForce) {
+                Sponge.getEventManager().registerListeners(this, NewHonorListener);
+            }
         }
         boolean usePAPI = NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false);
         if (usePAPI) {

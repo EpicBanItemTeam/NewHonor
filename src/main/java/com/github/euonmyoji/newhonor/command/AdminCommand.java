@@ -173,6 +173,7 @@ class AdminCommand {
             .executor((src, args) -> {
                 src.sendMessage(of("[NewHonor]start reload"));
                 NewHonor.plugin.reload();
+                NewHonor.plugin.choosePluginMode();
                 refreshCache(src);
                 src.sendMessage(of("[NewHonor]reload successful"));
                 return CommandResult.success();
@@ -191,8 +192,6 @@ class AdminCommand {
             Sponge.getServer().getOnlinePlayers().stream().map(Player::getUniqueId)
                     .map(PlayerData::new)
                     .forEach(NewHonor::doSomething);
-            NewHonor.plugin.choosePluginMode();
-            ScoreBoardManager.init();
             src.sendMessage(of("[NewHonor]refresh successful"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);
     }

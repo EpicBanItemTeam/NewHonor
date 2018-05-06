@@ -18,7 +18,7 @@ public class ScoreBoardManager {
     static boolean enable = false;
     private static Scoreboard scoreboard = Scoreboard.builder().build();
 
-    public static void init() {
+    static void init() {
         if (enable) {
             scoreboard = Scoreboard.builder().build();
             initAllPlayers();
@@ -56,9 +56,9 @@ public class ScoreBoardManager {
                                     .build());
                             scoreboard.registerTeam(optionalTeam.get());
                         }
+                        optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
                     }
                 }
-                optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
                 setPlayerScoreBoard(p);
             }).async().name("NewHonor - execute" + p.getName()).submit(NewHonor.plugin);
         }
