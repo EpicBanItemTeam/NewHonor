@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.util.HaloEffects;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -44,6 +45,10 @@ public class EffectsData {
 
     public List<String> getEffectsList() throws ObjectMappingException {
         return cfg.getNode("effects").getList(TypeToken.of(String.class), ArrayList::new);
+    }
+
+    public HaloEffects getHaloEffectList() {
+        return new HaloEffects(cfg);
     }
 
     public List<PotionEffect> getEffects() throws ObjectMappingException {
@@ -107,11 +112,11 @@ public class EffectsData {
 
     public static void refresh() {
         try {
-            NewHonor.EFFECTS_CACHE.clear();
+            NewHonor.plugin.effectsCache.clear();
             getCreatedEffects().forEach(id -> {
                 EffectsData ed = new EffectsData(id);
                 try {
-                    NewHonor.EFFECTS_CACHE.put(id, ed.getEffects());
+                    NewHonor.plugin.effectsCache.put(id, ed.getEffects());
                 } catch (ObjectMappingException e) {
                     e.printStackTrace();
                 }

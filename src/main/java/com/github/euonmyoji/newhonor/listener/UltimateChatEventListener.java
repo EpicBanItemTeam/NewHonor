@@ -19,9 +19,9 @@ public class UltimateChatEventListener {
         CommandSource source = event.getSender();
         if (source instanceof Player) {
             UUID uuid = ((Player) source).getUniqueId();
-            if (NewHonor.HONOR_TEXT_CACHE.containsKey(uuid)) {
+            if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
                 event.addTag("{newhonor}",
-                        TextSerializers.FORMATTING_CODE.serialize(NewHonor.HONOR_TEXT_CACHE.get(uuid)));
+                        TextSerializers.FORMATTING_CODE.serialize(NewHonor.plugin.honorTextCache.get(uuid)));
             }
         }
     }

@@ -47,7 +47,11 @@ public class HonorData {
     }
 
     public static Optional<Text> getHonorText(String id) {
-        return Optional.ofNullable(cfg.getNode(id, "value").getString(null)).map(TextSerializers.FORMATTING_CODE::deserializeUnchecked);
+        return getHonorRawText(id).map(TextSerializers.FORMATTING_CODE::deserialize);
+    }
+
+    public static Optional<String> getHonorRawText(String id) {
+        return Optional.ofNullable(cfg.getNode(id, "value").getString(null));
     }
 
     public static boolean set(String id, String honor) {

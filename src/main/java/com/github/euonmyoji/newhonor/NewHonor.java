@@ -4,6 +4,7 @@ import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.*;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
+import com.github.euonmyoji.newhonor.util.HaloEffects;
 import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -44,7 +45,7 @@ import java.util.UUID;
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "1.6.1";
+    public static final String VERSION = "1.6.2";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -54,9 +55,10 @@ public class NewHonor {
     public Logger logger;
 
     public static NewHonor plugin;
-    public static final HashMap<UUID, Text> HONOR_TEXT_CACHE = new HashMap<>();
-    private static final HashMap<UUID, String> PLAYER_USING_EFFECT_CACHE = new HashMap<>();
-    public static final HashMap<String, List<PotionEffect>> EFFECTS_CACHE = new HashMap<>();
+    public final HashMap<UUID, Text> honorTextCache = new HashMap<>();
+    private final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
+    public final HashMap<String, List<PotionEffect>> effectsCache = new HashMap<>();
+    private final HashMap<String, HaloEffects> haloEffectsCache = new HashMap<>();
 
     private static final String COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
     private static final String DISPLAY_HONOR_NODE_PATH = "displayHonor";
@@ -134,21 +136,29 @@ public class NewHonor {
     @Listener
     public void onStarted(GameStartedServerEvent event) {
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour");
-        Task.builder().execute(() -> PLAYER_USING_EFFECT_CACHE.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
+        Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
                 .ifPresent(player -> {
-                    if (EFFECTS_CACHE.containsKey(s)) {
+                    if (effectsCache.containsKey(s)) {
                         PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(UNKNOWN::new);
-                        List<PotionEffect> list = EFFECTS_CACHE.get(s);
+                        List<PotionEffect> list = effectsCache.get(s);
                         list.forEach(effects::addElement);
                         player.offer(effects);
                     }
                 }))).name("newhonor - givePlayerEffects").intervalTicks(20).submit(this);
+        Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
+                .ifPresent(player -> {
+                    if (haloEffectsCache.containsKey(s)) {
+                        haloEffectsCache.get(s).execute(player);
+                    }
+                }))).name("newhonor - givePlayerHaloEffects").async().intervalTicks(20).submit(this);
         logger.info("NewHonor author email:1418780411@qq.com");
         choosePluginMode();
-        metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EFFECTS_CACHE.size() > 0 ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> effectsCache.size() > 0 ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usepapi",
                 () -> NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean() ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> plugin.haloEffectsCache.size() > 0 ?
+                "true" : "false"));
     }
 
     @Listener
@@ -174,9 +184,9 @@ public class NewHonor {
 
 
     public static void clearCaches() {
-        HONOR_TEXT_CACHE.clear();
-        EFFECTS_CACHE.clear();
-        PLAYER_USING_EFFECT_CACHE.clear();
+        plugin.honorTextCache.clear();
+        plugin.effectsCache.clear();
+        plugin.playerUsingEffectCache.clear();
     }
 
     public void choosePluginMode() {
@@ -219,17 +229,19 @@ public class NewHonor {
 
     public static void doSomething(PlayerData pd) {
         pd.checkUsing();
-        PLAYER_USING_EFFECT_CACHE.remove(pd.getUUID());
-        HONOR_TEXT_CACHE.remove(pd.getUUID());
+        plugin.playerUsingEffectCache.remove(pd.getUUID());
+        plugin.honorTextCache.remove(pd.getUUID());
         if (pd.isUseHonor()) {
-            pd.getHonor().ifPresent(text -> HONOR_TEXT_CACHE.put(pd.getUUID(), text));
+            pd.getHonor().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
             if (pd.isEnableEffects()) {
                 HonorData.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> {
                     try {
-                        EFFECTS_CACHE.put(s, new EffectsData(s).getEffects());
-                        PLAYER_USING_EFFECT_CACHE.put(pd.getUUID(), s);
+                        EffectsData ed = new EffectsData(s);
+                        plugin.effectsCache.put(s, ed.getEffects());
+                        plugin.playerUsingEffectCache.put(pd.getUUID(), s);
+                        plugin.haloEffectsCache.put(s, ed.getHaloEffectList());
                     } catch (ObjectMappingException e) {
-                        NewHonor.plugin.logger.warn("parse effects" + s + "failed", e);
+                        plugin.logger.warn("parse effects" + s + "failed", e);
                     }
                 });
             }

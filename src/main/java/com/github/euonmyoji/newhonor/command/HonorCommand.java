@@ -21,7 +21,6 @@ import static com.github.euonmyoji.newhonor.configuration.LanguageManager.*;
 import static org.spongepowered.api.text.Text.of;
 import static org.spongepowered.api.text.action.TextActions.runCommand;
 import static org.spongepowered.api.text.action.TextActions.showText;
-import static org.spongepowered.api.text.serializer.TextSerializers.FORMATTING_CODE;
 
 /**
  * @author yinyangshi
@@ -67,22 +66,22 @@ public class HonorCommand {
                         if (honors.isPresent()) {
                             PaginationList.Builder builder = PaginationList.builder()
                                     .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
-                            HonorData.getHonorText(pd.getUsingHonorID())
+                            HonorData.getHonorRawText(pd.getUsingHonorID())
                                     .ifPresent(text -> builder.header(langBuilder("newhonor.listhonors.header")
                                             .replace("%ownername", user.getName())
-                                            .replace("%honor%", FORMATTING_CODE.serialize(text))
+                                            .replace("%honor%", text)
                                             .replace("%effectsID%", HonorData.getEffectsID(pd.getUsingHonorID()).orElse("null"))
                                             .build()));
                             List<Text> texts = honors.get().stream()
-                                    .map(id -> HonorData.getHonorText(id).map(honor -> Text.builder()
+                                    .map(id -> HonorData.getHonorRawText(id).map(honor -> Text.builder()
                                             //显示头衔 药水效果组
                                             .append(langBuilder("newhonor.listhonors.contexts")
                                                     .replace("%honorid%", id)
-                                                    .replace("%honor%", FORMATTING_CODE.serialize(honor))
+                                                    .replace("%honor%", honor)
                                                     .replace("%effectsID%", HonorData.getEffectsID(id).orElse("null"))
                                                     .build())
                                             .onHover(showText(langBuilder("newhonor.listhonors.clickuse")
-                                                    .replace("%honor%", FORMATTING_CODE.serialize(honor))
+                                                    .replace("%honor%", honor)
                                                     .replace("%honorid%", id)
                                                     .build()))
                                             .onClick(runCommand("/honor use " + id))
@@ -93,7 +92,7 @@ public class HonorCommand {
                             builder.contents(texts).build().sendTo(src);
                             Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
                                     .execute(() -> honors.get().forEach(s -> {
-                                        if (!HonorData.getHonorText(s).isPresent()) {
+                                        if (!HonorData.getHonorRawText(s).isPresent()) {
                                             pd.take(s);
                                         }
                                     })).submit(NewHonor.plugin);

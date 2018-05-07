@@ -24,7 +24,7 @@ public class PlaceHolderManager {
 
     @Placeholder(id = "newhonor")
     public Text getNewHonorText(@Source Player p) {
-        return NewHonor.HONOR_TEXT_CACHE.get(p.getUniqueId());
+        return NewHonor.plugin.honorTextCache.get(p.getUniqueId());
     }
 
     private PlaceHolderManager() {

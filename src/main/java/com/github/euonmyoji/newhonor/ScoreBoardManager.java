@@ -45,8 +45,8 @@ public class ScoreBoardManager {
                 boolean isTeamPresent = optionalTeam.isPresent();
                 optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
                 if (pd.isUseHonor()) {
-                    if (NewHonor.HONOR_TEXT_CACHE.containsKey(uuid)) {
-                        Text prefix = NewHonor.HONOR_TEXT_CACHE.get(uuid);
+                    if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
+                        Text prefix = NewHonor.plugin.honorTextCache.get(uuid);
                         if (isTeamPresent) {
                             optionalTeam.get().setPrefix(prefix);
                         } else {
