@@ -8,13 +8,14 @@ import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
+import java.util.ConcurrentModificationException;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
  * @author yinyangshi
  */
-public class ScoreBoardManager {
+class ScoreBoardManager {
     static boolean enable = false;
     private static Scoreboard scoreboard = Scoreboard.builder().build();
 
@@ -38,29 +39,57 @@ public class ScoreBoardManager {
     private static void execute(Player p) {
         if (enable) {
             Task.builder().execute(() -> {
-                UUID uuid = p.getUniqueId();
-                PlayerData pd = new PlayerData(p);
-                String honorID = pd.getUsingHonorID();
-                Optional<Team> optionalTeam = scoreboard.getTeam(honorID);
-                boolean isTeamPresent = optionalTeam.isPresent();
-                optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
-                if (pd.isUseHonor()) {
-                    if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
-                        Text prefix = NewHonor.plugin.honorTextCache.get(uuid);
-                        if (isTeamPresent) {
-                            optionalTeam.get().setPrefix(prefix);
-                        } else {
-                            optionalTeam = Optional.of(Team.builder()
-                                    .name(honorID)
-                                    .prefix(prefix)
-                                    .build());
-                            scoreboard.registerTeam(optionalTeam.get());
+                //如果异步时出了问题同步再来一次.jpg
+                try {
+                    UUID uuid = p.getUniqueId();
+                    PlayerData pd = new PlayerData(p);
+                    String honorID = pd.getUsingHonorID();
+                    Optional<Team> optionalTeam = scoreboard.getTeam(honorID);
+                    boolean isTeamPresent = optionalTeam.isPresent();
+                    optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
+                    if (pd.isUseHonor()) {
+                        if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
+                            Text prefix = NewHonor.plugin.honorTextCache.get(uuid);
+                            if (isTeamPresent) {
+                                optionalTeam.get().setPrefix(prefix);
+                            } else {
+                                optionalTeam = Optional.of(Team.builder()
+                                        .name(honorID)
+                                        .prefix(prefix)
+                                        .build());
+                                scoreboard.registerTeam(optionalTeam.get());
+                            }
+                            optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
                         }
-                        optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
                     }
+                    setPlayerScoreBoard(p);
+                } catch (ConcurrentModificationException e) {
+                    Task.builder().execute(() -> {
+                        UUID uuid = p.getUniqueId();
+                        PlayerData pd = new PlayerData(p);
+                        String honorID = pd.getUsingHonorID();
+                        Optional<Team> optionalTeam = scoreboard.getTeam(honorID);
+                        boolean isTeamPresent = optionalTeam.isPresent();
+                        optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
+                        if (pd.isUseHonor()) {
+                            if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
+                                Text prefix = NewHonor.plugin.honorTextCache.get(uuid);
+                                if (isTeamPresent) {
+                                    optionalTeam.get().setPrefix(prefix);
+                                } else {
+                                    optionalTeam = Optional.of(Team.builder()
+                                            .name(honorID)
+                                            .prefix(prefix)
+                                            .build());
+                                    scoreboard.registerTeam(optionalTeam.get());
+                                }
+                                optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
+                            }
+                        }
+                        setPlayerScoreBoard(p);
+                    }).name("NewHonor - (no async) execute " + p.getName()).submit(NewHonor.plugin);
                 }
-                setPlayerScoreBoard(p);
-            }).async().name("NewHonor - execute" + p.getName()).submit(NewHonor.plugin);
+            }).async().name("NewHonor - execute " + p.getName()).submit(NewHonor.plugin);
         }
     }
 

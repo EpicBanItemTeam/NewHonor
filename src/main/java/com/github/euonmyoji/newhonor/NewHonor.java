@@ -10,7 +10,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.omg.CORBA.UNKNOWN;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
@@ -35,6 +34,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -138,19 +138,27 @@ public class NewHonor {
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour");
         Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
                 .ifPresent(player -> {
-                    if (effectsCache.containsKey(s)) {
-                        PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(UNKNOWN::new);
-                        List<PotionEffect> list = effectsCache.get(s);
-                        list.forEach(effects::addElement);
-                        player.offer(effects);
+                    try {
+                        if (effectsCache.containsKey(s)) {
+                            PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(NoSuchFieldError::new);
+                            List<PotionEffect> list = effectsCache.get(s);
+                            list.forEach(effects::addElement);
+                            player.offer(effects);
+                        }
+                    } catch (ConcurrentModificationException e) {
+                        logger.warn("ConcurrentModificationException while offer player effects");
                     }
-                }))).name("newhonor - givePlayerEffects").intervalTicks(20).submit(this);
+                }))).name("newhonor - givePlayerEffects").async().intervalTicks(15).submit(this);
         Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
                 .ifPresent(player -> {
-                    if (haloEffectsCache.containsKey(s)) {
-                        haloEffectsCache.get(s).execute(player);
+                    try {
+                        if (haloEffectsCache.containsKey(s)) {
+                            haloEffectsCache.get(s).execute(player);
+                        }
+                    } catch (ConcurrentModificationException e) {
+                        logger.warn("ConcurrentModificationException while offer player halo effects");
                     }
-                }))).name("newhonor - givePlayerHaloEffects").async().intervalTicks(20).submit(this);
+                }))).name("newhonor - givePlayerHaloEffects").async().intervalTicks(15).submit(this);
         logger.info("NewHonor author email:1418780411@qq.com");
         choosePluginMode();
         metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> effectsCache.size() > 0 ? "true" : "false"));
@@ -190,33 +198,37 @@ public class NewHonor {
     }
 
     public void choosePluginMode() {
-        EventManager eventManager = Sponge.getEventManager();
-        eventManager.unregisterListeners(UChatListener);
-        eventManager.unregisterListeners(NewHonorListener);
-        ScoreBoardManager.enable = false;
-        ScoreBoardManager.clear();
-        boolean allowForce = true;
-        if (NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false)) {
-            Sponge.getEventManager().registerListeners(this, UChatListener);
-            logger.info("uchat mode enabled");
-            allowForce = false;
-        }
-        if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
-            ScoreBoardManager.enable = true;
-            ScoreBoardManager.init();
-            logger.info("displayHonor mode enabled");
-            if (NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean() && allowForce) {
-                Sponge.getEventManager().registerListeners(this, NewHonorListener);
+        try {
+            EventManager eventManager = Sponge.getEventManager();
+            eventManager.unregisterListeners(UChatListener);
+            eventManager.unregisterListeners(NewHonorListener);
+            ScoreBoardManager.enable = false;
+            ScoreBoardManager.clear();
+            boolean allowForce = true;
+            if (NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false)) {
+                Sponge.getEventManager().registerListeners(this, UChatListener);
+                logger.info("uchat mode enabled");
+                allowForce = false;
             }
-        } else {
-            if (allowForce) {
-                Sponge.getEventManager().registerListeners(this, NewHonorListener);
+            if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
+                ScoreBoardManager.enable = true;
+                ScoreBoardManager.init();
+                logger.info("displayHonor mode enabled");
+                if (NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean() && allowForce) {
+                    Sponge.getEventManager().registerListeners(this, NewHonorListener);
+                }
+            } else {
+                if (allowForce) {
+                    Sponge.getEventManager().registerListeners(this, NewHonorListener);
+                }
             }
-        }
-        boolean usePAPI = NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false);
-        if (usePAPI) {
-            PlaceHolderManager.create();
-            logger.info("enabled PAPI");
+            boolean usePAPI = NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false);
+            if (usePAPI) {
+                PlaceHolderManager.create();
+                logger.info("enabled PAPI");
+            }
+        } catch (Exception e) {
+            logger.error("error mode", e);
         }
     }
 
@@ -241,7 +253,7 @@ public class NewHonor {
                         plugin.playerUsingEffectCache.put(pd.getUUID(), s);
                         plugin.haloEffectsCache.put(s, ed.getHaloEffectList());
                     } catch (ObjectMappingException e) {
-                        plugin.logger.warn("parse effects" + s + "failed", e);
+                        plugin.logger.warn("parse effects " + s + " failed", e);
                     }
                 });
             }

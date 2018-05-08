@@ -1,16 +1,15 @@
 package com.github.euonmyoji.newhonor.util;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.omg.CORBA.UNKNOWN;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.scheduler.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,13 +24,11 @@ public class HaloEffects {
     private final HashMap<Double, List<PotionEffect>> cache = new HashMap<>();
 
     public HaloEffects(CommentedConfigurationNode config) {
-        config.getChildrenMap().forEach((string, cfg) -> {
+        config.getChildrenMap().values().forEach(cfg -> {
             try {
-                double distance;
-                try {
-                    distance = Double.parseDouble(((String) string).replaceAll("[a-z]|[A-Z]", ""));
-                } catch (Exception ignore) {
-                    return;
+                double distance = cfg.getNode("distance").getDouble(-1);
+                if (distance == -1) {
+                    throw new ObjectMappingException("the distance is unknown!");
                 }
                 List<String> effects = getEffectsList(cfg);
                 cache.put(distance, effects.stream()
@@ -41,7 +38,7 @@ public class HaloEffects {
                                     PotionEffect.builder()
                                             .potionType(type)
                                             .amplifier(Integer.parseInt(args[1]))
-                                            .duration(40)
+                                            .duration(60)
                                             .build());
                         })
                         .filter(Optional::isPresent)
@@ -54,16 +51,17 @@ public class HaloEffects {
     }
 
     public void execute(Player p) {
-        Task.builder().execute(() ->
-                cache.forEach((distance, potionEffects) -> p.getNearbyEntities(distance).stream()
-                        .filter(entity -> entity instanceof Player)
-                        .forEach(entity -> {
-                            Player player = ((Player) entity);
-                            PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(UNKNOWN::new);
-                            potionEffects.forEach(effects::addElement);
-                            player.offer(effects);
-                        })))
-                .name("NewHonor - give" + p.getName() + "NearByEntity Buff").submit(NewHonor.plugin);
+        final Vector3d o = p.getLocation().getPosition();
+        p.getWorld().getPlayers().forEach(player -> {
+            double distanceSquared = player.getLocation().getPosition().distanceSquared(o);
+            cache.forEach((distanceLimit, potionEffects) -> {
+                if (!p.getUniqueId().equals(player.getUniqueId()) && distanceSquared < (distanceLimit * distanceLimit)) {
+                    PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(NoSuchFieldError::new);
+                    potionEffects.forEach(effects::addElement);
+                    player.offer(effects);
+                }
+            });
+        });
     }
 
     private static List<String> getEffectsList(CommentedConfigurationNode cfg) throws ObjectMappingException {
