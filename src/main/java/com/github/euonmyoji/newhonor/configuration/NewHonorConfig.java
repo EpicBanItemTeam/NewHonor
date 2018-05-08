@@ -77,7 +77,7 @@ public class NewHonorConfig {
         }
     }
 
-    public static List<String> getDefaultOwnHonors() {
+    static List<String> getDefaultOwnHonors() {
         try {
             return cfg.getNode(DEFAULT_HONORS).getValue(LIST_STRING_TYPE, (Supplier<List<String>>) () -> new ArrayList<String>() {{
                 add("default");
