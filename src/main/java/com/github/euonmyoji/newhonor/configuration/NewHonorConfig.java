@@ -1,20 +1,27 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 /**
  * @author yinyangshi
  */
 public class NewHonorConfig {
+    private static final TypeToken<List<String>> LIST_STRING_TYPE = new TypeToken<List<String>>() {
+    };
     private static CommentedConfigurationNode cfg;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     public static Path cfgDir;
@@ -22,6 +29,7 @@ public class NewHonorConfig {
     private static final String DATA_PATH_NODE = "data-dir-path";
     private static final String CHECK_UPDATE_NODE_PATH = "check-update";
     private static final String LANGUAGE = "lang";
+    private static final String DEFAULT_HONORS = "default-honors";
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
@@ -30,6 +38,14 @@ public class NewHonorConfig {
         cfg.getNode(DATA_PATH_NODE).setValue(cfg.getNode(DATA_PATH_NODE).getString("default"));
         cfg.getNode(CHECK_UPDATE_NODE_PATH).setValue(cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false));
         cfg.getNode(LANGUAGE).setValue(cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
+        try {
+            cfg.getNode(DEFAULT_HONORS).setValue(LIST_STRING_TYPE,
+                    cfg.getNode(DEFAULT_HONORS).getValue(LIST_STRING_TYPE, (Supplier<List<String>>) () -> new ArrayList<String>() {{
+                        add("default");
+                    }}));
+        } catch (ObjectMappingException e) {
+            NewHonor.plugin.logger.error("default honor is error!", e);
+        }
         save();
         reload();
     }

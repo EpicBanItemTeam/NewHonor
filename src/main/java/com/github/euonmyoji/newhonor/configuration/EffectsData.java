@@ -48,7 +48,7 @@ public class EffectsData {
     }
 
     public HaloEffects getHaloEffectList() {
-        return new HaloEffects(cfg.getNode("distance"));
+        return new HaloEffects(cfg);
     }
 
     public List<PotionEffect> getEffects() throws ObjectMappingException {

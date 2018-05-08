@@ -24,9 +24,9 @@ public class HaloEffects {
     private final HashMap<Double, List<PotionEffect>> cache = new HashMap<>();
 
     public HaloEffects(CommentedConfigurationNode config) {
-        config.getChildrenMap().values().forEach(cfg -> {
+        config.getNode("halo").getChildrenMap().values().forEach(cfg -> {
             try {
-                double distance = cfg.getNode("distance").getDouble(-1);
+                double distance = cfg.getNode("radius").getDouble(-1);
                 if (distance == -1) {
                     throw new ObjectMappingException("the distance is unknown!");
                 }
