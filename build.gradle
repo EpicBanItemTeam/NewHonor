@@ -7,7 +7,7 @@ sourceCompatibility = '1.8'
 defaultTasks 'clean', 'build'
 jar {
     manifest {
-        attributes 'Main-Class': 'com.github.euonmyoji.newhonor.NewHonor'
+        attributes 'Main-Class': 'com.github.euonmyoji.newhonor.Main'
     }
 }
 

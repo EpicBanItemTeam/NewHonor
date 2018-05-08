@@ -261,8 +261,4 @@ public class NewHonor {
         }
         Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(ScoreBoardManager::initPlayer);
     }
-
-    public static void main(String[] args) {
-        JOptionPane.showMessageDialog(null, "你执行插件jar文件干嘛?:D");
-    }
 }
