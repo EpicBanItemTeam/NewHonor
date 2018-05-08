@@ -25,7 +25,7 @@ public class HonorData {
         loader = HoconConfigurationLoader.builder()
                 .setPath(NewHonorConfig.cfgDir.resolve("honor.conf")).build();
         cfg = load();
-        set("default", cfg.getNode("default", "value").getString("[default]"));
+        NewHonorConfig.getDefaultOwnHonors().forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]")));
         cfg.removeChild("created-honors");
         save();
     }
@@ -58,6 +58,10 @@ public class HonorData {
     public static boolean set(String id, String honor) {
         cfg.getNode(id, "value").setValue(honor);
         return save();
+    }
+
+    private static void noSaveSet(String id, String honor) {
+        cfg.getNode(id, "value").setValue(honor);
     }
 
     public static boolean delete(String id) {
