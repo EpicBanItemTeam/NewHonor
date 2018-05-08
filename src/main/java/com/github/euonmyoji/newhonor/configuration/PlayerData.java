@@ -101,7 +101,7 @@ public class PlayerData {
     }
 
     private boolean hasHonor(String id) {
-        return getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals) || "default".equals(id);
+        return getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals);
     }
 
     public String getUsingHonorID() {
@@ -122,9 +122,12 @@ public class PlayerData {
     }
 
     public boolean init() {
-        give("default");
-        setUse(getUsingHonorID());
-        return save();
+        Collection<String> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
+        if (!defaultHonors.isEmpty()) {
+            defaultHonors.forEach(this::give);
+            return setUse(((List<String>) defaultHonors).get(0));
+        }
+        return true;
     }
 
     public void checkUsing() {
