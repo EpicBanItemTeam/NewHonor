@@ -29,7 +29,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.plugin.meta.version.ComparableVersion;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;

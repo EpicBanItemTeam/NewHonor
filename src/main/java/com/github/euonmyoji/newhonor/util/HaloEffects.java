@@ -28,7 +28,7 @@ public class HaloEffects {
             try {
                 double distance = cfg.getNode("radius").getDouble(-1);
                 if (distance == -1) {
-                    throw new ObjectMappingException("the distance is unknown!");
+                    throw new ObjectMappingException("the effects radius is unknown!");
                 }
                 List<String> effects = getEffectsList(cfg);
                 cache.put(distance, effects.stream()
