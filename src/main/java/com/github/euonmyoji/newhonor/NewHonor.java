@@ -29,6 +29,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.plugin.meta.version.ComparableVersion;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -259,5 +260,9 @@ public class NewHonor {
             }
         }
         Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(ScoreBoardManager::initPlayer);
+    }
+
+    public static void main(String[] args) {
+        JOptionPane.showMessageDialog(null, "你执行插件jar文件干嘛?:D");
     }
 }
