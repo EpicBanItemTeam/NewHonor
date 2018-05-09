@@ -24,7 +24,7 @@ public class HaloEffects {
     private final HashMap<Double, List<PotionEffect>> cache = new HashMap<>();
 
     public HaloEffects(CommentedConfigurationNode config) {
-        int time = config.getNode("intervalTicks").getInt(60);
+        int time = config.getNode("potionEffectsDurationTick").getInt(60);
         config.getNode("halo").getChildrenMap().values().forEach(cfg -> {
             try {
                 double distance = cfg.getNode("radius").getDouble(-1);

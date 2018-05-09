@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 public class EffectsData {
     private static final Path PATH = NewHonorConfig.cfgDir.resolve("EffectsData");
     private CommentedConfigurationNode cfg;
-    private ConfigurationLoader<CommentedConfigurationNode> loader;
-    private int potionEffectsTime;
+    private final ConfigurationLoader<CommentedConfigurationNode> loader;
+    private final int potionEffectsTime;
 
     static {
         if (!Files.exists(PATH)) {
@@ -42,7 +42,7 @@ public class EffectsData {
         loader = HoconConfigurationLoader.builder()
                 .setPath(PATH.resolve(id + ".conf")).build();
         reload();
-        potionEffectsTime = cfg.getNode("intervalTicks").getInt(60);
+        potionEffectsTime = cfg.getNode("potionEffectsDurationTick").getInt(60);
     }
 
     public List<String> getEffectsList() throws ObjectMappingException {
