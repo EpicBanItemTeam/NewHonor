@@ -36,11 +36,13 @@ public class NewHonorConfig {
         cfg.getNode(CHECK_UPDATE_NODE_PATH).setValue(cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false));
         cfg.getNode(LANGUAGE).setValue(cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
         try {
-            cfg.getNode(DEFAULT_HONORS).setValue(LIST_STRING_TYPE, getDefaultOwnHonors().orElseGet(() -> new ArrayList<String>() {{
-                add("default");
-            }}));
+            if (cfg.getNode(DEFAULT_HONORS).isVirtual()) {
+                cfg.getNode(DEFAULT_HONORS).setValue(LIST_STRING_TYPE, new ArrayList<String>() {{
+                    add("default");
+                }});
+            }
         } catch (ObjectMappingException e) {
-            NewHonor.plugin.logger.error("default honor is error!", e);
+            NewHonor.plugin.logger.error("Exception while set default has honors!", e);
         }
         save();
         reload();
