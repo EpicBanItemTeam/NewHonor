@@ -13,8 +13,10 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.github.euonmyoji.newhonor.configuration.LanguageManager.*;
@@ -27,11 +29,27 @@ import static org.spongepowered.api.text.action.TextActions.showText;
  */
 public class HonorCommand {
     private static String ADMIN_PERMISSION = "newhonor.admin";
+    private static HashMap<UUID, Integer> useCD = new HashMap<>();
+
+    static {
+        Task.builder().execute(() -> new HashMap<>(useCD).forEach((uuid, integer) -> {
+            if (useCD.get(uuid) <= 0) {
+                useCD.remove(uuid);
+            }
+            useCD.put(uuid, integer - 1);
+        })).async().intervalTicks(20).submit(NewHonor.plugin);
+    }
 
     private static CommandSpec use = CommandSpec.builder()
             .arguments(GenericArguments.string(of("id")))
             .executor((src, args) -> {
                 if (src instanceof Player) {
+                    if (!src.hasPermission(ADMIN_PERMISSION)) {
+                        int cd = useCD.get(((Player) src).getUniqueId());
+                        if (cd > 0) {
+                            src.sendMessage(of("[NewHonor]You should wait" + cd + "second(s) to change use honor"));
+                        }
+                    }
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData((User) src);
                         if (pd.setUse(args.<String>getOne(of("id")).orElseThrow(NoSuchFieldError::new))) {
@@ -42,6 +60,9 @@ public class HonorCommand {
                             src.sendMessage(getText("newhonor.changehonor.failed"));
                         }
                         NewHonor.doSomething(pd);
+                        if (!src.hasPermission(ADMIN_PERMISSION)) {
+                            useCD.put(((Player) src).getUniqueId(), 5);
+                        }
                     }).async().name("newhonor - Player Change Using Honor").submit(NewHonor.plugin);
                 } else {
                     src.sendMessage(getText("newhonor.changehonor.unknownsource"));
