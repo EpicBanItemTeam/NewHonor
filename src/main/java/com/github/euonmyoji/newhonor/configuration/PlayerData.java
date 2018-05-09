@@ -105,7 +105,7 @@ public class PlayerData {
     }
 
     public String getUsingHonorID() {
-        return cfg.getNode("using").getString("default");
+        return cfg.getNode("using").getString();
     }
 
     public Optional<List<String>> getHonors() {
@@ -118,7 +118,7 @@ public class PlayerData {
     }
 
     public Optional<Text> getHonor() {
-        return Optional.ofNullable(cfg.getNode("using").getString("default")).flatMap(HonorData::getHonorText);
+        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorData::getHonorText);
     }
 
     public boolean init() {
@@ -132,7 +132,12 @@ public class PlayerData {
 
     public void checkUsing() {
         if (!hasHonor(getUsingHonorID())) {
-            setUse("default");
+            List<String> list = NewHonorConfig.getDefaultOwnHonors();
+            if (list.isEmpty()) {
+                setUse("");
+            } else {
+                setUse(list.get(0));
+            }
         }
     }
 

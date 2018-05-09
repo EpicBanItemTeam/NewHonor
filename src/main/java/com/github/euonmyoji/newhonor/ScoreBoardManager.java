@@ -44,6 +44,9 @@ class ScoreBoardManager {
                     UUID uuid = p.getUniqueId();
                     PlayerData pd = new PlayerData(p);
                     String honorID = pd.getUsingHonorID();
+                    if (honorID == null) {
+                        return;
+                    }
                     Optional<Team> optionalTeam = scoreboard.getTeam(honorID);
                     boolean isTeamPresent = optionalTeam.isPresent();
                     optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
@@ -68,6 +71,9 @@ class ScoreBoardManager {
                         UUID uuid = p.getUniqueId();
                         PlayerData pd = new PlayerData(p);
                         String honorID = pd.getUsingHonorID();
+                        if (honorID == null) {
+                            return;
+                        }
                         Optional<Team> optionalTeam = scoreboard.getTeam(honorID);
                         boolean isTeamPresent = optionalTeam.isPresent();
                         optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));

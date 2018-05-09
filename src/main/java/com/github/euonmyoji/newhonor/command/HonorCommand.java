@@ -66,11 +66,12 @@ public class HonorCommand {
                         if (honors.isPresent()) {
                             PaginationList.Builder builder = PaginationList.builder()
                                     .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
-                            HonorData.getHonorRawText(pd.getUsingHonorID())
+                            String usingID = pd.getUsingHonorID();
+                            HonorData.getHonorRawText(usingID)
                                     .ifPresent(text -> builder.header(langBuilder("newhonor.listhonors.header")
                                             .replace("%ownername", user.getName())
                                             .replace("%honor%", text)
-                                            .replace("%effectsID%", HonorData.getEffectsID(pd.getUsingHonorID()).orElse("null"))
+                                            .replace("%effectsID%", HonorData.getEffectsID(usingID).orElse("null"))
                                             .build()));
                             List<Text> texts = honors.get().stream()
                                     .map(id -> HonorData.getHonorRawText(id).map(honor -> Text.builder()
