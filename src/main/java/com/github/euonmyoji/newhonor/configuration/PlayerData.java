@@ -101,7 +101,7 @@ public class PlayerData {
     }
 
     private boolean hasHonor(String id) {
-        return getHonors().orElse(Collections.emptyList()).stream().anyMatch(id::equals);
+        return getHonors().orElse(Collections.emptyList()).stream().anyMatch(s -> Objects.equals(s, id));
     }
 
     public String getUsingHonorID() {
