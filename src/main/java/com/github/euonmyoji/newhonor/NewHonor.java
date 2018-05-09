@@ -58,7 +58,7 @@ public class NewHonor {
     public final HashMap<UUID, Text> honorTextCache = new HashMap<>();
     private final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
     public final HashMap<String, List<PotionEffect>> effectsCache = new HashMap<>();
-    private final HashMap<String, HaloEffects> haloEffectsCache = new HashMap<>();
+    public final HashMap<String, HaloEffects> haloEffectsCache = new HashMap<>();
 
     private static final String COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
     private static final String DISPLAY_HONOR_NODE_PATH = "displayHonor";
@@ -165,7 +165,7 @@ public class NewHonor {
         metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usepapi",
                 () -> NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean() ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> plugin.haloEffectsCache.size() > 0 ?
+        metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> haloEffectsCache.size() > 0 ?
                 "true" : "false"));
     }
 
@@ -195,6 +195,7 @@ public class NewHonor {
         plugin.honorTextCache.clear();
         plugin.effectsCache.clear();
         plugin.playerUsingEffectCache.clear();
+        plugin.haloEffectsCache.clear();
     }
 
     public void choosePluginMode() {
@@ -260,4 +261,5 @@ public class NewHonor {
         }
         Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(ScoreBoardManager::initPlayer);
     }
+
 }

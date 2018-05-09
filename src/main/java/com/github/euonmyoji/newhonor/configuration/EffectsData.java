@@ -114,16 +114,18 @@ public class EffectsData {
     public static void refresh() {
         try {
             NewHonor.plugin.effectsCache.clear();
-            getCreatedEffects().forEach(id -> {
+            List<String> createdEffects = getCreatedEffects();
+            createdEffects.forEach(id -> {
                 EffectsData ed = new EffectsData(id);
                 try {
                     NewHonor.plugin.effectsCache.put(id, ed.getEffects());
                 } catch (ObjectMappingException e) {
-                    e.printStackTrace();
+                    NewHonor.plugin.logger.error("refresh effects error", e);
                 }
+                NewHonor.plugin.haloEffectsCache.put(id, ed.getHaloEffectList());
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            NewHonor.plugin.logger.error("refresh effects error", e);
         }
     }
 

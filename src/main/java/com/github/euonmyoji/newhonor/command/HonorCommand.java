@@ -37,7 +37,8 @@ public class HonorCommand {
                         if (pd.setUse(args.<String>getOne(of("id")).orElseThrow(NoSuchFieldError::new))) {
                             src.sendMessage(getText("newhonor.changehonor.succeed"));
                         } else {
-                            pd.setUse("default");
+                            pd.setUse("");
+                            pd.init();
                             src.sendMessage(getText("newhonor.changehonor.failed"));
                         }
                         NewHonor.doSomething(pd);
@@ -64,6 +65,9 @@ public class HonorCommand {
                         PlayerData pd = new PlayerData(user);
                         Optional<List<String>> honors = pd.getHonors();
                         if (honors.isPresent()) {
+                            if (honors.get().isEmpty()) {
+                                src.sendMessage(getText("newhonor.listhonors.empty"));
+                            }
                             PaginationList.Builder builder = PaginationList.builder()
                                     .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
                             String usingID = pd.getUsingHonorID();
@@ -98,7 +102,7 @@ public class HonorCommand {
                                         }
                                     })).submit(NewHonor.plugin);
                         } else {
-                            src.sendMessage(getText("newhonor.listhonors.empty"));
+                            src.sendMessage(of("unknown error"));
                         }
                     }).async().name("newhonor - List Player" + user.getName() + " Honors").submit(NewHonor.plugin);
                     return CommandResult.success();

@@ -131,6 +131,10 @@ public class PlayerData {
     }
 
     public void checkUsing() {
+        String usingID = getUsingHonorID();
+        if (usingID == null) {
+            return;
+        }
         if (!hasHonor(getUsingHonorID())) {
             Optional<List<String>> list = NewHonorConfig.getDefaultOwnHonors();
             if (list.isPresent()) {
