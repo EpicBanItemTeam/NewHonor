@@ -11,11 +11,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.function.Supplier;
+import java.util.*;
 
 /**
  * @author yinyangshi
@@ -40,7 +36,9 @@ public class NewHonorConfig {
         cfg.getNode(CHECK_UPDATE_NODE_PATH).setValue(cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false));
         cfg.getNode(LANGUAGE).setValue(cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
         try {
-            cfg.getNode(DEFAULT_HONORS).setValue(LIST_STRING_TYPE, getDefaultOwnHonors());
+            cfg.getNode(DEFAULT_HONORS).setValue(LIST_STRING_TYPE, getDefaultOwnHonors().orElseGet(() -> new ArrayList<String>() {{
+                add("default");
+            }}));
         } catch (ObjectMappingException e) {
             NewHonor.plugin.logger.error("default honor is error!", e);
         }
@@ -77,14 +75,12 @@ public class NewHonorConfig {
         }
     }
 
-    static List<String> getDefaultOwnHonors() {
+    static Optional<List<String>> getDefaultOwnHonors() {
         try {
-            return cfg.getNode(DEFAULT_HONORS).getValue(LIST_STRING_TYPE, (Supplier<List<String>>) () -> new ArrayList<String>() {{
-                add("default");
-            }});
+            return Optional.ofNullable(cfg.getNode(DEFAULT_HONORS).getValue(LIST_STRING_TYPE));
         } catch (ObjectMappingException e) {
             NewHonor.plugin.logger.error("default own honor is error!", e);
-            return Collections.emptyList();
+            return Optional.of(Collections.emptyList());
         }
     }
 

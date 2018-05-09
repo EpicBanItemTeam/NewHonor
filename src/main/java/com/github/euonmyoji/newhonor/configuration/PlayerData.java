@@ -122,21 +122,21 @@ public class PlayerData {
     }
 
     public boolean init() {
-        Collection<String> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
-        if (!defaultHonors.isEmpty()) {
-            defaultHonors.forEach(this::give);
-            return setUse(((List<String>) defaultHonors).get(0));
+        Optional<List<String>> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
+        if (defaultHonors.isPresent()) {
+            defaultHonors.get().forEach(this::give);
+            return setUse(defaultHonors.get().get(0));
         }
         return true;
     }
 
     public void checkUsing() {
         if (!hasHonor(getUsingHonorID())) {
-            List<String> list = NewHonorConfig.getDefaultOwnHonors();
-            if (list.isEmpty()) {
-                setUse("");
+            Optional<List<String>> list = NewHonorConfig.getDefaultOwnHonors();
+            if (list.isPresent()) {
+                setUse(list.get().get(0));
             } else {
-                setUse(list.get(0));
+                setUse("");
             }
         }
     }

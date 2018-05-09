@@ -25,7 +25,7 @@ public class HonorData {
         loader = HoconConfigurationLoader.builder()
                 .setPath(NewHonorConfig.cfgDir.resolve("honor.conf")).build();
         cfg = load();
-        NewHonorConfig.getDefaultOwnHonors().forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]")));
+        NewHonorConfig.getDefaultOwnHonors().ifPresent(strings -> strings.forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]"))));
         cfg.removeChild("created-honors");
         save();
     }
