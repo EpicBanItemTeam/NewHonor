@@ -26,7 +26,8 @@ public class NewHonorConfig {
     private static final String DATA_PATH_NODE = "data-dir-path";
     private static final String CHECK_UPDATE_NODE_PATH = "check-update";
     private static final String LANGUAGE = "lang";
-    private static final String DEFAULT_HONORS = "default-honors";
+    private static final String DEFAULT_HONORS = "honors";
+    private static final String DEFAULT_HONORS_SETTINGS = "default-honors-settings";
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
@@ -35,9 +36,10 @@ public class NewHonorConfig {
         cfg.getNode(DATA_PATH_NODE).setValue(cfg.getNode(DATA_PATH_NODE).getString("default"));
         cfg.getNode(CHECK_UPDATE_NODE_PATH).setValue(cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false));
         cfg.getNode(LANGUAGE).setValue(cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
+        cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").setValue(cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true));
         try {
-            if (cfg.getNode(DEFAULT_HONORS).isVirtual()) {
-                cfg.getNode(DEFAULT_HONORS).setValue(LIST_STRING_TYPE, new ArrayList<String>() {{
+            if (cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).isVirtual()) {
+                cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).setValue(LIST_STRING_TYPE, new ArrayList<String>() {{
                     add("default");
                 }});
             }
@@ -79,7 +81,8 @@ public class NewHonorConfig {
 
     static Optional<List<String>> getDefaultOwnHonors() {
         try {
-            return Optional.ofNullable(cfg.getNode(DEFAULT_HONORS).getValue(LIST_STRING_TYPE));
+            return cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true) ?
+                    Optional.ofNullable(cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).getValue(LIST_STRING_TYPE)) : Optional.empty();
         } catch (ObjectMappingException e) {
             NewHonor.plugin.logger.error("default own honor is error!", e);
             return Optional.of(Collections.emptyList());
