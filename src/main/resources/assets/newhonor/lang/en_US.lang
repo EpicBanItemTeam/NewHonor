@@ -34,10 +34,10 @@ newhonor.changehonor.unknownsource = [NewHonor]You are not a user
 
 newhonor.listhonors.title = %ownername%'s honors
 newhonor.listhonors.header = %ownername% is using %honor%&r，effects:%effectsID%
-newhonor.listhonors.contexts = honor:%honor%&r，effects:%effectsID%
-newhonor.listhonors.clickuse = click to use honor:%honor%&r
+newhonor.listhonors.contexts = honor:&r%honor%&r，effects:%effectsID%
+newhonor.listhonors.clickuse = click to use honor:&r%honor%&r
 newhonor.listhonors.empty = [NewHonor]You don't have any honor
 newhonor.listhonors.nopermission = [NewHonor]You don't have permission to list other user's honors
 
 newhonor.listcreatedhonors.title = all created honor
-newhonor.listcreatedhonors.contexts = honorid:%honorid%，text:%honor%&r，effectsID:%effectsID%
+newhonor.listcreatedhonors.contexts = honorid:%honorid%，text:&r%honor%&r，effectsID:%effectsID%
