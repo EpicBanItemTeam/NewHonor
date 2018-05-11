@@ -96,7 +96,7 @@ public class HonorCommand {
                             String usingID = pd.getUsingHonorID();
                             HonorData.getHonorRawText(usingID)
                                     .ifPresent(text -> builder.header(langBuilder("newhonor.listhonors.header")
-                                            .replace("%ownername", user.getName())
+                                            .replace("%ownername%", user.getName())
                                             .replace("%honor%", text)
                                             .replace("%effectsID%", HonorData.getEffectsID(usingID).orElse("null"))
                                             .build()));

@@ -1,5 +1,5 @@
 group = 'com.github.euonmyoji.newhonor'
-version = '1.6.2'
+version = '1.6.2.1'
 apply plugin: 'java'
 
 sourceCompatibility = '1.8'

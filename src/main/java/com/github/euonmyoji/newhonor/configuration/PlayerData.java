@@ -125,7 +125,7 @@ public class PlayerData {
         Optional<List<String>> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
         if (defaultHonors.isPresent()) {
             defaultHonors.get().forEach(this::give);
-            return setUse(defaultHonors.get().get(0));
+            return setUse(cfg.getNode("using").getString(defaultHonors.get().get(0)));
         }
         return true;
     }

@@ -45,7 +45,7 @@ import java.util.UUID;
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "1.6.2";
+    public static final String VERSION = "1.6.2.1";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
