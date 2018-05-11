@@ -44,7 +44,7 @@ public class HonorCommand {
             .arguments(GenericArguments.string(of("id")))
             .executor((src, args) -> {
                 if (src instanceof Player) {
-                    if (!src.hasPermission(ADMIN_PERMISSION)) {
+                    if (!src.hasPermission(ADMIN_PERMISSION) && useCD.containsKey(((Player) src).getUniqueId())) {
                         int cd = useCD.get(((Player) src).getUniqueId());
                         if (cd > 0) {
                             src.sendMessage(of("[NewHonor]You should wait " + cd + " second(s) to change use honor"));
