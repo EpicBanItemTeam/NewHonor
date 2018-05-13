@@ -260,14 +260,16 @@ public class NewHonor {
                     });
                 }
             }
-            Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(ScoreBoardManager::initPlayer);
             final String checkPrefix = "newhonor.honor.";
-            Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(player -> HonorData.getAllCreatedHonors().forEach(id -> {
-                if (player.hasPermission(checkPrefix + id)) {
-                    pd.noSaveGive(id);
-                }
-            }));
-            pd.save();
+            Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(player -> {
+                ScoreBoardManager.initPlayer(player);
+                HonorData.getAllCreatedHonors().forEach(id -> {
+                    if (player.hasPermission(checkPrefix + id)) {
+                        pd.noSaveGive(id);
+                    }
+                });
+                pd.save();
+            });
         }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
     }
 
