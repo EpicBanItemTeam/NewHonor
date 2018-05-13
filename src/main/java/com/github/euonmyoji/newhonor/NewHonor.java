@@ -268,7 +268,7 @@ public class NewHonor {
                 }
             }));
             pd.save();
-        }).async().name("NewHonor - do something with playerdata" + pd.hashCode()).submit(plugin);
+        }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
     }
 
 }
