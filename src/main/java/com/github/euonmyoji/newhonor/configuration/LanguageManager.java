@@ -52,8 +52,9 @@ public class LanguageManager {
 
     private static void init() {
         try {
-            if (Files.notExists(NewHonorConfig.cfgDir.resolve("lang"))) {
-                Files.createDirectory(NewHonorConfig.cfgDir.resolve("lang"));
+            Path langFolder = NewHonorConfig.cfgDir.resolve("lang");
+            if (Files.notExists(langFolder)) {
+                Files.createDirectory(langFolder);
             }
             try {
                 if (Files.notExists(langFile)) {

@@ -54,7 +54,7 @@ class EffectsCommand {
                         List<String> edArgs = ed.getEffectsList();
                         if (ed.anyMatchType(edArgs, type.get())) {
                             src.sendMessage(Text.of("[NewHonor]the effects is already exist!"));
-                        } else if (ed.set(edArgs, type.get().getId() + "," + level)) {
+                        } else if (ed.set(edArgs, type.get().getId() + EffectsData.CONNECT_KEY + level)) {
                             src.sendMessage(Text.of("[NewHonor]set the effects effect successful"));
                             return CommandResult.success();
                         } else {

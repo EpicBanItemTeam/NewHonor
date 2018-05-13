@@ -45,7 +45,7 @@ import java.util.UUID;
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "1.6.2.2";
+    public static final String VERSION = "1.7.0-alpha";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -241,25 +241,34 @@ public class NewHonor {
     }
 
     public static void doSomething(PlayerData pd) {
-        pd.checkUsing();
-        plugin.playerUsingEffectCache.remove(pd.getUUID());
-        plugin.honorTextCache.remove(pd.getUUID());
-        if (pd.isUseHonor()) {
-            pd.getHonor().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
-            if (pd.isEnableEffects()) {
-                HonorData.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> {
-                    try {
-                        EffectsData ed = new EffectsData(s);
-                        plugin.effectsCache.put(s, ed.getEffects());
-                        plugin.playerUsingEffectCache.put(pd.getUUID(), s);
-                        plugin.haloEffectsCache.put(s, ed.getHaloEffectList());
-                    } catch (ObjectMappingException e) {
-                        plugin.logger.warn("parse effects " + s + " failed", e);
-                    }
-                });
+        Task.builder().execute(() -> {
+            pd.checkUsing();
+            plugin.playerUsingEffectCache.remove(pd.getUUID());
+            plugin.honorTextCache.remove(pd.getUUID());
+            if (pd.isUseHonor()) {
+                pd.getHonor().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
+                if (pd.isEnableEffects()) {
+                    HonorData.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> {
+                        try {
+                            EffectsData ed = new EffectsData(s);
+                            plugin.effectsCache.put(s, ed.getEffects());
+                            plugin.playerUsingEffectCache.put(pd.getUUID(), s);
+                            plugin.haloEffectsCache.put(s, ed.getHaloEffectList());
+                        } catch (ObjectMappingException e) {
+                            plugin.logger.warn("parse effects " + s + " failed", e);
+                        }
+                    });
+                }
             }
-        }
-        Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(ScoreBoardManager::initPlayer);
+            Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(ScoreBoardManager::initPlayer);
+            final String checkPrefix = "newhonor.honor.";
+            Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(player -> HonorData.getAllCreatedHonors().forEach(id -> {
+                if (player.hasPermission(checkPrefix + id)) {
+                    pd.noSaveGive(id);
+                }
+            }));
+            pd.save();
+        }).async().name("NewHonor - do something with playerdata" + pd.hashCode()).submit(plugin);
     }
 
 }

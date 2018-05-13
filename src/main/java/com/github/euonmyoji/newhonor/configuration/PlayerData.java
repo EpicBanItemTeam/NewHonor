@@ -67,13 +67,17 @@ public class PlayerData {
     }
 
     public boolean give(String id) {
+        return noSaveGive(id) && save();
+    }
+
+    public boolean noSaveGive(String id) {
         Optional<List<String>> honors = getHonors();
         if (HonorData.getHonorText(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
             honors.get().add(id);
             cfg.getNode("honors").setValue(honors.get());
             Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
                     HonorData.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
-            return save();
+            return true;
         }
         return false;
     }
@@ -145,7 +149,7 @@ public class PlayerData {
         }
     }
 
-    private boolean save() {
+    public boolean save() {
         try {
             loader.save(cfg);
             return true;

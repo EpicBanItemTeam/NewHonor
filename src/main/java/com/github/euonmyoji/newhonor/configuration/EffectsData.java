@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  * @author yinyangshi
  */
 public class EffectsData {
+    public static final String CONNECT_KEY = ",";
     private static final Path PATH = NewHonorConfig.cfgDir.resolve("EffectsData");
     private CommentedConfigurationNode cfg;
     private final ConfigurationLoader<CommentedConfigurationNode> loader;
@@ -56,7 +57,7 @@ public class EffectsData {
     public List<PotionEffect> getEffects() throws ObjectMappingException {
         List<PotionEffect> list = new ArrayList<>();
         getEffectsList().forEach(s -> {
-            String[] args = s.split(",", 2);
+            String[] args = s.split(CONNECT_KEY, 2);
             Sponge.getRegistry().getType(PotionEffectType.class, args[0]).ifPresent(type ->
                     list.add(PotionEffect.builder()
                             .potionType(type)
@@ -109,7 +110,7 @@ public class EffectsData {
         //noinspection ConstantConditions 出问题一定是有人不会用:D
         return args.stream()
                 .map(s -> Sponge.getRegistry()
-                        .getType(PotionEffectType.class, s.split(",", 2)[0]).get())
+                        .getType(PotionEffectType.class, s.split(CONNECT_KEY, 2)[0]).get())
                 .anyMatch(type::equals);
     }
 

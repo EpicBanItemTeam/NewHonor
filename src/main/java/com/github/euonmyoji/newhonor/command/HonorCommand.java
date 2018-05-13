@@ -30,6 +30,7 @@ import static org.spongepowered.api.text.action.TextActions.showText;
 public class HonorCommand {
     private static String ADMIN_PERMISSION = "newhonor.admin";
     private static HashMap<UUID, Integer> useCD = new HashMap<>();
+    private static String ID_KEY = "id";
 
     static {
         Task.builder().execute(() -> new HashMap<>(useCD).forEach((uuid, integer) -> {
@@ -41,19 +42,17 @@ public class HonorCommand {
     }
 
     private static CommandSpec use = CommandSpec.builder()
-            .arguments(GenericArguments.string(of("id")))
+            .arguments(GenericArguments.string(of(ID_KEY)))
             .executor((src, args) -> {
                 if (src instanceof Player) {
                     if (!src.hasPermission(ADMIN_PERMISSION) && useCD.containsKey(((Player) src).getUniqueId())) {
                         int cd = useCD.get(((Player) src).getUniqueId());
-                        if (cd > 0) {
-                            src.sendMessage(of("[NewHonor]You should wait " + cd + " second(s) to change use honor"));
-                            return CommandResult.empty();
-                        }
+                        src.sendMessage(of("[NewHonor]You should wait " + cd + " second(s) to change use honor"));
+                        return CommandResult.empty();
                     }
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData((User) src);
-                        if (pd.setUse(args.<String>getOne(of("id")).orElseThrow(NoSuchFieldError::new))) {
+                        if (pd.setUse(args.<String>getOne(of(ID_KEY)).orElseThrow(NoSuchFieldError::new))) {
                             src.sendMessage(getText("newhonor.changehonor.succeed"));
                         } else {
                             pd.setUse("");
