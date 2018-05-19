@@ -17,7 +17,7 @@ class SettingsArgs {
                 if (src instanceof User) {
                     boolean use = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
                     PlayerData pd = new PlayerData((User) src);
-                    pd.usehonor(use);
+                    pd.setWhetherUseHonor(use);
                     NewHonor.doSomething(pd);
                     src.sendMessage(of("[NewHonor]change settings successful"));
                     return CommandResult.success();
@@ -33,7 +33,7 @@ class SettingsArgs {
                 if (src instanceof User) {
                     boolean enable = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
                     PlayerData pd = new PlayerData((User) src);
-                    pd.enableEffects(enable);
+                    pd.setWhetherEnableEffects(enable);
                     NewHonor.doSomething(pd);
                     src.sendMessage(of("[NewHonor]change settings successful"));
                     return CommandResult.success();

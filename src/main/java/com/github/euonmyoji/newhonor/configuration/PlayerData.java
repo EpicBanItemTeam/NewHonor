@@ -23,10 +23,6 @@ public class PlayerData {
     private final TypeToken<String> type = TypeToken.of(String.class);
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
     public PlayerData(User user) {
         uuid = user.getUniqueId();
         loader = HoconConfigurationLoader.builder()
@@ -41,22 +37,23 @@ public class PlayerData {
         cfg = load();
     }
 
-    private CommentedConfigurationNode load() {
-        try {
-            return loader.load();
-        } catch (IOException e) {
-            return loader.createEmptyNode(ConfigurationOptions.defaults());
+    public boolean init() {
+        Optional<List<String>> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
+        if (defaultHonors.isPresent()) {
+            defaultHonors.get().forEach(this::giveHonor);
+            return setUseHonor(cfg.getNode("using").getString(defaultHonors.get().get(0)));
         }
+        return true;
     }
 
     public boolean isUseHonor() {
         return cfg.getNode("usehonor").getBoolean(true);
     }
 
-    public boolean take(String... ids) {
+    public boolean takeHonor(String... ids) {
         boolean took = false;
         for (String id : ids) {
-            Optional<List<String>> honors = getHonors();
+            Optional<List<String>> honors = getOwnHonors();
             if (honors.isPresent() && honors.get().stream().anyMatch(id::equals)) {
                 honors.get().remove(id);
                 cfg.getNode("honors").setValue(honors.get());
@@ -66,12 +63,12 @@ public class PlayerData {
         return took && save();
     }
 
-    public boolean give(String id) {
+    public boolean giveHonor(String id) {
         return noSaveGive(id) && save();
     }
 
     public boolean noSaveGive(String id) {
-        Optional<List<String>> honors = getHonors();
+        Optional<List<String>> honors = getOwnHonors();
         if (HonorData.getHonorText(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
             honors.get().add(id);
             cfg.getNode("honors").setValue(honors.get());
@@ -82,12 +79,12 @@ public class PlayerData {
         return false;
     }
 
-    public void usehonor(boolean use) {
+    public void setWhetherUseHonor(boolean use) {
         cfg.getNode("usehonor").setValue(use);
         save();
     }
 
-    public void enableEffects(boolean enable) {
+    public void setWhetherEnableEffects(boolean enable) {
         cfg.getNode("enableEffects").setValue(enable);
         save();
     }
@@ -96,23 +93,19 @@ public class PlayerData {
         return cfg.getNode("enableEffects").getBoolean(true);
     }
 
-    public boolean setUse(String id) {
-        if (hasHonor(id) && HonorData.getHonorText(id).isPresent()) {
+    public boolean setUseHonor(String id) {
+        if (isOwnHonor(id) && HonorData.getHonorText(id).isPresent()) {
             cfg.getNode("using").setValue(id);
             return save();
         }
         return false;
     }
 
-    private boolean hasHonor(String id) {
-        return getHonors().orElse(Collections.emptyList()).stream().anyMatch(s -> Objects.equals(s, id));
-    }
-
     public String getUsingHonorID() {
         return cfg.getNode("using").getString();
     }
 
-    public Optional<List<String>> getHonors() {
+    public Optional<List<String>> getOwnHonors() {
         try {
             return Optional.of(cfg.getNode("honors").getList(type, ArrayList::new));
         } catch (ObjectMappingException e) {
@@ -121,30 +114,17 @@ public class PlayerData {
         }
     }
 
-    public Optional<Text> getHonor() {
-        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorData::getHonorText);
-    }
-
-    public boolean init() {
-        Optional<List<String>> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
-        if (defaultHonors.isPresent()) {
-            defaultHonors.get().forEach(this::give);
-            return setUse(cfg.getNode("using").getString(defaultHonors.get().get(0)));
-        }
-        return true;
-    }
-
-    public void checkUsing() {
+    public void checkUsingHonor() {
         String usingID = getUsingHonorID();
         if (usingID == null) {
             return;
         }
-        if (!hasHonor(getUsingHonorID())) {
+        if (!isOwnHonor(getUsingHonorID())) {
             Optional<List<String>> list = NewHonorConfig.getDefaultOwnHonors();
             if (list.isPresent()) {
-                setUse(list.get().get(0));
+                setUseHonor(list.get().get(0));
             } else {
-                setUse("");
+                setUseHonor("");
             }
         }
     }
@@ -157,5 +137,26 @@ public class PlayerData {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Optional<Text> getUsingHonorText() {
+        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorData::getHonorText);
+    }
+
+    public UUID getUUID() {
+        return this.uuid;
+    }
+
+
+    private CommentedConfigurationNode load() {
+        try {
+            return loader.load();
+        } catch (IOException e) {
+            return loader.createEmptyNode(ConfigurationOptions.defaults());
+        }
+    }
+
+    private boolean isOwnHonor(String id) {
+        return getOwnHonors().orElse(Collections.emptyList()).stream().anyMatch(s -> Objects.equals(s, id));
     }
 }

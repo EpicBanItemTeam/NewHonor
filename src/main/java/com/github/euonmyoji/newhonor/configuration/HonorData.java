@@ -30,7 +30,7 @@ public class HonorData {
         save();
     }
 
-    public static boolean effects(String id, String effectsID) {
+    public static boolean setHonorEffects(String id, String effectsID) {
         cfg.getNode(id, "effects").setValue(effectsID);
         return save();
     }
@@ -39,7 +39,7 @@ public class HonorData {
         return Optional.ofNullable(cfg.getNode(id, "effects").getString(null));
     }
 
-    public static boolean add(String id, String honor) {
+    public static boolean addHonor(String id, String honor) {
         if (isVirtual(id)) {
             cfg.getNode(id, "value").setValue(honor);
             return save();
@@ -55,7 +55,7 @@ public class HonorData {
         return Optional.ofNullable(cfg.getNode(id, "value").getString(null));
     }
 
-    public static boolean set(String id, String honor) {
+    public static boolean setHonor(String id, String honor) {
         cfg.getNode(id, "value").setValue(honor);
         return save();
     }
@@ -64,7 +64,7 @@ public class HonorData {
         cfg.getNode(id, "value").setValue(honor);
     }
 
-    public static boolean delete(String id) {
+    public static boolean deleteHonor(String id) {
         return cfg.removeChild(id) && save();
     }
 

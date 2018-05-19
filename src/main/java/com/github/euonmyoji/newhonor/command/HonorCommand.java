@@ -52,10 +52,10 @@ public class HonorCommand {
                     }
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData((User) src);
-                        if (pd.setUse(args.<String>getOne(of(ID_KEY)).orElseThrow(NoSuchFieldError::new))) {
+                        if (pd.setUseHonor(args.<String>getOne(of(ID_KEY)).orElseThrow(NoSuchFieldError::new))) {
                             src.sendMessage(getText("newhonor.changehonor.succeed"));
                         } else {
-                            pd.setUse("");
+                            pd.setUseHonor("");
                             pd.init();
                             src.sendMessage(getText("newhonor.changehonor.failed"));
                         }
@@ -85,7 +85,7 @@ public class HonorCommand {
                 if (execute) {
                     Task.builder().execute(() -> {
                         PlayerData pd = new PlayerData(user);
-                        Optional<List<String>> honors = pd.getHonors();
+                        Optional<List<String>> honors = pd.getOwnHonors();
                         if (honors.isPresent()) {
                             if (honors.get().isEmpty()) {
                                 src.sendMessage(getText("newhonor.listhonors.empty"));
@@ -120,7 +120,7 @@ public class HonorCommand {
                             Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
                                     .execute(() -> honors.get().forEach(s -> {
                                         if (!HonorData.getHonorRawText(s).isPresent()) {
-                                            pd.take(s);
+                                            pd.takeHonor(s);
                                         }
                                     })).submit(NewHonor.plugin);
                         } else {

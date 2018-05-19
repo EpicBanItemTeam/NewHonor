@@ -47,7 +47,7 @@ class AdminCommand {
                 Task.builder().execute(() -> users.forEach(user -> {
                     PlayerData pd = new PlayerData(user);
                     ids.forEach(id -> {
-                        if (pd.give(id)) {
+                        if (pd.giveHonor(id)) {
                             src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " successful"));
                             plugin.logger.info(src.getName() + "gave " + user.getName() + " honor: " + id + " successful");
                         } else {
@@ -70,7 +70,7 @@ class AdminCommand {
                     users.forEach(user -> {
                         PlayerData pd = new PlayerData(user);
                         ids.forEach(id -> {
-                            if (pd.take(id)) {
+                            if (pd.takeHonor(id)) {
                                 src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " successful"));
                                 plugin.logger.info(src.getName() + "took " + user.getName() + " honor:" + id + " successful");
                             } else {
@@ -108,7 +108,7 @@ class AdminCommand {
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
-                if (HonorData.set(id, honor)) {
+                if (HonorData.setHonor(id, honor)) {
                     plugin.logger.info(src.getName() + "set a honor" + id);
                     src.sendMessage(of("[NewHonor]set a honor successful(start refresh)"));
                     refreshCache(src);
@@ -123,7 +123,7 @@ class AdminCommand {
             .arguments(GenericArguments.string(of("honorID")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
-                if (HonorData.delete(id)) {
+                if (HonorData.deleteHonor(id)) {
                     plugin.logger.info(src.getName() + "deleted a honor" + id);
                     src.sendMessage(of("[NewHonor]deleted a honor successful(start refresh)"));
                     refreshCache(src);
@@ -140,7 +140,7 @@ class AdminCommand {
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
-                if (HonorData.add(id, honor)) {
+                if (HonorData.addHonor(id, honor)) {
                     plugin.logger.info(src.getName() + "add a honor :" + id);
                     src.sendMessage(of("[NewHonor]add a honor successful"));
                     return CommandResult.success();
@@ -156,7 +156,7 @@ class AdminCommand {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String effectsID = args.<String>getOne(of("effectsID")).orElseThrow(NoSuchFieldError::new);
                 if (Files.exists(EffectsData.getPath(effectsID))) {
-                    if (HonorData.effects(id, effectsID)) {
+                    if (HonorData.setHonorEffects(id, effectsID)) {
                         src.sendMessage(of("[NewHonor]set honor effects successful"));
                         return CommandResult.success();
                     }

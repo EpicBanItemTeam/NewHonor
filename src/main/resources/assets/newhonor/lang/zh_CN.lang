@@ -26,11 +26,11 @@ newhonor.command.describe.effects.listAllCreatedEffects = &6列出所有创建�
 newhonor.command.hovermessage.list = &a点击显示自己拥有的头衔
 newhonor.command.hovermessage.settings = &a点击进入修改设置界面
 newhonor.hovermessage.settings.usehonor = &6左键后输入&atrue&6或者&cfalse&6更改设置
-newhonor.hovermessage.settings.enableeffects = &6左键后输入&6true&6或者&6false&6更改设置
+newhonor.hovermessage.settings.enableeffects = &6左键后输入&atrue&6或者&cfalse&6更改设置
 
-newhonor.changehonor.succeed = &e[&b头街插件&e] &a修改使用头衔成功
-newhonor.changehonor.failed = &e[&b头街插件&e] &c修改使用头衔失败，已将头衔改成默认头衔。
-newhonor.changehonor.unknownsource = &e[&b头街插件&e] &c未知发送者
+newhonor.changehonor.succeed = &e[&b头衔插件&e] &a修改使用头衔成功
+newhonor.changehonor.failed = &e[&b头衔插件&e] &c修改使用头衔失败，已将头衔改成默认头衔。
+newhonor.changehonor.unknownsource = &e[&b头衔插件&e] &c未知发送者
 
 newhonor.listhonors.title = &e%ownername% &a拥有的头衔
 newhonor.listhonors.header = &e%ownername% &a正在使用的头衔 &r%honor%&r &a，药水效果组: &d%effectsID%
@@ -40,4 +40,4 @@ newhonor.listhonors.empty = &e[&b头衔插件&e] &e你目前没有任何头衔
 newhonor.listhonors.nopermission = &e[&b头衔插件&e] &c你目前没有权限 &6newhonor.admin &c来查看别人拥有的头衔
 
 newhonor.listcreatedhonors.title = &a&l所有创建的头衔
-newhonor.listcreatedhonors.contexts = &e头衔id: &6%honorid% &a，&a头衔: &r%honor%&r &a，&3药水效果组: &d%effectsID%
+newhonor.listcreatedhonors.contexts = &e头衔id: &6%honorid% &a，头衔: &r%honor%&r &a，&3药水效果组: &d%effectsID%

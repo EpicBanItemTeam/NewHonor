@@ -45,7 +45,7 @@ import java.util.UUID;
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "1.7.0";
+    public static final String VERSION = "1.7.1";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -109,7 +109,7 @@ public class NewHonor {
     private void checkUpdate() {
         Task.builder().async().name("NewHonor - check for update").execute(() -> {
             try {
-                URL url = new URL("https://api.com.github.com/repos/euOnmyoji/NewHonor-SpongePlugin/releases");
+                URL url = new URL("https://api.github.com/repos/euOnmyoji/NewHonor-plugin-for-sponge/releases");
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.getResponseCode();
@@ -180,7 +180,6 @@ public class NewHonor {
             doSomething(pd);
         }).async().delayTicks(20).name("newhonor - init Player" + p.getName()).submit(this);
         ScoreBoardManager.initPlayer(p);
-
     }
 
     @Listener
@@ -242,11 +241,11 @@ public class NewHonor {
 
     public static void doSomething(PlayerData pd) {
         Task.builder().execute(() -> {
-            pd.checkUsing();
+            pd.checkUsingHonor();
             plugin.playerUsingEffectCache.remove(pd.getUUID());
             plugin.honorTextCache.remove(pd.getUUID());
             if (pd.isUseHonor()) {
-                pd.getHonor().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
+                pd.getUsingHonorText().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
                 if (pd.isEnableEffects()) {
                     HonorData.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> {
                         try {
