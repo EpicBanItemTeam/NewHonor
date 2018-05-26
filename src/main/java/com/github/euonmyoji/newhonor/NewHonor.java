@@ -100,6 +100,7 @@ public class NewHonor {
                     .setValue(NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
             NewHonorConfig.save();
             LanguageManager.reload();
+            SqlManager.init();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -149,7 +150,6 @@ public class NewHonor {
                 () -> NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean() ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> haloEffectsCache.size() > 0 ?
                 "true" : "false"));
-        SqlManager.init();
     }
 
     @Listener

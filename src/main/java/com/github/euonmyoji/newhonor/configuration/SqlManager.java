@@ -19,10 +19,10 @@ import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.cfg;
 public class SqlManager {
     static boolean enable = false;
     private static final String DATA_TABLE_NAME = "NewHonorPlayerData";
-    private static String address = "127.0.0.1";
-    private static int port = 3306;
-    private static String database = "mysql";
-    private static String user = "root";
+    private static String address;
+    private static int port;
+    private static String database;
+    private static String user;
     private static String password;
     private static CommentedConfigurationNode node = cfg.getNode("SQL-settings");
     private static SqlService sql;
@@ -52,7 +52,7 @@ public class SqlManager {
         password = node.getNode("password").getString("password");
         if (enable) {
             Task.builder().execute(() -> {
-                try (Statement s = getDataSource(getURL()).getConnection(user, password).createStatement()) {
+                try (Statement s = getDataSource(getURL()).getConnection().createStatement()) {
                     s.execute("use " + database);
                     s.execute("CREATE TABLE IF NOT EXISTS " + DATA_TABLE_NAME + "(UUID varchar(36) not null," +
                             USING_KEY + " varchar(64)," +
@@ -74,7 +74,8 @@ public class SqlManager {
     }
 
     private static String getURL() {
-        return "jdbc:mysql://" + address + ":" + port + "/" + database + "&useUnicode=true&characterEncoding=UTF-8";
+        return String.format("jdbc:mysql://%s:%s/%s?user=%s&password=%s&useUnicode=true&characterEncoding=UTF-8",
+                address, port, database, user, password);
     }
 
     public static class SqlPlayerData implements PlayerData, AutoCloseable {
@@ -105,6 +106,10 @@ public class SqlManager {
             this.uuid = uuid;
             new Thread(() -> {
                 try {
+                    try (PreparedStatement statement2 = getConnection().prepareStatement("INSERT INTO " + DATA_TABLE_NAME + " (UUID) VALUES('" + uuid + "');")) {
+                        statement2.execute();
+                    } catch (Exception ignore) {
+                    }
                     PreparedStatement statement = getConnection().prepareStatement("select * from " + DATA_TABLE_NAME + " where UUID = '" + uuid + "'");
                     result = statement.executeQuery();
                     closeables.add(statement);
@@ -238,7 +243,7 @@ public class SqlManager {
 
         private static Connection getConnection() throws SQLException {
             if (con == null || con.isClosed()) {
-                con = getDataSource(getURL()).getConnection(user, password);
+                con = getDataSource(getURL()).getConnection();
             }
             time_out = 60;
             return con;
