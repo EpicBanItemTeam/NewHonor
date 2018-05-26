@@ -10,6 +10,9 @@ jar {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.Main'
     }
 
+    from {
+        configurations.compile.copy(org.javalite.activejdbc.Model as Closure)
+    }
 }
 
 repositories {
