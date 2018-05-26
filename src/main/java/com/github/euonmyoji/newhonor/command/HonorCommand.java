@@ -13,6 +13,7 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -51,17 +52,22 @@ public class HonorCommand {
                         return CommandResult.empty();
                     }
                     Task.builder().execute(() -> {
-                        PlayerData pd = new PlayerData((User) src);
-                        if (pd.setUseHonor(args.<String>getOne(of(ID_KEY)).orElseThrow(NoSuchFieldError::new))) {
-                            src.sendMessage(getText("newhonor.changehonor.succeed"));
-                        } else {
-                            pd.setUseHonor("");
-                            pd.init();
-                            src.sendMessage(getText("newhonor.changehonor.failed"));
-                        }
-                        NewHonor.doSomething(pd);
-                        if (!src.hasPermission(ADMIN_PERMISSION)) {
-                            useCD.put(((Player) src).getUniqueId(), 9);
+                        try {
+                            PlayerData pd = PlayerData.get((User) src);
+                            if (pd.setUseHonor(args.<String>getOne(of(ID_KEY)).orElseThrow(NoSuchFieldError::new))) {
+                                src.sendMessage(getText("newhonor.changehonor.succeed"));
+                            } else {
+                                pd.setUseHonor("");
+                                pd.init();
+                                src.sendMessage(getText("newhonor.changehonor.failed"));
+                            }
+                            NewHonor.doSomething(pd);
+                            if (!src.hasPermission(ADMIN_PERMISSION)) {
+                                useCD.put(((Player) src).getUniqueId(), 9);
+                            }
+                        } catch (Exception e) {
+                            src.sendMessage(getText("[NewHonor] error!"));
+                            e.printStackTrace();
                         }
                     }).async().name("newhonor - Player Change Using Honor").submit(NewHonor.plugin);
                     return CommandResult.success();
@@ -84,47 +90,57 @@ public class HonorCommand {
                 boolean execute = typedUser ? pass : user != null;
                 if (execute) {
                     Task.builder().execute(() -> {
-                        PlayerData pd = new PlayerData(user);
-                        Optional<List<String>> honors = pd.getOwnHonors();
-                        if (honors.isPresent()) {
-                            if (honors.get().isEmpty()) {
-                                src.sendMessage(getText("newhonor.listhonors.empty"));
+                        try {
+                            PlayerData pd = PlayerData.get(user);
+                            Optional<List<String>> honors = pd.getOwnHonors();
+                            if (honors.isPresent()) {
+                                if (honors.get().isEmpty()) {
+                                    src.sendMessage(getText("newhonor.listhonors.empty"));
+                                }
+                                PaginationList.Builder builder = PaginationList.builder()
+                                        .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
+                                String usingID = pd.getUsingHonorID();
+                                HonorData.getHonorRawText(usingID)
+                                        .ifPresent(text -> builder.header(langBuilder("newhonor.listhonors.header")
+                                                .replace("%ownername%", user.getName())
+                                                .replace("%honor%", text)
+                                                .replace("%effectsID%", HonorData.getEffectsID(usingID).orElse("null"))
+                                                .build()));
+                                List<Text> texts = honors.get().stream()
+                                        .map(id -> HonorData.getHonorRawText(id).map(honor -> Text.builder()
+                                                //显示头衔 药水效果组
+                                                .append(langBuilder("newhonor.listhonors.contexts")
+                                                        .replace("%honorid%", id)
+                                                        .replace("%honor%", honor)
+                                                        .replace("%effectsID%", HonorData.getEffectsID(id).orElse("null"))
+                                                        .build())
+                                                .onHover(showText(langBuilder("newhonor.listhonors.clickuse")
+                                                        .replace("%honor%", honor)
+                                                        .replace("%honorid%", id)
+                                                        .build()))
+                                                .onClick(runCommand("/honor use " + id))
+                                                .build()))
+                                        .filter(Optional::isPresent)
+                                        .map(Optional::get)
+                                        .collect(Collectors.toList());
+                                builder.contents(texts).build().sendTo(src);
+                                Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
+                                        .execute(() -> honors.get().forEach(s -> {
+                                            if (!HonorData.getHonorRawText(s).isPresent()) {
+                                                try {
+                                                    pd.takeHonor(s);
+                                                } catch (SQLException e) {
+                                                    src.sendMessage(getText("[NewHonor] error!"));
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        })).submit(NewHonor.plugin);
+                            } else {
+                                src.sendMessage(of("unknown error"));
                             }
-                            PaginationList.Builder builder = PaginationList.builder()
-                                    .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
-                            String usingID = pd.getUsingHonorID();
-                            HonorData.getHonorRawText(usingID)
-                                    .ifPresent(text -> builder.header(langBuilder("newhonor.listhonors.header")
-                                            .replace("%ownername%", user.getName())
-                                            .replace("%honor%", text)
-                                            .replace("%effectsID%", HonorData.getEffectsID(usingID).orElse("null"))
-                                            .build()));
-                            List<Text> texts = honors.get().stream()
-                                    .map(id -> HonorData.getHonorRawText(id).map(honor -> Text.builder()
-                                            //显示头衔 药水效果组
-                                            .append(langBuilder("newhonor.listhonors.contexts")
-                                                    .replace("%honorid%", id)
-                                                    .replace("%honor%", honor)
-                                                    .replace("%effectsID%", HonorData.getEffectsID(id).orElse("null"))
-                                                    .build())
-                                            .onHover(showText(langBuilder("newhonor.listhonors.clickuse")
-                                                    .replace("%honor%", honor)
-                                                    .replace("%honorid%", id)
-                                                    .build()))
-                                            .onClick(runCommand("/honor use " + id))
-                                            .build()))
-                                    .filter(Optional::isPresent)
-                                    .map(Optional::get)
-                                    .collect(Collectors.toList());
-                            builder.contents(texts).build().sendTo(src);
-                            Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
-                                    .execute(() -> honors.get().forEach(s -> {
-                                        if (!HonorData.getHonorRawText(s).isPresent()) {
-                                            pd.takeHonor(s);
-                                        }
-                                    })).submit(NewHonor.plugin);
-                        } else {
-                            src.sendMessage(of("unknown error"));
+                        } catch (Exception e) {
+                            src.sendMessage(getText("[NewHonor] error!"));
+                            e.printStackTrace();
                         }
                     }).async().name("newhonor - List Player" + user.getName() + " Honors").submit(NewHonor.plugin);
                     return CommandResult.success();

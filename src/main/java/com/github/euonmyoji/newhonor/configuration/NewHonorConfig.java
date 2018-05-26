@@ -17,9 +17,9 @@ import java.util.*;
  * @author yinyangshi
  */
 public class NewHonorConfig {
+    static CommentedConfigurationNode cfg;
     private static final TypeToken<List<String>> LIST_STRING_TYPE = new TypeToken<List<String>>() {
     };
-    private static CommentedConfigurationNode cfg;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     public static Path cfgDir;
     public static Path defaultCfgDir;
@@ -46,6 +46,7 @@ public class NewHonorConfig {
         } catch (ObjectMappingException e) {
             NewHonor.plugin.logger.error("Exception while set default has honors!", e);
         }
+        SqlManager.init();
         save();
         reload();
     }
@@ -64,6 +65,7 @@ public class NewHonorConfig {
         String path = cfg.getNode(DATA_PATH_NODE).getString("default");
         cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
         NewHonor.plugin.logger.info("using data dir path:" + cfgDir);
+        SqlManager.reloadSQLInfo();
     }
 
     public static CommentedConfigurationNode getCfg() {

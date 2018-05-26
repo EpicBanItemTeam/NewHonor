@@ -8,6 +8,7 @@ import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
+import java.sql.SQLException;
 import java.util.ConcurrentModificationException;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +35,8 @@ class ScoreBoardManager {
             Task.builder().execute(() -> {
                 try {
                     execute(p);
+                } catch (SQLException e) {
+                    NewHonor.plugin.logger.error("error about data!", e);
                 } catch (ConcurrentModificationException e) {
                     Task.builder().execute(() -> {
                     }).name("NewHonor - execute " + p.getName()).submit(NewHonor.plugin);
@@ -44,9 +47,9 @@ class ScoreBoardManager {
 
     }
 
-    private static void execute(Player p) throws ConcurrentModificationException {
+    private static void execute(Player p) throws ConcurrentModificationException, SQLException {
         UUID uuid = p.getUniqueId();
-        PlayerData pd = new PlayerData(p);
+        PlayerData pd = PlayerData.get(p);
         String honorID = pd.getUsingHonorID();
         if (honorID == null) {
             return;

@@ -4,7 +4,6 @@ import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.*;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
-import com.github.euonmyoji.newhonor.sql.SqlManager;
 import com.github.euonmyoji.newhonor.util.Util;
 import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
@@ -34,6 +33,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -140,7 +140,7 @@ public class NewHonor {
                     if (effectsCache.containsKey(s)) {
                         Util.offerEffectsSafely(player, effectsCache.get(s));
                     }
-                }))).name("newhonor - givePlayerEffects").async().intervalTicks(15).submit(this);
+                }))).name("newhonor - givePlayerEffects").intervalTicks(15).submit(this);
         logger.info("NewHonor author email:1418780411@qq.com");
         choosePluginMode();
         metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> effectsCache.size() > 0 ? "true" : "false"));
@@ -155,21 +155,28 @@ public class NewHonor {
     @Listener
     public void onClientConnectionJoin(ClientConnectionEvent.Join event) {
         Player p = event.getTargetEntity();
-        PlayerData pd = new PlayerData(p);
         Task.builder().execute(() -> {
-            if (!pd.init()) {
-                logger.error("init Player" + p.getName() + "," + p.getUniqueId() + "Data failed");
+            try {
+                PlayerData pd = PlayerData.get(p);
+                pd.init();
+                doSomething(pd);
+            } catch (Exception e) {
+                logger.error("error while init player", e);
             }
-            doSomething(pd);
-        }).async().delayTicks(20).name("newhonor - init Player" + p.getName()).submit(this);
-        ScoreBoardManager.initPlayer(p);
+            ScoreBoardManager.initPlayer(p);
+        }).async().name("newhonor - init Player" + p.getName()).submit(this);
     }
 
     @Listener
     public void onPlayerDie(RespawnPlayerEvent event) {
         Player p = event.getTargetEntity();
-        PlayerData pd = new PlayerData(p);
-        Task.builder().execute(() -> doSomething(pd)).async().name("newhonor - (die) init Player" + p.getName()).submit(this);
+        Task.builder().execute(() -> {
+            try {
+                doSomething(PlayerData.get(p));
+            } catch (SQLException e) {
+                logger.error("SQLE while init player", e);
+            }
+        }).async().name("newhonor - (die) init Player" + p.getName()).submit(this);
     }
 
 
@@ -224,33 +231,40 @@ public class NewHonor {
 
     public static void doSomething(PlayerData pd) {
         Task.builder().execute(() -> {
-            pd.checkUsingHonor();
-            plugin.playerUsingEffectCache.remove(pd.getUUID());
-            plugin.honorTextCache.remove(pd.getUUID());
-            if (pd.isUseHonor()) {
-                pd.getUsingHonorText().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
-                if (pd.isEnableEffects()) {
-                    HonorData.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> {
-                        try {
-                            EffectsData ed = new EffectsData(s);
-                            plugin.effectsCache.put(s, ed.getEffects());
-                            plugin.playerUsingEffectCache.put(pd.getUUID(), s);
-                            plugin.haloEffectsCache.put(s, ed.getHaloEffectList());
-                        } catch (ObjectMappingException e) {
-                            plugin.logger.warn("parse effects " + s + " failed", e);
-                        }
-                    });
+            try {
+                pd.checkUsingHonor();
+                plugin.playerUsingEffectCache.remove(pd.getUUID());
+                plugin.honorTextCache.remove(pd.getUUID());
+                if (pd.isUseHonor()) {
+                    pd.getUsingHonorText().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
+                    if (pd.isEnableEffects()) {
+                        HonorData.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> {
+                            try {
+                                EffectsData ed = new EffectsData(s);
+                                plugin.effectsCache.put(s, ed.getEffects());
+                                plugin.playerUsingEffectCache.put(pd.getUUID(), s);
+                                plugin.haloEffectsCache.put(s, ed.getHaloEffectList());
+                            } catch (ObjectMappingException e) {
+                                plugin.logger.warn("parse effects " + s + " failed", e);
+                            }
+                        });
+                    }
                 }
+            } catch (Exception e) {
+                plugin.logger.error("error about data!", e);
             }
             final String checkPrefix = "newhonor.honor.";
             Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(player -> {
                 ScoreBoardManager.initPlayer(player);
                 HonorData.getAllCreatedHonors().forEach(id -> {
                     if (player.hasPermission(checkPrefix + id)) {
-                        pd.noSaveGive(id);
+                        try {
+                            pd.giveHonor(id);
+                        } catch (Exception e) {
+                            plugin.logger.error("error about data!", e);
+                        }
                     }
                 });
-                pd.save();
             });
         }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
     }

@@ -15,7 +15,9 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
 
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.github.euonmyoji.newhonor.configuration.LanguageManager.getText;
@@ -45,16 +47,26 @@ class AdminCommand {
                     return CommandResult.empty();
                 }
                 Task.builder().execute(() -> users.forEach(user -> {
-                    PlayerData pd = new PlayerData(user);
-                    ids.forEach(id -> {
-                        if (pd.giveHonor(id)) {
-                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " successful"));
-                            plugin.logger.info(src.getName() + "gave " + user.getName() + " honor: " + id + " successful");
-                        } else {
-                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed"));
-                            plugin.logger.info(src.getName() + "gave " + user.getName() + " honor: " + id + " failed");
-                        }
-                    });
+                    try {
+                        PlayerData pd = PlayerData.get(user);
+                        ids.forEach(id -> {
+                            try {
+                                if (pd.giveHonor(id)) {
+                                    src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " successful"));
+                                    plugin.logger.info(src.getName() + "gave " + user.getName() + " honor: " + id + " successful");
+                                } else {
+                                    src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed"));
+                                    plugin.logger.info(src.getName() + "gave " + user.getName() + " honor: " + id + " failed");
+                                }
+                            } catch (Exception e) {
+                                src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed(error!)"));
+                                e.printStackTrace();
+                            }
+                        });
+                    } catch (Exception e) {
+                        src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + " failed(error!)"));
+                        e.printStackTrace();
+                    }
                 })).async().name("newhonor - Give Users Honors").submit(NewHonor.plugin);
                 return CommandResult.success();
             })
@@ -68,16 +80,26 @@ class AdminCommand {
                 Collection<String> ids = args.getAll(of("id"));
                 Task.builder().execute(() -> {
                     users.forEach(user -> {
-                        PlayerData pd = new PlayerData(user);
-                        ids.forEach(id -> {
-                            if (pd.takeHonor(id)) {
-                                src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " successful"));
-                                plugin.logger.info(src.getName() + "took " + user.getName() + " honor:" + id + " successful");
-                            } else {
-                                src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " failed"));
-                                plugin.logger.info(src.getName() + "took " + user.getName() + " honor:" + id + " failed");
-                            }
-                        });
+                        try {
+                            PlayerData pd = PlayerData.get(user);
+                            ids.forEach(id -> {
+                                try {
+                                    if (pd.takeHonor(id)) {
+                                        src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " successful"));
+                                        plugin.logger.info(src.getName() + "took " + user.getName() + " honor:" + id + " successful");
+                                    } else {
+                                        src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " failed"));
+                                        plugin.logger.info(src.getName() + "took " + user.getName() + " honor:" + id + " failed");
+                                    }
+                                } catch (Exception e) {
+                                    src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed(error!)"));
+                                    e.printStackTrace();
+                                }
+                            });
+                        } catch (Exception e) {
+                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + " failed(error!)"));
+                            e.printStackTrace();
+                        }
                     });
                     refreshCache(src);
                 }).async().name("newhonor - take users honors").submit(NewHonor.plugin);
@@ -189,7 +211,15 @@ class AdminCommand {
             src.sendMessage(of("[NewHonor]start refresh"));
             NewHonor.clearCaches();
             Sponge.getServer().getOnlinePlayers().stream().map(Player::getUniqueId)
-                    .map(PlayerData::new)
+                    .map(uuid -> {
+                        try {
+                            return PlayerData.get(uuid);
+                        } catch (SQLException e) {
+                            NewHonor.plugin.logger.error("error about sql!", e);
+                        }
+                        return null;
+                    })
+                    .filter(Objects::nonNull)
                     .forEach(NewHonor::doSomething);
             src.sendMessage(of("[NewHonor]refresh successful"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);

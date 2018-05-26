@@ -15,12 +15,17 @@ class SettingsArgs {
             .arguments(GenericArguments.bool(of("boolean")))
             .executor((src, args) -> {
                 if (src instanceof User) {
-                    boolean use = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
-                    PlayerData pd = new PlayerData((User) src);
-                    pd.setWhetherUseHonor(use);
-                    NewHonor.doSomething(pd);
-                    src.sendMessage(of("[NewHonor]change settings successful"));
-                    return CommandResult.success();
+                    try {
+                        boolean use = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
+                        PlayerData pd = PlayerData.get(((User) src));
+                        pd.setWhetherUseHonor(use);
+                        NewHonor.doSomething(pd);
+                        src.sendMessage(of("[NewHonor]change settings successful"));
+                        return CommandResult.success();
+                    } catch (Exception e) {
+                        src.sendMessage(of("[NewHonor]error!"));
+                        e.printStackTrace();
+                    }
                 }
                 src.sendMessage(of("[NewHonor]You are not a user"));
                 return CommandResult.empty();
@@ -31,12 +36,18 @@ class SettingsArgs {
             .arguments(GenericArguments.bool(of("boolean")))
             .executor((src, args) -> {
                 if (src instanceof User) {
-                    boolean enable = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
-                    PlayerData pd = new PlayerData((User) src);
-                    pd.setWhetherEnableEffects(enable);
-                    NewHonor.doSomething(pd);
-                    src.sendMessage(of("[NewHonor]change settings successful"));
-                    return CommandResult.success();
+                    try {
+                        boolean enable = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
+                        PlayerData pd = PlayerData.get(((User) src));
+                        pd.setWhetherEnableEffects(enable);
+                        NewHonor.doSomething(pd);
+                        src.sendMessage(of("[NewHonor]change settings successful"));
+                        return CommandResult.success();
+                    } catch (Exception e) {
+                        src.sendMessage(of("[NewHonor]error!"));
+                        e.printStackTrace();
+                        return CommandResult.empty();
+                    }
                 }
                 src.sendMessage(of("[NewHonor]You are not a user"));
                 return CommandResult.empty();

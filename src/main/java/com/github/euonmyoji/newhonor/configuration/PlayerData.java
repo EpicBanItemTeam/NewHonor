@@ -1,162 +1,140 @@
 package com.github.euonmyoji.newhonor.configuration;
 
-import com.google.common.reflect.TypeToken;
-import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 
-import java.io.IOException;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author yinyangshi
  */
-public class PlayerData {
-    private final UUID uuid;
-    private final CommentedConfigurationNode cfg;
-    private final TypeToken<String> type = TypeToken.of(String.class);
-    private ConfigurationLoader<CommentedConfigurationNode> loader;
-
-    public PlayerData(User user) {
-        uuid = user.getUniqueId();
-        loader = HoconConfigurationLoader.builder()
-                .setPath((NewHonorConfig.cfgDir.resolve("PlayerData")).resolve(user.getUniqueId().toString() + ".conf")).build();
-        cfg = load();
+public interface PlayerData {
+    /**
+     * 得到玩家爱数据
+     *
+     * @param user user对象
+     * @return data
+     * @throws SQLException when found any error
+     */
+    static PlayerData get(User user) throws SQLException {
+        return get(user.getUniqueId());
     }
 
-    public PlayerData(UUID uuid) {
-        this.uuid = uuid;
-        loader = HoconConfigurationLoader.builder()
-                .setPath((NewHonorConfig.cfgDir.resolve("PlayerData")).resolve(uuid.toString() + ".conf")).build();
-        cfg = load();
+    /**
+     * 得到玩家数据
+     *
+     * @param uuid 玩家uuid
+     * @return data
+     * @throws SQLException when found any error
+     */
+    static PlayerData get(UUID uuid) throws SQLException {
+        return SqlManager.enable ? new SqlManager.SqlPlayerData(uuid) : new LocalPlayerData(uuid);
     }
 
-    public boolean init() {
-        Optional<List<String>> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
-        if (defaultHonors.isPresent()) {
-            defaultHonors.get().forEach(this::giveHonor);
-            return setUseHonor(cfg.getNode("using").getString(defaultHonors.get().get(0)));
-        }
-        return true;
-    }
+    /**
+     * 初始化玩家数据
+     *
+     * @throws SQLException when found any error
+     */
+    void init() throws SQLException;
 
-    public boolean isUseHonor() {
-        return cfg.getNode("usehonor").getBoolean(true);
-    }
+    /**
+     * 玩家是否使用头衔
+     *
+     * @return boolean
+     * @throws SQLException when found any error
+     */
+    boolean isUseHonor() throws SQLException;
 
-    public boolean takeHonor(String... ids) {
-        boolean took = false;
-        for (String id : ids) {
-            Optional<List<String>> honors = getOwnHonors();
-            if (honors.isPresent() && honors.get().stream().anyMatch(id::equals)) {
-                honors.get().remove(id);
-                cfg.getNode("honors").setValue(honors.get());
-                took = true;
-            }
-        }
-        return took && save();
-    }
+    /**
+     * 移除玩家头衔
+     *
+     * @param ids 被移除的honorid
+     * @return 移除是否成功
+     * @throws SQLException when found any error
+     */
+    boolean takeHonor(String... ids) throws SQLException;
 
-    public boolean giveHonor(String id) {
-        return noSaveGive(id) && save();
-    }
+    /**
+     * 给予玩家头衔
+     *
+     * @param id 被给予的头衔id
+     * @return 给予+保存是否成功
+     * @throws SQLException when found any error
+     */
+    boolean giveHonor(String id) throws SQLException;
 
-    public boolean noSaveGive(String id) {
-        Optional<List<String>> honors = getOwnHonors();
-        if (HonorData.getHonorText(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
-            honors.get().add(id);
-            cfg.getNode("honors").setValue(honors.get());
-            Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
-                    HonorData.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
-            return true;
-        }
-        return false;
-    }
+    /**
+     * 设置玩家是否使用头衔
+     *
+     * @param use boolean
+     * @throws SQLException when found any error
+     */
+    void setWhetherUseHonor(boolean use) throws SQLException;
 
-    public void setWhetherUseHonor(boolean use) {
-        cfg.getNode("usehonor").setValue(use);
-        save();
-    }
+    /**
+     * 设置玩家是否使用药水效果
+     *
+     * @param enable boolean
+     * @throws SQLException when found any error
+     */
+    void setWhetherEnableEffects(boolean enable) throws SQLException;
 
-    public void setWhetherEnableEffects(boolean enable) {
-        cfg.getNode("enableEffects").setValue(enable);
-        save();
-    }
+    /**
+     * 玩家是否使用药水效果
+     *
+     * @return boolean
+     * @throws SQLException when found any error
+     */
+    boolean isEnableEffects() throws SQLException;
 
-    public boolean isEnableEffects() {
-        return cfg.getNode("enableEffects").getBoolean(true);
-    }
+    /**
+     * 设置玩家使用的头衔
+     *
+     * @param id 使用头衔的id
+     * @return 设置是否成功
+     * @throws SQLException when found any error
+     */
+    boolean setUseHonor(String id) throws SQLException;
 
-    public boolean setUseHonor(String id) {
-        if (isOwnHonor(id) && HonorData.getHonorText(id).isPresent()) {
-            cfg.getNode("using").setValue(id);
-            return save();
-        }
-        return false;
-    }
+    /**
+     * 获得玩家正在使用的头衔id
+     *
+     * @return honorid
+     * @throws SQLException when found any error
+     */
+    String getUsingHonorID() throws SQLException;
 
-    public String getUsingHonorID() {
-        return cfg.getNode("using").getString();
-    }
+    /**
+     * 获得玩家拥有的头衔
+     *
+     * @return 玩家拥有的头衔
+     * @throws SQLException when found any error
+     */
+    Optional<List<String>> getOwnHonors() throws SQLException;
 
-    public Optional<List<String>> getOwnHonors() {
-        try {
-            return Optional.of(cfg.getNode("honors").getList(type, ArrayList::new));
-        } catch (ObjectMappingException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
-    }
+    /**
+     * 检查玩家拥有的头衔是否有不正确的地方
+     *
+     * @throws SQLException when found any error
+     */
+    void checkUsingHonor() throws SQLException;
 
-    public void checkUsingHonor() {
-        String usingID = getUsingHonorID();
-        if (usingID == null) {
-            return;
-        }
-        if (!isOwnHonor(getUsingHonorID())) {
-            Optional<List<String>> list = NewHonorConfig.getDefaultOwnHonors();
-            if (list.isPresent()) {
-                setUseHonor(list.get().get(0));
-            } else {
-                setUseHonor("");
-            }
-        }
-    }
+    /**
+     * 得到正在使用的头衔text
+     *
+     * @return text
+     * @throws SQLException when found any error
+     */
+    Optional<Text> getUsingHonorText() throws SQLException;
 
-    public boolean save() {
-        try {
-            loader.save(cfg);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public Optional<Text> getUsingHonorText() {
-        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorData::getHonorText);
-    }
-
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
-
-    private CommentedConfigurationNode load() {
-        try {
-            return loader.load();
-        } catch (IOException e) {
-            return loader.createEmptyNode(ConfigurationOptions.defaults());
-        }
-    }
-
-    private boolean isOwnHonor(String id) {
-        return getOwnHonors().orElse(Collections.emptyList()).stream().anyMatch(s -> Objects.equals(s, id));
-    }
+    /**
+     * 得到这个数据主人的uuid
+     *
+     * @return uuid
+     */
+    UUID getUUID();
 }
