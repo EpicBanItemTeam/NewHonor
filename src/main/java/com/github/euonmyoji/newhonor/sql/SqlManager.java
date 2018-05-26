@@ -19,7 +19,7 @@ public class SqlManager {
     private static String password;
 
     public static void init() {
-        Base.open(getURL());
+        Base.open("com.mysql.jdbc.Driver", getURL(), user, password);
         List<String> list = new ArrayList<String>() {{
             add("default");
             add("admin");
@@ -29,10 +29,8 @@ public class SqlManager {
 
     private static String getURL() {
         StringBuilder sb = new StringBuilder().append("jdbc:mysql://").append(address).append(":").append(port)
-                .append("/").append(database).append("?").append("user=").append(user);
-        if (password != null) {
-            sb.append("&password=").append(password);
-        }
+                .append("/").append(database);
+        //append("?") append("user=").append(user) and append("&password=").append(password)
         sb.append("&useUnicode=true&characterEncoding=UTF-8");
         return sb.toString();
     }

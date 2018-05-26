@@ -15,6 +15,7 @@ buildscript {
     dependencies {
         classpath group: 'org.javalite', name: 'activejdbc-gradle-plugin', version: '2.0'
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+        classpath 'org.javalite:activejdbc:2.0'
     }
 }
 
@@ -28,12 +29,12 @@ jar {
 
 shadowJar {
     dependencies {
-        exclude(dependency('br.*::') as String)
-        exclude(dependency('com.*::') as String)
-        exclude(dependency(':ao.*:') as String)
-        exclude(dependency('org.ow.*::') as String)
-        exclude(dependency(':.*sist.*:') as String)
-        exclude(dependency(':[^a].*:') as String)
+        exclude(dependency('br.*::') as Spec<FileTreeElement>)
+        exclude(dependency('com.*::') as Spec<FileTreeElement>)
+        exclude(dependency(':ao.*:') as Spec<FileTreeElement>)
+        exclude(dependency('org.ow.*::') as Spec<FileTreeElement>)
+        exclude(dependency(':.*sist.*:') as Spec<FileTreeElement>)
+        exclude(dependency(':[^a].*:') as Spec<FileTreeElement>)
     }
 }
 
