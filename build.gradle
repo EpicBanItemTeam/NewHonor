@@ -1,17 +1,39 @@
 group = 'com.github.euonmyoji.newhonor'
 version = '2.0.0-alpha'
 apply plugin: 'java'
+apply plugin: 'org.javalite.activejdbc'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = '1.8'
 
-defaultTasks 'clean', 'build'
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url = 'http://repo.javalite.io' }
+        jcenter()
+    }
+    dependencies {
+        classpath group: 'org.javalite', name: 'activejdbc-gradle-plugin', version: '2.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+    }
+}
+
+defaultTasks 'clean', 'build', 'shadowJar'
+
 jar {
     manifest {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.Main'
     }
+}
 
-    from {
-        configurations.compile.copy(org.javalite.activejdbc.Model as Closure)
+shadowJar {
+    dependencies {
+        exclude(dependency('br.*::') as String)
+        exclude(dependency('com.*::') as String)
+        exclude(dependency(':ao.*:') as String)
+        exclude(dependency('org.ow.*::') as String)
+        exclude(dependency(':.*sist.*:') as String)
+        exclude(dependency(':[^a].*:') as String)
     }
 }
 
@@ -34,6 +56,5 @@ dependencies {
     compile 'org.spongepowered:spongeapi:7.0.0'
     compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-5.0-6.0:1.8.6'
     compile 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
-    compile 'org.javalite:activejdbc:1.4.13'
-    compile 'org.javalite:activejdbc-instrumentation:1.4.13'
+    compile 'org.javalite:activejdbc:2.0'
 }
