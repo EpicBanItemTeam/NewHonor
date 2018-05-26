@@ -4,7 +4,8 @@ import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.*;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
-import com.github.euonmyoji.newhonor.util.HaloEffects;
+import com.github.euonmyoji.newhonor.sql.SqlManager;
+import com.github.euonmyoji.newhonor.util.Util;
 import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,7 +14,6 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
@@ -34,7 +34,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -45,7 +44,7 @@ import java.util.UUID;
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "1.7.1";
+    public static final String VERSION = "2.0.0-alpha";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -58,7 +57,7 @@ public class NewHonor {
     public final HashMap<UUID, Text> honorTextCache = new HashMap<>();
     private final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
     public final HashMap<String, List<PotionEffect>> effectsCache = new HashMap<>();
-    public final HashMap<String, HaloEffects> haloEffectsCache = new HashMap<>();
+    public final HashMap<String, HaloEffectsData> haloEffectsCache = new HashMap<>();
 
     private static final String COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
     private static final String DISPLAY_HONOR_NODE_PATH = "displayHonor";
@@ -138,27 +137,10 @@ public class NewHonor {
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour");
         Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
                 .ifPresent(player -> {
-                    try {
-                        if (effectsCache.containsKey(s)) {
-                            PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(NoSuchFieldError::new);
-                            List<PotionEffect> list = effectsCache.get(s);
-                            list.forEach(effects::addElement);
-                            player.offer(effects);
-                        }
-                    } catch (ConcurrentModificationException e) {
-                        logger.warn("ConcurrentModificationException while offer player effects");
+                    if (effectsCache.containsKey(s)) {
+                        Util.offerEffectsSafely(player, effectsCache.get(s));
                     }
                 }))).name("newhonor - givePlayerEffects").async().intervalTicks(15).submit(this);
-        Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
-                .ifPresent(player -> {
-                    try {
-                        if (haloEffectsCache.containsKey(s)) {
-                            haloEffectsCache.get(s).execute(player);
-                        }
-                    } catch (ConcurrentModificationException e) {
-                        logger.warn("ConcurrentModificationException while offer player halo effects");
-                    }
-                }))).name("newhonor - givePlayerHaloEffects").async().intervalTicks(15).submit(this);
         logger.info("NewHonor author email:1418780411@qq.com");
         choosePluginMode();
         metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> effectsCache.size() > 0 ? "true" : "false"));
@@ -167,6 +149,7 @@ public class NewHonor {
                 () -> NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean() ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> haloEffectsCache.size() > 0 ?
                 "true" : "false"));
+        SqlManager.init();
     }
 
     @Listener

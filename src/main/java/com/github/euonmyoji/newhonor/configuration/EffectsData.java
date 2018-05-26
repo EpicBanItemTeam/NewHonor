@@ -1,7 +1,6 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.util.HaloEffects;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -17,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -50,8 +50,8 @@ public class EffectsData {
         return cfg.getNode("effects").getList(TypeToken.of(String.class), ArrayList::new);
     }
 
-    public HaloEffects getHaloEffectList() {
-        return new HaloEffects(cfg);
+    public HaloEffectsData getHaloEffectList() {
+        return new HaloEffectsData(cfg);
     }
 
     public List<PotionEffect> getEffects() throws ObjectMappingException {
@@ -134,5 +134,45 @@ public class EffectsData {
 
     public static List<String> getCreatedEffects() throws IOException {
         return Files.list(PATH).map(Path::getFileName).map(Path::toString).collect(Collectors.toList());
+    }
+
+    public class EffectsDelayData {
+        private final List<Range> ranges = new ArrayList<>();
+
+        public EffectsDelayData(String arg) {
+            try {
+                String[] ors = arg.split(",");
+                for (String value : ors) {
+                    ranges.add(new Range(value.split("~", 2)));
+                }
+            } catch (Exception e) {
+                NewHonor.plugin.logger.warn("There is something wrong with EffectsDelay: " + arg, e);
+            }
+        }
+
+        public int getDelay() {
+            ranges.get(new Random().nextInt(ranges.size()));
+            return 0;
+        }
+
+        private class Range {
+            private int min;
+            private int max;
+            private static final int MAX_LENGTH = 2;
+
+            private Range(String[] arg) throws NumberFormatException {
+                if (arg.length == 1) {
+                    min = Integer.parseInt(arg[0]);
+                    max = min;
+                } else if (arg.length == MAX_LENGTH) {
+                    int a = Integer.parseInt(arg[0]);
+                    int b = Integer.parseInt(arg[1]);
+                    min = Math.min(a, b);
+                    max = Math.max(a, b);
+                } else {
+                    throw new IllegalArgumentException("Not a correct delay expression");
+                }
+            }
+        }
     }
 }
