@@ -65,7 +65,7 @@ public class HonorCommand {
                             if (!src.hasPermission(ADMIN_PERMISSION)) {
                                 useCD.put(((Player) src).getUniqueId(), 9);
                             }
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             src.sendMessage(getText("[NewHonor] error!"));
                             e.printStackTrace();
                         }
@@ -138,7 +138,7 @@ public class HonorCommand {
                             } else {
                                 src.sendMessage(of("unknown error"));
                             }
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             src.sendMessage(getText("[NewHonor] error!"));
                             e.printStackTrace();
                         }

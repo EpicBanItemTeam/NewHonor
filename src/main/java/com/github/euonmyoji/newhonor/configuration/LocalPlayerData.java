@@ -13,7 +13,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
 import java.util.*;
@@ -137,11 +136,6 @@ public class LocalPlayerData implements PlayerData {
             e.printStackTrace();
         }
         return false;
-    }
-
-    @Override
-    public Optional<Text> getUsingHonorText() {
-        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorData::getHonorText);
     }
 
     @Override

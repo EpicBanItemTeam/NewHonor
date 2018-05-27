@@ -33,7 +33,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -160,7 +159,7 @@ public class NewHonor {
                 PlayerData pd = PlayerData.get(p);
                 pd.init();
                 doSomething(pd);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error("error while init player", e);
             }
             ScoreBoardManager.initPlayer(p);
@@ -173,8 +172,8 @@ public class NewHonor {
         Task.builder().execute(() -> {
             try {
                 doSomething(PlayerData.get(p));
-            } catch (SQLException e) {
-                logger.error("SQLE while init player", e);
+            } catch (Throwable e) {
+                logger.error("error while init player", e);
             }
         }).async().name("newhonor - (die) init Player" + p.getName()).submit(this);
     }

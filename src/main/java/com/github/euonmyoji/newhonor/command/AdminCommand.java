@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.event.NewHonorReloadEvent;
 import com.github.euonmyoji.newhonor.configuration.EffectsData;
 import com.github.euonmyoji.newhonor.configuration.HonorData;
 import com.github.euonmyoji.newhonor.configuration.PlayerData;
@@ -15,7 +16,6 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
 
 import java.nio.file.Files;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -63,7 +63,7 @@ class AdminCommand {
                                 e.printStackTrace();
                             }
                         });
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + " failed(error!)"));
                         e.printStackTrace();
                     }
@@ -96,7 +96,7 @@ class AdminCommand {
                                     e.printStackTrace();
                                 }
                             });
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + " failed(error!)"));
                             e.printStackTrace();
                         }
@@ -193,6 +193,7 @@ class AdminCommand {
     static CommandSpec reload = CommandSpec.builder()
             .executor((src, args) -> {
                 src.sendMessage(of("[NewHonor]start reload"));
+                Sponge.getEventManager().post(new NewHonorReloadEvent());
                 NewHonor.plugin.reload();
                 NewHonor.plugin.choosePluginMode();
                 refreshCache(src);
@@ -214,7 +215,7 @@ class AdminCommand {
                     .map(uuid -> {
                         try {
                             return PlayerData.get(uuid);
-                        } catch (SQLException e) {
+                        } catch (Throwable e) {
                             NewHonor.plugin.logger.error("error about sql!", e);
                         }
                         return null;

@@ -17,9 +17,9 @@ public interface PlayerData {
      *
      * @param user user对象
      * @return data
-     * @throws SQLException when found any error
+     * @throws Exception when found any error
      */
-    static PlayerData get(User user) throws SQLException {
+    static PlayerData get(User user) throws Exception {
         return get(user.getUniqueId());
     }
 
@@ -28,9 +28,9 @@ public interface PlayerData {
      *
      * @param uuid 玩家uuid
      * @return data
-     * @throws SQLException when found any error
+     * @throws Exception when found any error
      */
-    static PlayerData get(UUID uuid) throws SQLException {
+    static PlayerData get(UUID uuid) throws Exception {
         return SqlManager.enable ? new SqlManager.SqlPlayerData(uuid) : new LocalPlayerData(uuid);
     }
 
@@ -129,7 +129,9 @@ public interface PlayerData {
      * @return text
      * @throws SQLException when found any error
      */
-    Optional<Text> getUsingHonorText() throws SQLException;
+    default Optional<Text> getUsingHonorText() throws SQLException {
+        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorData::getHonorText);
+    }
 
     /**
      * 得到这个数据主人的uuid
