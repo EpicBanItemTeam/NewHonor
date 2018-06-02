@@ -1,7 +1,6 @@
 package com.github.euonmyoji.newhonor.event;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.sun.istack.internal.NotNull;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
@@ -32,7 +31,7 @@ public class OfferPlayerEffectsEvent implements Event, Cancellable {
     private boolean halo;
     private boolean canceled = false;
 
-    public OfferPlayerEffectsEvent(@NotNull Player player, @Nonnull String effectsID, @Nullable Player from, @Nonnull List<PotionEffect> potionEffects, boolean halo) {
+    public OfferPlayerEffectsEvent(@Nonnull Player player, @Nonnull String effectsID, @Nullable Player from, @Nonnull List<PotionEffect> potionEffects, boolean halo) {
         this.player = player;
         this.effectsID = effectsID;
         this.from = from;

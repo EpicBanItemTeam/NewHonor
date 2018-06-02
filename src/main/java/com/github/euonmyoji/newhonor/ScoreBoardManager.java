@@ -18,6 +18,7 @@ import java.util.UUID;
 class ScoreBoardManager {
     static boolean enable = false;
     private static Scoreboard scoreboard = Scoreboard.builder().build();
+    private static final Object LOCK = new Object();
 
     static void init() {
         if (enable) {
@@ -78,8 +79,6 @@ class ScoreBoardManager {
     private static void setPlayerScoreBoard(Player p) {
         p.setScoreboard(getScoreBoard());
     }
-
-    private static final Object LOCK = new Object();
 
     private static Scoreboard getScoreBoard() {
         if (scoreboard == null) {
