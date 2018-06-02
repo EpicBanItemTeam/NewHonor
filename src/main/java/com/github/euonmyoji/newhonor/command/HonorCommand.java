@@ -42,6 +42,17 @@ public class HonorCommand {
         })).async().intervalTicks(20).submit(NewHonor.plugin);
     }
 
+    private static CommandSpec data = CommandSpec.builder()
+            .permission(ADMIN_PERMISSION)
+            .executor((src, args) -> {
+                src.sendMessage(of("/honor data updateToSql   Update PlayerData to Sql"));
+                src.sendMessage(of("/honor data downloadFromSql   Download PlayerData from Sql"));
+                return CommandResult.success();
+            })
+            .child(SqlCommand.downloadFromSql, "downloadFromSql")
+            .child(SqlCommand.updateToSql, "updateToSql")
+            .build();
+
     private static CommandSpec use = CommandSpec.builder()
             .arguments(GenericArguments.string(of(ID_KEY)))
             .executor((src, args) -> {
@@ -230,5 +241,6 @@ public class HonorCommand {
             .child(use, "use")
             .child(list, "list")
             .child(effects, "effects")
+            .child(data, "data")
             .build();
 }

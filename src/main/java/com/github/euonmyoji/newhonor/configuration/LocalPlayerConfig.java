@@ -26,7 +26,7 @@ public class LocalPlayerConfig implements PlayerConfig {
     private final TypeToken<String> type = TypeToken.of(String.class);
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
-    LocalPlayerConfig(UUID uuid) {
+    public LocalPlayerConfig(UUID uuid) {
         this.uuid = uuid;
         loader = HoconConfigurationLoader.builder()
                 .setPath((NewHonorConfig.cfgDir.resolve("PlayerData")).resolve(uuid.toString() + ".conf")).build();
@@ -129,7 +129,7 @@ public class LocalPlayerConfig implements PlayerConfig {
         }
     }
 
-    private boolean save() {
+    public boolean save() {
         try {
             loader.save(cfg);
             return true;

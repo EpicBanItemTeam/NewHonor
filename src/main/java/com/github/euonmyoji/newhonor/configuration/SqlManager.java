@@ -85,7 +85,7 @@ public class SqlManager {
                 address, port, database, user, password);
     }
 
-    public static class SqlPlayerData implements PlayerConfig {
+    public static class SqlPlayerConfig implements PlayerConfig {
         private static volatile Connection con;
         private static volatile Statement statement;
         private UUID uuid;
@@ -118,7 +118,7 @@ public class SqlManager {
             }).async().intervalTicks(20).submit(NewHonor.plugin);
         }
 
-        SqlPlayerData(UUID uuid) throws Exception {
+        public SqlPlayerConfig(UUID uuid) throws Exception {
             this.uuid = uuid;
             Task.builder().execute(() -> {
                 try {

@@ -31,7 +31,7 @@ public interface PlayerConfig {
      * @throws Exception when found any error
      */
     static PlayerConfig get(UUID uuid) throws Exception {
-        return SqlManager.enable ? new SqlManager.SqlPlayerData(uuid) : new LocalPlayerConfig(uuid);
+        return SqlManager.enable ? new SqlManager.SqlPlayerConfig(uuid) : new LocalPlayerConfig(uuid);
     }
 
     /**
