@@ -24,15 +24,17 @@ public class HaloEffectsData {
     private final double chance;
     private final double radius;
     private final boolean include;
+    private final boolean show;
     public LocalDateTime lastRunTime = LocalDateTime.MIN;
     public int lastDelay = 0;
 
     public HaloEffectsData(CommentedConfigurationNode cfg) throws ObjectMappingException {
         delayData = new EffectsDelayData(cfg.getNode("delay").getString("0"));
         radius = cfg.getNode("radius").getDouble(5);
-        potionEffects = Util.getPotionEffects(cfg, Util.getPotionEffectsDurationTick(cfg));
         chance = cfg.getNode("chance").getDouble(1);
         include = cfg.getNode("include-me").getBoolean(false);
+        show = cfg.getNode("show").getBoolean(false);
+        potionEffects = Util.getPotionEffects(cfg, Util.getPotionEffectsDurationTick(cfg), cfg.getNode("show").getBoolean(false));
     }
 
     public void execute(List<UUID> list) {

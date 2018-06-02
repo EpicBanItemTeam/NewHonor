@@ -25,7 +25,7 @@ public class RandomEffectsData {
 
     public RandomEffectsData(CommentedConfigurationNode cfg) throws ObjectMappingException {
         delayData = new EffectsDelayData(cfg.getNode("delay").getString("15"));
-        potionEffects = Util.getPotionEffects(cfg, Util.getPotionEffectsDurationTick(cfg));
+        potionEffects = Util.getPotionEffects(cfg, Util.getPotionEffectsDurationTick(cfg), cfg.getNode("show").getBoolean());
         chance = cfg.getNode("chance").getDouble(1);
     }
 

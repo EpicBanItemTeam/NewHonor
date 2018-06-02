@@ -33,7 +33,7 @@ public class Util {
         return cfg.getNode("potionEffectsDurationTick").getInt(60);
     }
 
-    public static List<PotionEffect> getPotionEffects(CommentedConfigurationNode cfg, int tick) throws ObjectMappingException {
+    public static List<PotionEffect> getPotionEffects(CommentedConfigurationNode cfg, int tick, boolean show) throws ObjectMappingException {
         List<PotionEffect> list = new ArrayList<>();
         getEffectsList(cfg).forEach(s -> {
             String[] args = s.split(EffectsConfig.CONNECT_KEY, 2);
@@ -42,6 +42,7 @@ public class Util {
                             .potionType(type)
                             .amplifier(Integer.parseInt(args[1]))
                             .duration(tick)
+                            .particles(show)
                             .build()));
         });
         return list;

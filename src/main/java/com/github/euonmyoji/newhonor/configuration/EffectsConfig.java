@@ -51,7 +51,7 @@ public class EffectsConfig {
     }
 
     public List<PotionEffect> getEffects() throws ObjectMappingException {
-        return Util.getPotionEffects(cfg.getNode("effects"), potionEffectsTime);
+        return Util.getPotionEffects(cfg.getNode("effects"), potionEffectsTime, cfg.getNode("effects").getNode("show").getBoolean());
     }
 
     public boolean remove(List<String> list) {
