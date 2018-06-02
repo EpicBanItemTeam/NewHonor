@@ -53,25 +53,26 @@ class ScoreBoardManager {
         if (honorID == null) {
             return;
         }
-        Optional<Team> optionalTeam = getScoreBoard().getTeam(honorID);
-        boolean isTeamPresent = optionalTeam.isPresent();
-        optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
-        if (pd.isUseHonor()) {
-            if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
-                Text prefix = NewHonor.plugin.honorTextCache.get(uuid);
-                if (isTeamPresent) {
-                    optionalTeam.get().setPrefix(prefix);
-                } else {
-                    optionalTeam = Optional.of(Team.builder()
-                            .name(honorID)
-                            .prefix(prefix)
-                            .build());
-                    getScoreBoard().registerTeam(optionalTeam.get());
+        synchronized (LOCK) {
+            Optional<Team> optionalTeam = getScoreBoard().getTeam(honorID);
+            boolean isTeamPresent = optionalTeam.isPresent();
+            optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
+            if (pd.isUseHonor()) {
+                if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
+                    Text prefix = NewHonor.plugin.honorTextCache.get(uuid);
+                    if (isTeamPresent) {
+                        optionalTeam.get().setPrefix(prefix);
+                    } else {
+                        optionalTeam = Optional.of(Team.builder()
+                                .name(honorID)
+                                .prefix(prefix)
+                                .build());
+                        getScoreBoard().registerTeam(optionalTeam.get());
+                    }
+                    optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
                 }
-                optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
             }
         }
-
     }
 
     private static void setPlayerScoreBoard(Player p) {

@@ -101,7 +101,7 @@ public class EffectsConfig {
     }
 
     public static List<String> getCreatedEffects() throws IOException {
-        return Files.list(PATH).map(Path::getFileName).map(Path::toString).collect(Collectors.toList());
+        return Files.list(PATH).map(Path::getFileName).map(Path::toString).map(s -> s.replace(".conf", "")).collect(Collectors.toList());
     }
 
     public String getId() {

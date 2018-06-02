@@ -28,7 +28,7 @@ public class HaloEffectsData {
     public int lastDelay = 0;
 
     public HaloEffectsData(CommentedConfigurationNode cfg) throws ObjectMappingException {
-        delayData = new EffectsDelayData(cfg.getNode("delay").getString("15"));
+        delayData = new EffectsDelayData(cfg.getNode("delay").getString("0"));
         radius = cfg.getNode("radius").getDouble(5);
         potionEffects = Util.getPotionEffects(cfg, Util.getPotionEffectsDurationTick(cfg));
         chance = cfg.getNode("chance").getDouble(1);

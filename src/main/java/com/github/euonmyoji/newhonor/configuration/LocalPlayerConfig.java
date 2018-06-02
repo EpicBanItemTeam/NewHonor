@@ -92,6 +92,7 @@ public class LocalPlayerConfig implements PlayerConfig {
     @Override
     public boolean setUseHonor(String id) {
         if (isOwnHonor(id) && HonorConfig.getHonorText(id).isPresent()) {
+            cfg.getNode("using").setValue(id);
             return save();
         }
         return false;

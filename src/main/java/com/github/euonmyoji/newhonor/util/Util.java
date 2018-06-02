@@ -11,6 +11,8 @@ import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.living.player.Player;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -28,7 +30,7 @@ public class Util {
     }
 
     public static int getPotionEffectsDurationTick(CommentedConfigurationNode cfg) {
-        return cfg.getNode("potionEffectsDurationTick").getInt(15);
+        return cfg.getNode("potionEffectsDurationTick").getInt(60);
     }
 
     public static List<PotionEffect> getPotionEffects(CommentedConfigurationNode cfg, int tick) throws ObjectMappingException {
@@ -63,5 +65,9 @@ public class Util {
             });
         }
         return list;
+    }
+
+    public static double getTimeDuration(LocalDateTime start) {
+        return Duration.between(start, LocalDateTime.now()).getSeconds();
     }
 }

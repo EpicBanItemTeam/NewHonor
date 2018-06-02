@@ -5,9 +5,8 @@ import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.data.HaloEffectsData;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.scheduler.Task;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +19,11 @@ public class HaloEffectsOffer {
     public static final HashMap<String, HaloTaskData> TASK_DATA = new HashMap<>();
 
     static {
-        org.spongepowered.api.scheduler.Task.builder().async().execute(() -> {
+        Task.builder().async().execute(() -> {
             synchronized (TASK_DATA) {
                 TASK_DATA.forEach((s, data) -> data.call());
             }
-        }).name("NewHonor - Halo Effects Offer Task").intervalTicks(10).submit(NewHonor.plugin);
+        }).name("NewHonor - Halo Effects Offer Task").intervalTicks(8).submit(NewHonor.plugin);
     }
 
     static void update(List<String> effects) {
@@ -40,11 +39,9 @@ public class HaloEffectsOffer {
         private final String id;
 
         private void call() {
-            LocalDateTime now = LocalDateTime.now();
             List<UUID> list = Util.getPlayerUsingEffects(id);
             randomList.forEach(data -> {
-                double d = ((double) Duration.between(data.lastRunTime, now).getSeconds()) / 20 + 5;
-                if (d > data.lastDelay) {
+                if (Util.getTimeDuration(data.lastRunTime) > data.lastDelay) {
                     data.execute(list);
                 }
             });

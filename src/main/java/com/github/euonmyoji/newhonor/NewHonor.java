@@ -138,6 +138,11 @@ public class NewHonor {
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour");
         logger.info("NewHonor author email:1418780411@qq.com");
         choosePluginMode();
+        try {
+            TaskManager.update();
+        } catch (IOException e) {
+            logger.warn("Task init error", e);
+        }
         metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EffectsOffer.TASK_DATA.size() > 0 ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usepapi",

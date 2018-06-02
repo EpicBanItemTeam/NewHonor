@@ -10,7 +10,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.scheduler.Task;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -21,11 +20,11 @@ public class EffectsOffer {
     public static final HashMap<String, SelfTaskData> TASK_DATA = new HashMap<>();
 
     static {
-        org.spongepowered.api.scheduler.Task.builder().async().execute(() -> {
+        Task.builder().async().execute(() -> {
             synchronized (TASK_DATA) {
                 TASK_DATA.forEach((s, data) -> data.call());
             }
-        }).name("NewHonor - Effects Offer Task").intervalTicks(10).submit(NewHonor.plugin);
+        }).name("NewHonor - Effects Offer Task").intervalTicks(8).submit(NewHonor.plugin);
     }
 
     static void update(List<String> effects) {
@@ -49,15 +48,12 @@ public class EffectsOffer {
         private int lastDelay = 0;
 
         private void call() {
-            LocalDateTime now = LocalDateTime.now();
             List<UUID> list = Util.getPlayerUsingEffects(id);
-            double duration = ((double) Duration.between(lastRunTime, now).getSeconds()) / 20 + 5;
-            if (duration > lastDelay) {
+            if (Util.getTimeDuration(lastRunTime) > lastDelay) {
                 execute(list);
             }
             randomList.forEach(data -> {
-                double d = ((double) Duration.between(data.lastRunTime, now).getSeconds()) / 20 + 5;
-                if (d > data.lastDelay) {
+                if (Util.getTimeDuration(data.lastRunTime) > data.lastDelay) {
                     data.execute(list);
                 }
             });
@@ -66,7 +62,7 @@ public class EffectsOffer {
         private SelfTaskData(EffectsConfig config) throws ObjectMappingException {
             id = config.getId();
             potionEffects = config.getEffects();
-            delayData = new EffectsDelayData(config.cfg.getNode("effects", "delay").getString("15"));
+            delayData = new EffectsDelayData(config.cfg.getNode("effects", "delay").getString("0"));
             config.cfg.getNode("effects", "random").getChildrenMap().forEach((o, cfg) -> {
                 try {
                     randomList.add(new RandomEffectsData(cfg));

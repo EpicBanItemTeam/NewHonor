@@ -45,36 +45,35 @@ public class HonorCommand {
     private static CommandSpec use = CommandSpec.builder()
             .arguments(GenericArguments.string(of(ID_KEY)))
             .executor((src, args) -> {
-                if (src instanceof Player) {
-                    if (!src.hasPermission(ADMIN_PERMISSION) && useCD.containsKey(((Player) src).getUniqueId())) {
-                        int cd = useCD.get(((Player) src).getUniqueId());
-                        src.sendMessage(of("[NewHonor]You should wait " + cd + " second(s) to change use honor"));
-                        return CommandResult.empty();
-                    }
-                    Task.builder().execute(() -> {
-                        try {
-                            PlayerConfig pd = PlayerConfig.get((User) src);
-                            if (pd.setUseHonor(args.<String>getOne(of(ID_KEY)).orElseThrow(NoSuchFieldError::new))) {
-                                src.sendMessage(getText("newhonor.changehonor.succeed"));
-                            } else {
-                                pd.setUseHonor("");
-                                pd.init();
-                                src.sendMessage(getText("newhonor.changehonor.failed"));
-                            }
-                            NewHonor.doSomething(pd);
-                            if (!src.hasPermission(ADMIN_PERMISSION)) {
-                                useCD.put(((Player) src).getUniqueId(), 9);
-                            }
-                        } catch (Throwable e) {
-                            src.sendMessage(getText("[NewHonor] error!"));
-                            e.printStackTrace();
-                        }
-                    }).async().name("newhonor - Player Change Using Honor").submit(NewHonor.plugin);
-                    return CommandResult.success();
-                } else {
+                if (!(src instanceof Player)) {
                     src.sendMessage(getText("newhonor.changehonor.unknownsource"));
+                    return CommandResult.empty();
                 }
-                return CommandResult.empty();
+                if (!src.hasPermission(ADMIN_PERMISSION) && useCD.containsKey(((Player) src).getUniqueId())) {
+                    int cd = useCD.get(((Player) src).getUniqueId());
+                    src.sendMessage(of("[NewHonor]You should wait " + cd + " second(s) to change use honor"));
+                    return CommandResult.empty();
+                }
+                Task.builder().execute(() -> {
+                    try {
+                        PlayerConfig pd = PlayerConfig.get((User) src);
+                        if (pd.setUseHonor(args.<String>getOne(of(ID_KEY)).orElseThrow(NoSuchFieldError::new))) {
+                            src.sendMessage(getText("newhonor.changehonor.succeed"));
+                        } else {
+                            pd.setUseHonor("");
+                            pd.init();
+                            src.sendMessage(getText("newhonor.changehonor.failed"));
+                        }
+                        NewHonor.doSomething(pd);
+                        if (!src.hasPermission(ADMIN_PERMISSION)) {
+                            useCD.put(((Player) src).getUniqueId(), 9);
+                        }
+                    } catch (Throwable e) {
+                        src.sendMessage(getText("[NewHonor] error!"));
+                        e.printStackTrace();
+                    }
+                }).async().name("newhonor - Player Change Using Honor").submit(NewHonor.plugin);
+                return CommandResult.success();
             })
             .build();
 
