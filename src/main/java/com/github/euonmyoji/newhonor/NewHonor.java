@@ -4,16 +4,16 @@ import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.*;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
-import com.github.euonmyoji.newhonor.util.Util;
+import com.github.euonmyoji.newhonor.task.EffectsOffer;
+import com.github.euonmyoji.newhonor.task.HaloEffectsOffer;
+import com.github.euonmyoji.newhonor.task.TaskManager;
 import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
@@ -23,6 +23,7 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.plugin.meta.version.ComparableVersion;
@@ -34,7 +35,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,20 +43,21 @@ import java.util.UUID;
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-alpha";
+    public static final String VERSION = "2.0.0-beta";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
+    public static final Object DATA_LOCK = new Object();
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path cfgDir;
 
     @Inject
     public Logger logger;
+    @Inject
+    private PluginContainer pluginContainer;
 
     public static NewHonor plugin;
     public final HashMap<UUID, Text> honorTextCache = new HashMap<>();
-    private final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
-    public final HashMap<String, List<PotionEffect>> effectsCache = new HashMap<>();
-    public final HashMap<String, HaloEffectsData> haloEffectsCache = new HashMap<>();
+    public final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
 
     private static final String COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
     private static final String DISPLAY_HONOR_NODE_PATH = "displayHonor";
@@ -135,19 +136,13 @@ public class NewHonor {
     @Listener
     public void onStarted(GameStartedServerEvent event) {
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour");
-        Task.builder().execute(() -> playerUsingEffectCache.forEach((uuid, s) -> Sponge.getServer().getPlayer(uuid)
-                .ifPresent(player -> {
-                    if (effectsCache.containsKey(s)) {
-                        Util.offerEffectsSafely(player, effectsCache.get(s));
-                    }
-                }))).name("newhonor - givePlayerEffects").intervalTicks(15).submit(this);
         logger.info("NewHonor author email:1418780411@qq.com");
         choosePluginMode();
-        metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> effectsCache.size() > 0 ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EffectsOffer.TASK_DATA.size() > 0 ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usepapi",
                 () -> NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean() ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> haloEffectsCache.size() > 0 ?
+        metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> HaloEffectsOffer.TASK_DATA.size() > 0 ?
                 "true" : "false"));
     }
 
@@ -156,7 +151,7 @@ public class NewHonor {
         Player p = event.getTargetEntity();
         Task.builder().execute(() -> {
             try {
-                PlayerData pd = PlayerData.get(p);
+                PlayerConfig pd = PlayerConfig.get(p);
                 pd.init();
                 doSomething(pd);
             } catch (Throwable e) {
@@ -171,7 +166,7 @@ public class NewHonor {
         Player p = event.getTargetEntity();
         Task.builder().execute(() -> {
             try {
-                doSomething(PlayerData.get(p));
+                doSomething(PlayerConfig.get(p));
             } catch (Throwable e) {
                 logger.error("error while init player", e);
             }
@@ -180,10 +175,11 @@ public class NewHonor {
 
 
     public static void clearCaches() {
-        plugin.honorTextCache.clear();
-        plugin.effectsCache.clear();
-        plugin.playerUsingEffectCache.clear();
-        plugin.haloEffectsCache.clear();
+        synchronized (DATA_LOCK) {
+            plugin.honorTextCache.clear();
+            plugin.playerUsingEffectCache.clear();
+            EffectsOffer.TASK_DATA.clear();
+        }
     }
 
     public void choosePluginMode() {
@@ -222,50 +218,53 @@ public class NewHonor {
     }
 
     public void reload() {
-        NewHonorConfig.reload();
-        LanguageManager.reload();
-        HonorData.reload();
-        EffectsData.refresh();
+        synchronized (DATA_LOCK) {
+            NewHonorConfig.reload();
+            LanguageManager.reload();
+            HonorConfig.reload();
+            try {
+                TaskManager.update();
+            } catch (IOException e) {
+                logger.warn("reload error!", e);
+            }
+        }
     }
 
-    public static void doSomething(PlayerData pd) {
+    public static void doSomething(PlayerConfig pd) {
         Task.builder().execute(() -> {
-            try {
-                pd.checkUsingHonor();
-                plugin.playerUsingEffectCache.remove(pd.getUUID());
-                plugin.honorTextCache.remove(pd.getUUID());
-                if (pd.isUseHonor()) {
-                    pd.getUsingHonorText().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
-                    if (pd.isEnableEffects()) {
-                        HonorData.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> {
-                            try {
-                                EffectsData ed = new EffectsData(s);
-                                plugin.effectsCache.put(s, ed.getEffects());
-                                plugin.playerUsingEffectCache.put(pd.getUUID(), s);
-                                plugin.haloEffectsCache.put(s, ed.getHaloEffectList());
-                            } catch (ObjectMappingException e) {
-                                plugin.logger.warn("parse effects " + s + " failed", e);
-                            }
-                        });
-                    }
-                }
-            } catch (Exception e) {
-                plugin.logger.error("error about data!", e);
-            }
-            final String checkPrefix = "newhonor.honor.";
-            Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(player -> {
-                ScoreBoardManager.initPlayer(player);
-                HonorData.getAllCreatedHonors().forEach(id -> {
-                    if (player.hasPermission(checkPrefix + id)) {
-                        try {
-                            pd.giveHonor(id);
-                        } catch (Exception e) {
-                            plugin.logger.error("error about data!", e);
+            synchronized (DATA_LOCK) {
+                try {
+                    pd.checkUsingHonor();
+                    plugin.playerUsingEffectCache.remove(pd.getUUID());
+                    plugin.honorTextCache.remove(pd.getUUID());
+                    if (pd.isUseHonor()) {
+                        pd.getUsingHonorText().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
+                        if (pd.isEnableEffects()) {
+                            HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
                         }
                     }
+                } catch (Exception e) {
+                    plugin.logger.error("error about data!", e);
+                }
+                final String checkPrefix = "newhonor.honor.";
+                Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(player -> {
+                    ScoreBoardManager.initPlayer(player);
+                    HonorConfig.getAllCreatedHonors().forEach(id -> {
+                        if (player.hasPermission(checkPrefix + id)) {
+                            try {
+                                pd.giveHonor(id);
+                            } catch (Exception e) {
+                                plugin.logger.error("error about data!", e);
+                            }
+                        }
+                    });
                 });
-            });
+            }
         }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
     }
 
+    @SuppressWarnings("unused")
+    public static PluginContainer container() {
+        return plugin.pluginContainer;
+    }
 }

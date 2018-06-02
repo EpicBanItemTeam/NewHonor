@@ -1,10 +1,11 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.api.event.NewHonorReloadEvent;
-import com.github.euonmyoji.newhonor.configuration.EffectsData;
-import com.github.euonmyoji.newhonor.configuration.HonorData;
-import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.event.NewHonorReloadEvent;
+import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
+import com.github.euonmyoji.newhonor.configuration.HonorConfig;
+import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.task.TaskManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -48,7 +49,7 @@ class AdminCommand {
                 }
                 Task.builder().execute(() -> users.forEach(user -> {
                     try {
-                        PlayerData pd = PlayerData.get(user);
+                        PlayerConfig pd = PlayerConfig.get(user);
                         ids.forEach(id -> {
                             try {
                                 if (pd.giveHonor(id)) {
@@ -81,7 +82,7 @@ class AdminCommand {
                 Task.builder().execute(() -> {
                     users.forEach(user -> {
                         try {
-                            PlayerData pd = PlayerData.get(user);
+                            PlayerConfig pd = PlayerConfig.get(user);
                             ids.forEach(id -> {
                                 try {
                                     if (pd.takeHonor(id)) {
@@ -111,10 +112,10 @@ class AdminCommand {
             .executor((src, args) -> {
                 Task.builder().async().execute(() -> {
                     PaginationList.Builder builder = PaginationList.builder().title(getText("newhonor.listcreatedhonors.title")).padding(of("-"));
-                    builder.contents(HonorData.getAllCreatedHonors().stream().map(id -> langBuilder("newhonor.listcreatedhonors.contexts")
+                    builder.contents(HonorConfig.getAllCreatedHonors().stream().map(id -> langBuilder("newhonor.listcreatedhonors.contexts")
                             .replace("%honorid%", id)
-                            .replace("%honor%", FORMATTING_CODE.serialize(HonorData.getHonorText(id).orElse(of("there is something wrong"))))
-                            .replace("%effectsID%", HonorData.getEffectsID(id).orElse("null"))
+                            .replace("%honor%", FORMATTING_CODE.serialize(HonorConfig.getHonorText(id).orElse(of("there is something wrong"))))
+                            .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
                             .build())
                             .filter(text -> !text.toString().contains("there is something wrong"))
                             .collect(Collectors.toList()));
@@ -130,7 +131,7 @@ class AdminCommand {
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
-                if (HonorData.setHonor(id, honor)) {
+                if (HonorConfig.setHonor(id, honor)) {
                     plugin.logger.info(src.getName() + "set a honor" + id);
                     src.sendMessage(of("[NewHonor]set a honor successful(start refresh)"));
                     refreshCache(src);
@@ -145,7 +146,7 @@ class AdminCommand {
             .arguments(GenericArguments.string(of("honorID")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
-                if (HonorData.deleteHonor(id)) {
+                if (HonorConfig.deleteHonor(id)) {
                     plugin.logger.info(src.getName() + "deleted a honor" + id);
                     src.sendMessage(of("[NewHonor]deleted a honor successful(start refresh)"));
                     refreshCache(src);
@@ -162,7 +163,7 @@ class AdminCommand {
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
-                if (HonorData.addHonor(id, honor)) {
+                if (HonorConfig.addHonor(id, honor)) {
                     plugin.logger.info(src.getName() + "add a honor :" + id);
                     src.sendMessage(of("[NewHonor]add a honor successful"));
                     return CommandResult.success();
@@ -177,8 +178,8 @@ class AdminCommand {
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String effectsID = args.<String>getOne(of("effectsID")).orElseThrow(NoSuchFieldError::new);
-                if (Files.exists(EffectsData.getPath(effectsID))) {
-                    if (HonorData.setHonorEffects(id, effectsID)) {
+                if (Files.exists(EffectsConfig.getPath(effectsID))) {
+                    if (HonorConfig.setHonorEffects(id, effectsID)) {
                         src.sendMessage(of("[NewHonor]set honor effects successful"));
                         return CommandResult.success();
                     }
@@ -211,10 +212,15 @@ class AdminCommand {
         Task.builder().execute(() -> {
             src.sendMessage(of("[NewHonor]start refresh"));
             NewHonor.clearCaches();
+            try {
+                TaskManager.update();
+            } catch (Exception e) {
+                NewHonor.plugin.logger.warn("Update Task error!", e);
+            }
             Sponge.getServer().getOnlinePlayers().stream().map(Player::getUniqueId)
                     .map(uuid -> {
                         try {
-                            return PlayerData.get(uuid);
+                            return PlayerConfig.get(uuid);
                         } catch (Throwable e) {
                             NewHonor.plugin.logger.error("error about sql!", e);
                         }

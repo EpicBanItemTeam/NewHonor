@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -17,7 +17,7 @@ class SettingsArgs {
                 if (src instanceof User) {
                     try {
                         boolean use = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
-                        PlayerData pd = PlayerData.get(((User) src));
+                        PlayerConfig pd = PlayerConfig.get(((User) src));
                         pd.setWhetherUseHonor(use);
                         NewHonor.doSomething(pd);
                         src.sendMessage(of("[NewHonor]change settings successful"));
@@ -38,7 +38,7 @@ class SettingsArgs {
                 if (src instanceof User) {
                     try {
                         boolean enable = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
-                        PlayerData pd = PlayerData.get(((User) src));
+                        PlayerConfig pd = PlayerConfig.get(((User) src));
                         pd.setWhetherEnableEffects(enable);
                         NewHonor.doSomething(pd);
                         src.sendMessage(of("[NewHonor]change settings successful"));

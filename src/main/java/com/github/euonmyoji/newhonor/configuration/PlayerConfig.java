@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * @author yinyangshi
  */
-public interface PlayerData {
+public interface PlayerConfig {
     /**
      * 得到玩家爱数据
      *
@@ -19,7 +19,7 @@ public interface PlayerData {
      * @return data
      * @throws Exception when found any error
      */
-    static PlayerData get(User user) throws Exception {
+    static PlayerConfig get(User user) throws Exception {
         return get(user.getUniqueId());
     }
 
@@ -30,8 +30,8 @@ public interface PlayerData {
      * @return data
      * @throws Exception when found any error
      */
-    static PlayerData get(UUID uuid) throws Exception {
-        return SqlManager.enable ? new SqlManager.SqlPlayerData(uuid) : new LocalPlayerData(uuid);
+    static PlayerConfig get(UUID uuid) throws Exception {
+        return SqlManager.enable ? new SqlManager.SqlPlayerData(uuid) : new LocalPlayerConfig(uuid);
     }
 
     /**
@@ -130,7 +130,7 @@ public interface PlayerData {
      * @throws SQLException when found any error
      */
     default Optional<Text> getUsingHonorText() throws SQLException {
-        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorData::getHonorText);
+        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorConfig::getHonorText);
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.api.event.PlayerGetHonorEvent;
-import com.github.euonmyoji.newhonor.api.event.PlayerLoseHonorEvent;
+import com.github.euonmyoji.newhonor.event.PlayerGetHonorEvent;
+import com.github.euonmyoji.newhonor.event.PlayerLoseHonorEvent;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -85,7 +85,7 @@ public class SqlManager {
                 address, port, database, user, password);
     }
 
-    public static class SqlPlayerData implements PlayerData {
+    public static class SqlPlayerData implements PlayerConfig {
         private static volatile Connection con;
         private static volatile Statement statement;
         private UUID uuid;
@@ -195,9 +195,9 @@ public class SqlManager {
             if (honors.contains(id)) {
                 event.setCancelled(true);
             }
-            if (!event.isCancelled() && HonorData.getHonorText(id).isPresent()) {
+            if (!event.isCancelled() && HonorConfig.getHonorText(id).isPresent()) {
                 Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
-                        HonorData.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
+                        HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
                 return getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'"
                         , HONORS_KEY, honors.stream().reduce((s, s2) -> s + D + s2).orElse("") + D + id, uuid)) < 2;
             }
@@ -221,7 +221,7 @@ public class SqlManager {
 
         @Override
         public boolean setUseHonor(String id) throws SQLException {
-            if (isOwnHonor(id) && HonorData.getHonorText(id).isPresent()) {
+            if (isOwnHonor(id) && HonorConfig.getHonorText(id).isPresent()) {
                 return getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", USING_KEY, id, uuid)) < 2;
             }
             return false;

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * @author yinyangshi
  */
-public class HonorData {
+public class HonorConfig {
     private static CommentedConfigurationNode cfg;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
 
@@ -103,7 +103,7 @@ public class HonorData {
         //noinspection ConstantConditions 之前有检查
         return Optional.ofNullable(cfg.getNode(id, "getMessage").getString(null))
                 .map(s -> "&r" + s.replace("{playername}", playername))
-                .map(s -> "&r" + s.replace("{newhonor}", TextSerializers.FORMATTING_CODE.serialize(HonorData.getHonorText(id).get())) + "&f")
+                .map(s -> "&r" + s.replace("{newhonor}", TextSerializers.FORMATTING_CODE.serialize(HonorConfig.getHonorText(id).get())) + "&f")
                 .map(TextSerializers.FORMATTING_CODE::deserialize);
     }
 

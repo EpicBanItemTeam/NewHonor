@@ -1,6 +1,6 @@
 package com.github.euonmyoji.newhonor;
 
-import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
@@ -48,7 +48,7 @@ class ScoreBoardManager {
 
     private static void execute(Player p) throws Exception {
         UUID uuid = p.getUniqueId();
-        PlayerData pd = PlayerData.get(p);
+        PlayerConfig pd = PlayerConfig.get(p);
         String honorID = pd.getUsingHonorID();
         if (honorID == null) {
             return;

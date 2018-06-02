@@ -1,8 +1,8 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.configuration.HonorData;
-import com.github.euonmyoji.newhonor.configuration.PlayerData;
+import com.github.euonmyoji.newhonor.configuration.HonorConfig;
+import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -53,7 +53,7 @@ public class HonorCommand {
                     }
                     Task.builder().execute(() -> {
                         try {
-                            PlayerData pd = PlayerData.get((User) src);
+                            PlayerConfig pd = PlayerConfig.get((User) src);
                             if (pd.setUseHonor(args.<String>getOne(of(ID_KEY)).orElseThrow(NoSuchFieldError::new))) {
                                 src.sendMessage(getText("newhonor.changehonor.succeed"));
                             } else {
@@ -91,7 +91,7 @@ public class HonorCommand {
                 if (execute) {
                     Task.builder().execute(() -> {
                         try {
-                            PlayerData pd = PlayerData.get(user);
+                            PlayerConfig pd = PlayerConfig.get(user);
                             Optional<List<String>> honors = pd.getOwnHonors();
                             if (honors.isPresent()) {
                                 if (honors.get().isEmpty()) {
@@ -100,19 +100,19 @@ public class HonorCommand {
                                 PaginationList.Builder builder = PaginationList.builder()
                                         .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
                                 String usingID = pd.getUsingHonorID();
-                                HonorData.getHonorRawText(usingID)
+                                HonorConfig.getHonorRawText(usingID)
                                         .ifPresent(text -> builder.header(langBuilder("newhonor.listhonors.header")
                                                 .replace("%ownername%", user.getName())
                                                 .replace("%honor%", text)
-                                                .replace("%effectsID%", HonorData.getEffectsID(usingID).orElse("null"))
+                                                .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
                                                 .build()));
                                 List<Text> texts = honors.get().stream()
-                                        .map(id -> HonorData.getHonorRawText(id).map(honor -> Text.builder()
+                                        .map(id -> HonorConfig.getHonorRawText(id).map(honor -> Text.builder()
                                                 //显示头衔 药水效果组
                                                 .append(langBuilder("newhonor.listhonors.contexts")
                                                         .replace("%honorid%", id)
                                                         .replace("%honor%", honor)
-                                                        .replace("%effectsID%", HonorData.getEffectsID(id).orElse("null"))
+                                                        .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
                                                         .build())
                                                 .onHover(showText(langBuilder("newhonor.listhonors.clickuse")
                                                         .replace("%honor%", honor)
@@ -126,7 +126,7 @@ public class HonorCommand {
                                 builder.contents(texts).build().sendTo(src);
                                 Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
                                         .execute(() -> honors.get().forEach(s -> {
-                                            if (!HonorData.getHonorRawText(s).isPresent()) {
+                                            if (!HonorConfig.getHonorRawText(s).isPresent()) {
                                                 try {
                                                     pd.takeHonor(s);
                                                 } catch (SQLException e) {

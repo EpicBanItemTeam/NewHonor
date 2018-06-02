@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.api.event;
+package com.github.euonmyoji.newhonor.event;
 
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
@@ -8,16 +8,16 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 import java.util.UUID;
 
 /**
- * fire when a player lose honor(s)
+ * fire when a player get a honor
  *
  * @author yinyangshi
  */
 @NonnullByDefault
 @SuppressWarnings("unused")
-public class PlayerLoseHonorEvent implements Event, Cancellable {
+public class PlayerGetHonorEvent implements Event, Cancellable {
     private Cause cause;
     private UUID uuid;
-    private String[] honorIDs;
+    private String honorID;
     private boolean canceled;
 
     /**
@@ -25,14 +25,14 @@ public class PlayerLoseHonorEvent implements Event, Cancellable {
      * @param uuid    被给玩家的uuid
      * @param honorID 被给头衔ID
      */
-    public PlayerLoseHonorEvent(Cause cause, UUID uuid, String... honorIDs) {
+    public PlayerGetHonorEvent(Cause cause, UUID uuid, String honorID) {
         this.cause = cause;
         this.uuid = uuid;
-        this.honorIDs = honorIDs;
+        this.honorID = honorID;
     }
 
     /**
-     * 获得这次事件中失去头衔的玩家的uuid
+     * 获得这次事件中被给头衔的玩家的uuid
      *
      * @return 被给玩家的uuid
      */
@@ -41,12 +41,12 @@ public class PlayerLoseHonorEvent implements Event, Cancellable {
     }
 
     /**
-     * 获得这次事件中失去的头衔ID
+     * 获得这次事件中被给头衔ID
      *
      * @return 被给予的头衔id
      */
-    public String[] getHonorIDs() {
-        return this.honorIDs;
+    public String getHonorID() {
+        return this.honorID;
     }
 
     @Override

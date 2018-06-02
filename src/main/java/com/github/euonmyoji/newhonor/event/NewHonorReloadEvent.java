@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.api.event;
+package com.github.euonmyoji.newhonor.event;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import org.spongepowered.api.event.Event;

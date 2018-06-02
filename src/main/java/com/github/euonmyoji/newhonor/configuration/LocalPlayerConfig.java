@@ -1,8 +1,8 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.api.event.PlayerGetHonorEvent;
-import com.github.euonmyoji.newhonor.api.event.PlayerLoseHonorEvent;
+import com.github.euonmyoji.newhonor.event.PlayerGetHonorEvent;
+import com.github.euonmyoji.newhonor.event.PlayerLoseHonorEvent;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -20,13 +20,13 @@ import java.util.*;
 /**
  * @author yinyangshi
  */
-public class LocalPlayerData implements PlayerData {
+public class LocalPlayerConfig implements PlayerConfig {
     private final UUID uuid;
     private final CommentedConfigurationNode cfg;
     private final TypeToken<String> type = TypeToken.of(String.class);
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
-    LocalPlayerData(UUID uuid) {
+    LocalPlayerConfig(UUID uuid) {
         this.uuid = uuid;
         loader = HoconConfigurationLoader.builder()
                 .setPath((NewHonorConfig.cfgDir.resolve("PlayerData")).resolve(uuid.toString() + ".conf")).build();
@@ -91,7 +91,7 @@ public class LocalPlayerData implements PlayerData {
 
     @Override
     public boolean setUseHonor(String id) {
-        if (isOwnHonor(id) && HonorData.getHonorText(id).isPresent()) {
+        if (isOwnHonor(id) && HonorConfig.getHonorText(id).isPresent()) {
             return save();
         }
         return false;
@@ -161,11 +161,11 @@ public class LocalPlayerData implements PlayerData {
             return false;
         }
         Optional<List<String>> honors = getOwnHonors();
-        if (HonorData.getHonorText(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
+        if (HonorConfig.getHonorText(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
             honors.get().add(id);
             cfg.getNode("honors").setValue(honors.get());
             Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
-                    HonorData.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
+                    HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
             return true;
         }
         return false;

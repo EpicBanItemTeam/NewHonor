@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.configuration.EffectsData;
+import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -23,7 +23,7 @@ class EffectsCommand {
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {
                 String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(NoSuchFieldError::new);
-                Path path = EffectsData.getPath(effectsID);
+                Path path = EffectsConfig.getPath(effectsID);
                 if (Files.exists(path)) {
                     try {
                         Files.delete(path);
@@ -49,12 +49,12 @@ class EffectsCommand {
                 if (type.isPresent()) {
                     String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(NoSuchFieldError::new);
                     int level = args.<Integer>getOne(Text.of("level")).orElseThrow(NoSuchFieldError::new);
-                    EffectsData ed = new EffectsData(effectsID);
+                    EffectsConfig ed = new EffectsConfig(effectsID);
                     try {
                         List<String> edArgs = ed.getEffectsList();
                         if (ed.anyMatchType(edArgs, type.get())) {
                             src.sendMessage(Text.of("[NewHonor]the effects is already exist!"));
-                        } else if (ed.set(edArgs, type.get().getId() + EffectsData.CONNECT_KEY + level)) {
+                        } else if (ed.set(edArgs, type.get().getId() + EffectsConfig.CONNECT_KEY + level)) {
                             src.sendMessage(Text.of("[NewHonor]set the effects effect successful"));
                             return CommandResult.success();
                         } else {
@@ -82,10 +82,10 @@ class EffectsCommand {
                 Optional<PotionEffectType> type = Sponge.getRegistry().getType(PotionEffectType.class, effectID);
                 if (!type.isPresent()) {
                     src.sendMessage(Text.of("[NewHonor]Unknown PotionEffect"));
-                } else if (!Files.exists(EffectsData.getPath(effectsID))) {
+                } else if (!Files.exists(EffectsConfig.getPath(effectsID))) {
                     src.sendMessage(Text.of("[NewHonor]effects is not found"));
                 } else {
-                    EffectsData ed = new EffectsData(effectsID);
+                    EffectsConfig ed = new EffectsConfig(effectsID);
                     try {
                         List<String> list = ed.getEffectsList();
                         if (ed.anyMatchType(list, type.get())) {
@@ -115,10 +115,10 @@ class EffectsCommand {
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {
                 String effectID = args.<String>getOne(Text.of("effectsID")).orElseThrow(NoSuchFieldError::new);
-                if (Files.exists(EffectsData.getPath(effectID))) {
+                if (Files.exists(EffectsConfig.getPath(effectID))) {
                     try {
                         src.sendMessage(Text.of("---------" + effectID + "---------"));
-                        new EffectsData(effectID).getEffects().forEach(effect ->
+                        new EffectsConfig(effectID).getEffects().forEach(effect ->
                                 src.sendMessage(Text.of(String.format("id:%s，name:%s，level:%d",
                                         effect.getType().getId(), effect.getType().getName(), effect.getAmplifier()))));
                         return CommandResult.success();
@@ -138,7 +138,7 @@ class EffectsCommand {
                 PaginationList.Builder builder = PaginationList.builder()
                         .title(Text.of("Created Effects")).padding(Text.of("-"));
                 try {
-                    builder.contents(EffectsData.getCreatedEffects().stream().map(Text::of).collect(Collectors.toList()));
+                    builder.contents(EffectsConfig.getCreatedEffects().stream().map(Text::of).collect(Collectors.toList()));
                     builder.build().sendTo(src);
                     return CommandResult.success();
                 } catch (IOException e) {
