@@ -51,7 +51,7 @@ public class HaloEffectsOffer {
             id = config.getId();
             config.cfg.getNode("halo").getChildrenMap().forEach((o, cfg) -> {
                 try {
-                    randomList.add(new HaloEffectsData(cfg));
+                    randomList.add(new HaloEffectsData(cfg, id));
                 } catch (ObjectMappingException e) {
                     NewHonor.plugin.logger.warn(String.format("There is something wrong with effects id:%s, random id:%s",
                             id, o.toString()), e);

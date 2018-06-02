@@ -2,6 +2,7 @@ package com.github.euonmyoji.newhonor.data;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -24,16 +25,16 @@ public class HaloEffectsData {
     private final double chance;
     private final double radius;
     private final boolean include;
-    private final boolean show;
     public LocalDateTime lastRunTime = LocalDateTime.MIN;
+    private final String effectID;
     public int lastDelay = 0;
 
-    public HaloEffectsData(CommentedConfigurationNode cfg) throws ObjectMappingException {
+    public HaloEffectsData(CommentedConfigurationNode cfg, String id) throws ObjectMappingException {
+        effectID = id;
         delayData = new EffectsDelayData(cfg.getNode("delay").getString("0"));
         radius = cfg.getNode("radius").getDouble(5);
         chance = cfg.getNode("chance").getDouble(1);
         include = cfg.getNode("include-me").getBoolean(false);
-        show = cfg.getNode("show").getBoolean(false);
         potionEffects = Util.getPotionEffects(cfg, Util.getPotionEffectsDurationTick(cfg), cfg.getNode("show").getBoolean(false));
     }
 
@@ -55,7 +56,11 @@ public class HaloEffectsData {
             double distanceSquared = player.getLocation().getPosition().distanceSquared(o);
             boolean playerPass = include || !(p.getUniqueId().equals(player.getUniqueId()));
             if (playerPass && distanceSquared < (radius * radius)) {
-                Util.offerEffects(player, potionEffects);
+                OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, effectID, p, potionEffects, true);
+                Sponge.getEventManager().post(event);
+                if (!event.isCancelled()) {
+                    Util.offerEffects(player, potionEffects);
+                }
             }
         });
     }

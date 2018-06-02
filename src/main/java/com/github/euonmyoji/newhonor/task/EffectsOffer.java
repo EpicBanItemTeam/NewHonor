@@ -4,6 +4,7 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.data.EffectsDelayData;
 import com.github.euonmyoji.newhonor.data.RandomEffectsData;
+import com.github.euonmyoji.newhonor.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
@@ -65,7 +66,7 @@ public class EffectsOffer {
             delayData = new EffectsDelayData(config.cfg.getNode("effects", "delay").getString("0"));
             config.cfg.getNode("effects", "random").getChildrenMap().forEach((o, cfg) -> {
                 try {
-                    randomList.add(new RandomEffectsData(cfg));
+                    randomList.add(new RandomEffectsData(cfg, id));
                 } catch (ObjectMappingException e) {
                     NewHonor.plugin.logger.warn(String.format("There is something wrong with effects id:%s, random id:%s",
                             id, o.toString()), e);
@@ -80,7 +81,13 @@ public class EffectsOffer {
                     .map(Sponge.getServer()::getPlayer)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .forEach(player -> Util.offerEffects(player, potionEffects))).submit(NewHonor.plugin);
+                    .forEach(player -> {
+                        OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, potionEffects, false);
+                        Sponge.getEventManager().post(event);
+                        if (!event.isCancelled()) {
+                            Util.offerEffects(player, potionEffects);
+                        }
+                    })).submit(NewHonor.plugin);
         }
     }
 }
