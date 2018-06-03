@@ -89,7 +89,6 @@ public class SqlManager {
         private static volatile Connection con;
         private static volatile Statement statement;
         private UUID uuid;
-        private ResultSet result;
         private List<SQLException> es = new ArrayList<>();
         private boolean done;
         private static int time_out = 0;
@@ -126,12 +125,6 @@ public class SqlManager {
                         preStat.execute();
                     } catch (SQLException ignore) {
                     }
-                    try (PreparedStatement preStat = getConnection().prepareStatement("select * from " + DATA_TABLE_NAME + " where UUID = '" + uuid + "'")) {
-                        result = preStat.executeQuery();
-                        result.next();
-                    } catch (SQLException e) {
-                        es.add(e);
-                    }
                     getStatement().execute("set names " + update_encoding + ";");
                 } catch (SQLException e) {
                     es.add(e);
@@ -164,6 +157,8 @@ public class SqlManager {
 
         @Override
         public boolean isUseHonor() throws SQLException {
+            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", USEHONOR_KEY, DATA_TABLE_NAME, uuid));
+            result.next();
             return result.getByte(USEHONOR_KEY) >= 1;
         }
 
@@ -215,7 +210,9 @@ public class SqlManager {
 
         @Override
         public boolean isEnableEffects() throws SQLException {
-            return result.getByte(ENABLEEFFECTS_KEY) > 1;
+            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", ENABLEEFFECTS_KEY, DATA_TABLE_NAME, uuid));
+            result.next();
+            return result.getByte(ENABLEEFFECTS_KEY) >= 1;
         }
 
         @Override
@@ -228,12 +225,16 @@ public class SqlManager {
 
         @Override
         public String getUsingHonorID() throws SQLException {
+            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", USING_KEY, DATA_TABLE_NAME, uuid));
+            result.next();
             return result.getString(USING_KEY);
         }
 
         @Override
         public Optional<List<String>> getOwnHonors() throws SQLException {
-            return Optional.ofNullable(result.getString("honors")).map(s -> new ArrayList<>(Arrays.asList(s.split(D))));
+            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", HONORS_KEY, DATA_TABLE_NAME, uuid));
+            result.next();
+            return Optional.ofNullable(result.getString(HONORS_KEY)).map(s -> new ArrayList<>(Arrays.asList(s.split(D))));
         }
 
         @Override
