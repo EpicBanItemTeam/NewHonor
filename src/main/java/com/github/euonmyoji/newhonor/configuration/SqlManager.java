@@ -124,8 +124,7 @@ public class SqlManager {
                 try {
                     try (PreparedStatement preStat = getConnection().prepareStatement("INSERT INTO " + DATA_TABLE_NAME + " (UUID) VALUES('" + uuid + "');")) {
                         preStat.execute();
-                    } catch (SQLException e) {
-                        es.add(e);
+                    } catch (SQLException ignore) {
                     }
                     try (PreparedStatement preStat = getConnection().prepareStatement("select * from " + DATA_TABLE_NAME + " where UUID = '" + uuid + "'")) {
                         result = preStat.executeQuery();
