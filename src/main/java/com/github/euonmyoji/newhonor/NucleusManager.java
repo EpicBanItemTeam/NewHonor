@@ -9,10 +9,10 @@ import java.util.Optional;
 /**
  * @author yinyangshi
  */
-public class NucleusManager {
+class NucleusManager {
     private static boolean done;
 
-    public static void doIt() {
+    static void doIt() {
         try {
             synchronized (NewHonor.DATA_LOCK) {
                 if (!done) {
