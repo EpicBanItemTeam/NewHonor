@@ -2,7 +2,7 @@ package com.github.euonmyoji.newhonor.data;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.event.OfferPlayerEffectsEvent;
+import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;

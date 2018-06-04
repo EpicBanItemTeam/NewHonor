@@ -1,8 +1,8 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.event.PlayerGetHonorEvent;
-import com.github.euonmyoji.newhonor.event.PlayerLoseHonorEvent;
+import com.github.euonmyoji.newhonor.api.event.PlayerGetHonorEvent;
+import com.github.euonmyoji.newhonor.api.event.PlayerLoseHonorEvent;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;

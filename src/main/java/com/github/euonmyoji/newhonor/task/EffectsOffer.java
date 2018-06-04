@@ -4,7 +4,7 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.data.EffectsDelayData;
 import com.github.euonmyoji.newhonor.data.RandomEffectsData;
-import com.github.euonmyoji.newhonor.event.OfferPlayerEffectsEvent;
+import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;

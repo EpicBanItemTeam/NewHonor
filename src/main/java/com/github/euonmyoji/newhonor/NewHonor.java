@@ -41,9 +41,10 @@ import java.util.UUID;
  * @author yinyangshi
  */
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
-        dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true)})
+        dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
+                @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-beta";
+    public static final String VERSION = "2.0.0-pre-b1";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     public static final Object DATA_LOCK = new Object();
     @Inject
@@ -149,6 +150,7 @@ public class NewHonor {
                 () -> NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean() ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> HaloEffectsOffer.TASK_DATA.size() > 0 ?
                 "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("usenucleus", () -> NewHonorConfig.isUseNucleus() ? "true" : "false"));
     }
 
     @Listener
@@ -204,6 +206,7 @@ public class NewHonor {
                 ScoreBoardManager.enable = true;
                 ScoreBoardManager.init();
                 logger.info("displayHonor mode enabled");
+                logger.info("if there is any wrong with chat and you installed nucleus, try to change config in nucleus(overwrite-early-prefix = true)");
                 if (NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean() && allowForce) {
                     Sponge.getEventManager().registerListeners(this, NewHonorListener);
                 }
@@ -216,6 +219,10 @@ public class NewHonor {
             if (usePAPI) {
                 PlaceHolderManager.create();
                 logger.info("enabled PAPI");
+            }
+            if (NewHonorConfig.isUseNucleus()) {
+                NucleusManager.doIt();
+                logger.info("nucleus support enabled");
             }
         } catch (Exception e) {
             logger.error("error mode", e);
@@ -268,8 +275,7 @@ public class NewHonor {
         }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
     }
 
-    @SuppressWarnings("unused")
-    public static PluginContainer container() {
+    static PluginContainer container() {
         return plugin.pluginContainer;
     }
 }
