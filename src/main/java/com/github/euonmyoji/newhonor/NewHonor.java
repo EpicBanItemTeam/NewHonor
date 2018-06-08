@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor;
 
+import com.github.euonmyoji.newhonor.api.event.NewHonorReloadEvent;
 import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.*;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
@@ -44,7 +45,7 @@ import java.util.UUID;
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-pre-b1";
+    public static final String VERSION = "2.0.0-pre-b2";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     public static final Object DATA_LOCK = new Object();
     @Inject
@@ -189,7 +190,7 @@ public class NewHonor {
         }
     }
 
-    public void choosePluginMode() {
+    private void choosePluginMode() {
         try {
             EventManager eventManager = Sponge.getEventManager();
             eventManager.unregisterListeners(UChatListener);
@@ -230,6 +231,8 @@ public class NewHonor {
     }
 
     public void reload() {
+        Sponge.getEventManager().post(new NewHonorReloadEvent());
+        NewHonor.plugin.choosePluginMode();
         synchronized (DATA_LOCK) {
             NewHonorConfig.reload();
             LanguageManager.reload();

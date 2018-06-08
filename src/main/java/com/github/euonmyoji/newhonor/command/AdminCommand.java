@@ -194,9 +194,7 @@ class AdminCommand {
     static CommandSpec reload = CommandSpec.builder()
             .executor((src, args) -> {
                 src.sendMessage(of("[NewHonor]start reload"));
-                Sponge.getEventManager().post(new NewHonorReloadEvent());
                 NewHonor.plugin.reload();
-                NewHonor.plugin.choosePluginMode();
                 refreshCache(src);
                 src.sendMessage(of("[NewHonor]reload successful"));
                 return CommandResult.success();

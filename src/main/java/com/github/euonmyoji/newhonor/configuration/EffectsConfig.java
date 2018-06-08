@@ -55,13 +55,13 @@ public class EffectsConfig {
     }
 
     public boolean remove(List<String> list) {
-        cfg.getNode("effects").setValue(list);
+        cfg.getNode("effects", "effects").setValue(list);
         return save();
     }
 
     public boolean set(List<String> list, String s) {
         list.add(s);
-        cfg.getNode("effects").setValue(list);
+        cfg.getNode("effects", "effects").setValue(list);
         return save();
     }
 

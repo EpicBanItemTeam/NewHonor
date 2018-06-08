@@ -27,11 +27,10 @@ public class HaloEffectsOffer {
     }
 
     static void update(List<String> effects) {
-        effects.forEach(id -> {
-            synchronized (TASK_DATA) {
-                TASK_DATA.put(id, new HaloTaskData(new EffectsConfig(id)));
-            }
-        });
+        synchronized (TASK_DATA) {
+            TASK_DATA.clear();
+            effects.forEach(id -> TASK_DATA.put(id, new HaloTaskData(new EffectsConfig(id))));
+        }
     }
 
     private static class HaloTaskData {

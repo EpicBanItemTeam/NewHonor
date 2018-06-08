@@ -1,10 +1,10 @@
 package com.github.euonmyoji.newhonor.task;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.data.EffectsDelayData;
 import com.github.euonmyoji.newhonor.data.RandomEffectsData;
-import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
@@ -29,15 +29,16 @@ public class EffectsOffer {
     }
 
     static void update(List<String> effects) {
-        effects.forEach(id -> {
-            synchronized (TASK_DATA) {
+        synchronized (TASK_DATA) {
+            TASK_DATA.clear();
+            effects.forEach(id -> {
                 try {
                     TASK_DATA.put(id, new SelfTaskData(new EffectsConfig(id)));
                 } catch (ObjectMappingException e) {
                     NewHonor.plugin.logger.warn("The Effects is error | id:" + id, e);
                 }
-            }
-        });
+            });
+        }
     }
 
     private static class SelfTaskData {
