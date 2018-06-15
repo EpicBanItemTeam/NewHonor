@@ -45,7 +45,7 @@ import java.util.UUID;
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-pre-b2";
+    public static final String VERSION = "2.0.0-pre-b3";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     public static final Object DATA_LOCK = new Object();
     @Inject
@@ -203,6 +203,11 @@ public class NewHonor {
                 logger.info("uchat mode enabled");
                 allowForce = false;
             }
+            if (NewHonorConfig.isUseNucleus()) {
+                NucleusManager.doIt();
+                logger.info("nucleus support enabled");
+                allowForce = false;
+            }
             if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
                 ScoreBoardManager.enable = true;
                 ScoreBoardManager.init();
@@ -220,10 +225,6 @@ public class NewHonor {
             if (usePAPI) {
                 PlaceHolderManager.create();
                 logger.info("enabled PAPI");
-            }
-            if (NewHonorConfig.isUseNucleus()) {
-                NucleusManager.doIt();
-                logger.info("nucleus support enabled");
             }
         } catch (Exception e) {
             logger.error("error mode", e);

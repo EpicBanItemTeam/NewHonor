@@ -11,6 +11,7 @@ import java.util.Random;
  */
 public class EffectsDelayData {
     private final List<Range> ranges = new ArrayList<>();
+    private static final Random R = new Random();
 
     public EffectsDelayData(String arg) {
         try {
@@ -24,8 +25,7 @@ public class EffectsDelayData {
     }
 
     public int getDelay() {
-        Random r = new Random();
-        return ranges.get(r.nextInt(ranges.size())).get(r);
+        return ranges.get(R.nextInt(ranges.size())).get();
     }
 
     private class Range {
@@ -33,8 +33,8 @@ public class EffectsDelayData {
         private int max;
         private static final int MAX_LENGTH = 2;
 
-        private int get(Random r) {
-            return r.nextInt(1 + max - min) + min;
+        private int get() {
+            return min == max ? min : R.nextInt(1 + max - min) + min;
         }
 
         private Range(String[] arg) throws NumberFormatException {

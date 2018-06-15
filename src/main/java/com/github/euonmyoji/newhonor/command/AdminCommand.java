@@ -1,7 +1,6 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.api.event.NewHonorReloadEvent;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
@@ -54,10 +53,10 @@ class AdminCommand {
                             try {
                                 if (pd.giveHonor(id)) {
                                     src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " successful"));
-                                    plugin.logger.info(src.getName() + "gave " + user.getName() + " honor: " + id + " successful");
+                                    plugin.logger.info(src.getName() + " gave " + user.getName() + " honor " + id + " successful");
                                 } else {
                                     src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed"));
-                                    plugin.logger.info(src.getName() + "gave " + user.getName() + " honor: " + id + " failed");
+                                    plugin.logger.info(src.getName() + " gave " + user.getName() + " honor " + id + " failed");
                                 }
                             } catch (Exception e) {
                                 src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed(error!)"));
@@ -87,10 +86,10 @@ class AdminCommand {
                                 try {
                                     if (pd.takeHonor(id)) {
                                         src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " successful"));
-                                        plugin.logger.info(src.getName() + "took " + user.getName() + " honor:" + id + " successful");
+                                        plugin.logger.info(src.getName() + " took " + user.getName() + " honor " + id + " successful");
                                     } else {
                                         src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " failed"));
-                                        plugin.logger.info(src.getName() + "took " + user.getName() + " honor:" + id + " failed");
+                                        plugin.logger.info(src.getName() + " took " + user.getName() + " honor " + id + " failed");
                                     }
                                 } catch (Exception e) {
                                     src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed(error!)"));

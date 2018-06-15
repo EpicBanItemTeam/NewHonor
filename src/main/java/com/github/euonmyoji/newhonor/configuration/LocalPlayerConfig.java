@@ -154,7 +154,7 @@ public class LocalPlayerConfig implements PlayerConfig {
     }
 
     private boolean isOwnHonor(String id) {
-        return getOwnHonors().orElse(Collections.emptyList()).stream().anyMatch(s -> Objects.equals(s, id));
+        return getOwnHonors().orElse(Collections.emptyList()).contains(id);
     }
 
     private boolean noSaveGive(String id) {

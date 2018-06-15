@@ -24,7 +24,7 @@ public class SqlManager {
     static boolean enable = false;
     private static final String DATA_TABLE_NAME = "NewHonorPlayerData";
     private static String address;
-    private static int port;
+    private static short port;
     private static String database;
     private static String user;
     private static String password;
@@ -52,7 +52,7 @@ public class SqlManager {
         CommentedConfigurationNode node = cfg.getNode("SQL-settings");
         enable = node.getNode("enable").getBoolean(false);
         address = node.getNode("address").getString("address");
-        port = node.getNode("port").getInt(3306);
+        port = (short) node.getNode("port").getInt(3306);
         database = node.getNode("database").getString("database");
         user = node.getNode("user").getString("user");
         password = node.getNode("password").getString("password");
@@ -91,7 +91,7 @@ public class SqlManager {
         private UUID uuid;
         private List<SQLException> es = new ArrayList<>();
         private boolean done;
-        private static int time_out = 0;
+        private static byte time_out = 0;
 
         private static final String D = ",";
 
