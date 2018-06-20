@@ -1,8 +1,23 @@
 #NewHonor
 
-基本权限节点\
+normal permissions:\
 newhonor.use\
 newhonor.settings
 
-管理员用权限节点\
+admin permission:\
 newhonor.admin
+
+
+stats data
+https://bstats.org/plugin/sponge/New%20Honor
+
+some var:
+
+PAPI
+%newhonor%
+
+UChat
+{newhonor}
+
+nucleus
+{{pl:newhonor:newhonor}}
