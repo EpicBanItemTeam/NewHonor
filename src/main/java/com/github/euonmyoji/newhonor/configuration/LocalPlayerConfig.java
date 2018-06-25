@@ -52,17 +52,18 @@ public class LocalPlayerConfig implements PlayerConfig {
     @Override
     public boolean takeHonor(String... ids) {
         boolean took = false;
+        Optional<List<String>> honors = getOwnHonors();
         for (String id : ids) {
-            Optional<List<String>> honors = getOwnHonors();
-            if (honors.isPresent() && honors.get().stream().anyMatch(id::equals)) {
-                honors.get().remove(id);
-                cfg.getNode("honors").setValue(honors.get());
+            if (honors.isPresent() && honors.get().remove(id)) {
                 took = true;
             }
         }
-        PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
-        Sponge.getEventManager().post(event);
-        return !event.isCancelled() && took && save();
+        if (took) {
+            cfg.getNode("honors").setValue(honors.get());
+            PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
+            return !Sponge.getEventManager().post(event) && save();
+        }
+        return false;
     }
 
     @Override
@@ -154,7 +155,7 @@ public class LocalPlayerConfig implements PlayerConfig {
     }
 
     private boolean isOwnHonor(String id) {
-        return getOwnHonors().orElse(Collections.emptyList()).contains(id);
+        return id != null && getOwnHonors().orElse(Collections.emptyList()).contains(id);
     }
 
     private boolean noSaveGive(String id) {
@@ -162,7 +163,7 @@ public class LocalPlayerConfig implements PlayerConfig {
             return false;
         }
         Optional<List<String>> honors = getOwnHonors();
-        if (HonorConfig.getHonorText(id).isPresent() && honors.isPresent() && honors.get().stream().noneMatch(id::equals)) {
+        if (HonorConfig.getHonorText(id).isPresent() && honors.isPresent() && !honors.get().contains(id)) {
             honors.get().add(id);
             cfg.getNode("honors").setValue(honors.get());
             Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->

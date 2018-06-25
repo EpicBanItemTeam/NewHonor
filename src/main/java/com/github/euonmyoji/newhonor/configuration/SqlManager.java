@@ -168,17 +168,18 @@ public class SqlManager {
             Optional<List<String>> honors = getOwnHonors();
             if (honors.isPresent()) {
                 for (String id : ids) {
-                    if (honors.get().stream().anyMatch(id::equals)) {
-                        honors.get().remove(id);
+                    if (honors.get().remove(id)) {
                         took = true;
                     }
                 }
             }
-            PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
-            Sponge.getEventManager().post(event);
-            return took && !event.isCancelled() && getStatement().executeUpdate(
-                    String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'",
-                            HONORS_KEY, honors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""), uuid)) < 2;
+            if (took) {
+                PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
+                return !Sponge.getEventManager().post(event) && getStatement().executeUpdate(
+                        String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'",
+                                HONORS_KEY, honors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""), uuid)) < 2;
+            }
+            return false;
         }
 
         @Override
@@ -243,7 +244,7 @@ public class SqlManager {
             if (usingID == null) {
                 return;
             }
-            if (!isOwnHonor(getUsingHonorID())) {
+            if (!isOwnHonor(usingID)) {
                 Optional<List<String>> list = NewHonorConfig.getDefaultOwnHonors();
                 if (list.isPresent()) {
                     setUseHonor(list.get().get(0));
@@ -259,7 +260,7 @@ public class SqlManager {
         }
 
         private boolean isOwnHonor(String id) throws SQLException {
-            return getOwnHonors().orElse(Collections.emptyList()).stream().anyMatch(s -> Objects.equals(s, id));
+            return getOwnHonors().orElse(Collections.emptyList()).contains(id);
         }
 
         private static Connection getConnection() throws SQLException {

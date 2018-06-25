@@ -77,7 +77,15 @@ class ScoreBoardManager {
     }
 
     private static void setPlayerScoreBoard(Player p) {
-        p.setScoreboard(getScoreBoard());
+        try {
+            p.setScoreboard(getScoreBoard());
+        } catch (NullPointerException e) {
+            try {
+                p.setScoreboard(getScoreBoard());
+            } catch (NullPointerException e2) {
+                NewHonor.plugin.logger.warn("some plugin deleted the honor scoreboard!");
+            }
+        }
     }
 
     private static Scoreboard getScoreBoard() {
