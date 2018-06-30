@@ -166,14 +166,19 @@ public class HonorCommand {
             .executor((src, args) -> {
                 src.sendMessage(of("-------------------------------------"));
                 src.sendMessage(Text.builder().append(of("/honor settings usehonor true/false -", getCommandDescribe("settings.usehonor")))
-                        .onClick(TextActions.suggestCommand("/honor settings usehonor -")).onHover(showText(getText("newhonor.hovermessage.settings.usehonor"))).build());
+                        .onClick(TextActions.suggestCommand("/honor settings usehonor ")).onHover(showText(getText("newhonor.hovermessage.settings.usehonor"))).build());
+
                 src.sendMessage(Text.builder().append(of("/honor settings enableeffects true/false -", getCommandDescribe("settings.enableeffects")))
-                        .onClick(TextActions.suggestCommand("/honor settings enableeffects -")).onHover(showText(getText("newhonor.hovermessage.settings.enableeffects"))).build());
+                        .onClick(TextActions.suggestCommand("/honor settings enableeffects ")).onHover(showText(getText("newhonor.hovermessage.settings.enableeffects"))).build());
+
+                src.sendMessage(Text.builder().append(of("/honor settings autochange true/false -", getCommandDescribe("settings.autochange")))
+                        .onClick(TextActions.suggestCommand("/honor settings autochange ")).onHover(showText(getText("newhonor.hovermessage.settings.autochange"))).build());
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
             .child(SettingsArgs.usehonor, "usehonor")
             .child(SettingsArgs.enableEffects, "enableeffects")
+            .child(SettingsArgs.autochange, "autochange")
             .build();
 
     private static CommandSpec admin = CommandSpec.builder()

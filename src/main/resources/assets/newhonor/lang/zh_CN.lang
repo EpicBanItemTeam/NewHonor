@@ -15,6 +15,7 @@ newhonor.command.describe.admin.refresh = &e刷新插件缓存
 
 newhonor.command.describe.settings.usehonor = &a使用头衔
 newhonor.command.describe.settings.enableeffects = &a使用头衔药水buff
+newhonor.command.describe.settings.autochange = &a获得头衔时自动切换该头衔
 
 newhonor.command.describe.effects.set = &6设置一个药水效果组的一个药水效果
 newhonor.command.describe.effects.delete = &c删除一个药水效果组
@@ -27,6 +28,7 @@ newhonor.command.hovermessage.list = &a点击显示自己拥有的头衔
 newhonor.command.hovermessage.settings = &a点击进入修改设置界面
 newhonor.hovermessage.settings.usehonor = &6左键后输入&atrue&6或者&cfalse&6更改设置
 newhonor.hovermessage.settings.enableeffects = &6左键后输入&atrue&6或者&cfalse&6更改设置
+newhonor.hovermessage.settings.autochange = &6左键后输入&atrue&6或者&cfalse&6更改设置
 
 newhonor.changehonor.succeed = &e[&b头衔插件&e] &a修改使用头衔成功
 newhonor.changehonor.failed = &e[&b头衔插件&e] &c修改使用头衔失败，已将头衔改成默认头衔。

@@ -15,6 +15,7 @@ newhonor.command.describe.admin.refresh = refresh the plugin memory
 
 newhonor.command.describe.settings.usehonor = use honor
 newhonor.command.describe.settings.enableeffects = enable honor effect buff
+newhonor.command.describe.settings.autochange = auto change honor if you get an honor
 
 newhonor.command.describe.effects.set = set a EffectGroup PotionEffect
 newhonor.command.describe.effects.delete = delete a EffectGroup
@@ -27,6 +28,7 @@ newhonor.command.hovermessage.list = click to list your honors
 newhonor.command.hovermessage.settings = click to see settings
 newhonor.hovermessage.settings.usehonor = click and type true/false to change settings
 newhonor.hovermessage.settings.enableeffects = click and type true/false to change settings
+newhonor.hovermessage.settings.autochange = click and type true/false to change settings
 
 newhonor.changehonor.succeed = [NewHonor]Change using honor successful
 newhonor.changehonor.failed = [NewHonor]Change using honor failed.(set using honor to default)

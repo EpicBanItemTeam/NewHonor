@@ -31,6 +31,13 @@ public class LocalPlayerConfig implements PlayerConfig {
         loader = HoconConfigurationLoader.builder()
                 .setPath((NewHonorConfig.cfgDir.resolve("PlayerData")).resolve(uuid.toString() + ".conf")).build();
         cfg = load();
+
+        //为了兼容以前版本cfg 更新代码
+        final String oldUseKey = "using";
+        if (!cfg.getNode(oldUseKey).isVirtual()) {
+            cfg.getNode(USING_KEY).setValue(cfg.getNode(oldUseKey).getString());
+            save();
+        }
     }
 
     @Override
@@ -39,14 +46,15 @@ public class LocalPlayerConfig implements PlayerConfig {
         if (defaultHonors.isPresent()) {
             defaultHonors.get().forEach(this::noSaveGive);
             if (save()) {
-                setUseHonor(cfg.getNode("using").getString(defaultHonors.get().get(0)));
+                //如果玩家没有使用中的头衔就用默认的第一个
+                setUseHonor(cfg.getNode(USING_KEY).getString(defaultHonors.get().get(0)));
             }
         }
     }
 
     @Override
     public boolean isUseHonor() {
-        return cfg.getNode("usehonor").getBoolean(true);
+        return cfg.getNode(USEHONOR_KEY).getBoolean(true);
     }
 
     @Override
@@ -59,7 +67,7 @@ public class LocalPlayerConfig implements PlayerConfig {
             }
         }
         if (took) {
-            cfg.getNode("honors").setValue(honors.get());
+            cfg.getNode(HONORS_KEY).setValue(honors.get());
             PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
             return !Sponge.getEventManager().post(event) && save();
         }
@@ -75,25 +83,36 @@ public class LocalPlayerConfig implements PlayerConfig {
 
     @Override
     public void setWhetherUseHonor(boolean use) {
-        cfg.getNode("usehonor").setValue(use);
+        cfg.getNode(USEHONOR_KEY).setValue(use);
         save();
     }
 
     @Override
     public void setWhetherEnableEffects(boolean enable) {
-        cfg.getNode("enableEffects").setValue(enable);
+        cfg.getNode(ENABLE_EFFECTS_KEY).setValue(enable);
         save();
     }
 
     @Override
+    public void enableAutoChange(boolean auto) {
+        cfg.getNode(AUTO_CHANGE_KEY).setValue(auto);
+        save();
+    }
+
+    @Override
+    public boolean isEnabledAutoChange() {
+        return cfg.getNode(AUTO_CHANGE_KEY).getBoolean(true);
+    }
+
+    @Override
     public boolean isEnableEffects() {
-        return cfg.getNode("enableEffects").getBoolean(true);
+        return cfg.getNode(ENABLE_EFFECTS_KEY).getBoolean(true);
     }
 
     @Override
     public boolean setUseHonor(String id) {
         if (isOwnHonor(id) && HonorConfig.getHonorText(id).isPresent()) {
-            cfg.getNode("using").setValue(id);
+            cfg.getNode(USING_KEY).setValue(id);
             return save();
         }
         return false;
@@ -101,13 +120,13 @@ public class LocalPlayerConfig implements PlayerConfig {
 
     @Override
     public String getUsingHonorID() {
-        return cfg.getNode("using").getString();
+        return cfg.getNode(USING_KEY).getString();
     }
 
     @Override
     public Optional<List<String>> getOwnHonors() {
         try {
-            return Optional.of(cfg.getNode("honors").getList(type, ArrayList::new));
+            return Optional.of(cfg.getNode(HONORS_KEY).getList(type, ArrayList::new));
         } catch (ObjectMappingException e) {
             e.printStackTrace();
             return Optional.empty();
@@ -165,9 +184,12 @@ public class LocalPlayerConfig implements PlayerConfig {
         Optional<List<String>> honors = getOwnHonors();
         if (HonorConfig.getHonorText(id).isPresent() && honors.isPresent() && !honors.get().contains(id)) {
             honors.get().add(id);
-            cfg.getNode("honors").setValue(honors.get());
+            cfg.getNode(HONORS_KEY).setValue(honors.get());
             Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
                     HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
+            if (isEnabledAutoChange()) {
+                setUseHonor(id);
+            }
             return true;
         }
         return false;

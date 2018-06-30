@@ -53,4 +53,27 @@ class SettingsArgs {
                 return CommandResult.empty();
             })
             .build();
+
+    static CommandSpec autochange = CommandSpec.builder()
+            .arguments(GenericArguments.bool(of("boolean")))
+            .executor((src, args) -> {
+                if (src instanceof User) {
+                    try {
+                        boolean enable = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
+                        PlayerConfig pd = PlayerConfig.get(((User) src));
+                        pd.enableAutoChange(enable);
+                        NewHonor.doSomething(pd);
+                        src.sendMessage(of("[NewHonor]change settings successful"));
+                        return CommandResult.success();
+                    } catch (Exception e) {
+                        src.sendMessage(of("[NewHonor]error!"));
+                        e.printStackTrace();
+                        return CommandResult.empty();
+                    }
+                }
+                src.sendMessage(of("[NewHonor]You are not a user"));
+                return CommandResult.empty();
+            })
+            .build();
+
 }

@@ -19,6 +19,7 @@ import java.util.*;
  */
 public class EffectsOffer {
     public static final HashMap<String, SelfTaskData> TASK_DATA = new HashMap<>();
+    private static final String EFFECTS_KEY = "effects";
 
     static {
         Task.builder().async().execute(() -> {
@@ -33,7 +34,10 @@ public class EffectsOffer {
             TASK_DATA.clear();
             effects.forEach(id -> {
                 try {
-                    TASK_DATA.put(id, new SelfTaskData(new EffectsConfig(id)));
+                    EffectsConfig ec = new EffectsConfig(id);
+                    if (!ec.cfg.getNode(EFFECTS_KEY).isVirtual()) {
+                        TASK_DATA.put(id, new SelfTaskData(new EffectsConfig(id)));
+                    }
                 } catch (ObjectMappingException e) {
                     NewHonor.plugin.logger.warn("The Effects is error | id:" + id, e);
                 }
@@ -64,8 +68,8 @@ public class EffectsOffer {
         private SelfTaskData(EffectsConfig config) throws ObjectMappingException {
             id = config.getId();
             potionEffects = config.getEffects();
-            delayData = new EffectsDelayData(config.cfg.getNode("effects", "delay").getString("0"));
-            config.cfg.getNode("effects", "random").getChildrenMap().forEach((o, cfg) -> {
+            delayData = new EffectsDelayData(config.cfg.getNode(EFFECTS_KEY, "delay").getString("0"));
+            config.cfg.getNode(EFFECTS_KEY, "random").getChildrenMap().forEach((o, cfg) -> {
                 try {
                     randomList.add(new RandomEffectsData(cfg, id));
                 } catch (ObjectMappingException e) {

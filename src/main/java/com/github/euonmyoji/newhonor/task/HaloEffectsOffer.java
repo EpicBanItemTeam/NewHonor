@@ -17,6 +17,7 @@ import java.util.UUID;
  */
 public class HaloEffectsOffer {
     public static final HashMap<String, HaloTaskData> TASK_DATA = new HashMap<>();
+    private static final String HALO_KEY = "halo";
 
     static {
         Task.builder().async().execute(() -> {
@@ -29,7 +30,12 @@ public class HaloEffectsOffer {
     static void update(List<String> effects) {
         synchronized (TASK_DATA) {
             TASK_DATA.clear();
-            effects.forEach(id -> TASK_DATA.put(id, new HaloTaskData(new EffectsConfig(id))));
+            effects.forEach(id -> {
+                EffectsConfig ec = new EffectsConfig(id);
+                if (!ec.cfg.getNode(HALO_KEY).isVirtual()) {
+                    TASK_DATA.put(id, new HaloTaskData(ec));
+                }
+            });
         }
     }
 
@@ -48,7 +54,7 @@ public class HaloEffectsOffer {
 
         private HaloTaskData(EffectsConfig config) {
             id = config.getId();
-            config.cfg.getNode("halo").getChildrenMap().forEach((o, cfg) -> {
+            config.cfg.getNode(HALO_KEY).getChildrenMap().forEach((o, cfg) -> {
                 try {
                     randomList.add(new HaloEffectsData(cfg, id));
                 } catch (ObjectMappingException e) {

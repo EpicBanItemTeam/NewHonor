@@ -12,6 +12,12 @@ import java.util.UUID;
  * @author yinyangshi
  */
 public interface PlayerConfig {
+    String USING_KEY = "usinghonor";
+    String HONORS_KEY = "honors";
+    String USEHONOR_KEY = "usehonor";
+    String ENABLE_EFFECTS_KEY = "enableeffects";
+    String AUTO_CHANGE_KEY = "autochange";
+
     /**
      * 得到玩家爱数据
      *
@@ -115,6 +121,22 @@ public interface PlayerConfig {
      * @throws SQLException when found any error
      */
     Optional<List<String>> getOwnHonors() throws SQLException;
+
+    /**
+     * 玩家获得新头衔后是否自动切换
+     *
+     * @param auto 是否自动切换
+     * @throws SQLException when found any SQL E
+     */
+    void enableAutoChange(boolean auto) throws SQLException;
+
+    /**
+     * 玩家获得新头衔后是否自动切换
+     *
+     * @return true if yes
+     * @throws SQLException when any SQL E
+     */
+    boolean isEnabledAutoChange() throws SQLException;
 
     /**
      * 检查玩家拥有的头衔是否有不正确的地方

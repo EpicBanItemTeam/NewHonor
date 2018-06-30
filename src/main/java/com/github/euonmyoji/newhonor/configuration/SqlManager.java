@@ -16,13 +16,14 @@ import java.sql.*;
 import java.util.*;
 
 import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.cfg;
+import static com.github.euonmyoji.newhonor.configuration.PlayerConfig.*;
 
 /**
  * @author yinyangshi
  */
 public class SqlManager {
     static boolean enable = false;
-    private static final String DATA_TABLE_NAME = "NewHonorPlayerData";
+    private static final String TABLE_NAME = "NewHonorPlayerData";
     private static String address;
     private static short port;
     private static String database;
@@ -31,11 +32,6 @@ public class SqlManager {
     private static String update_encoding;
     private static CommentedConfigurationNode node = cfg.getNode("SQL-settings");
     private static SqlService sql;
-
-    private static final String USING_KEY = "usinghonor";
-    private static final String HONORS_KEY = "honors";
-    private static final String USEHONOR_KEY = "usehonor";
-    private static final String ENABLEEFFECTS_KEY = "enableeffects";
 
     public static void init() {
         reloadSQLInfo();
@@ -61,11 +57,15 @@ public class SqlManager {
             Task.builder().execute(() -> {
                 try (Statement s = getDataSource(getURL()).getConnection().createStatement()) {
                     s.execute("use " + database);
-                    s.execute("CREATE TABLE IF NOT EXISTS " + DATA_TABLE_NAME + "(UUID varchar(36) not null primary key," +
+                    s.execute("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) not null primary key," +
                             USING_KEY + " varchar(64)," +
                             HONORS_KEY + " TEXT," +
                             USEHONOR_KEY + " BOOL DEFAULT 1," +
-                            ENABLEEFFECTS_KEY + " BOOL DEFAULT 1);");
+                            ENABLE_EFFECTS_KEY + " BOOL DEFAULT 1);");
+                    try {
+                        s.execute(String.format("ALTER TABLE %s ADD %s bool default 1;", TABLE_NAME, AUTO_CHANGE_KEY));
+                    } catch (Exception ignore) {
+                    }
                 } catch (SQLException e) {
                     NewHonor.plugin.logger.warn("SQLException while init newhonor sql", e);
                 }
@@ -121,7 +121,7 @@ public class SqlManager {
             this.uuid = uuid;
             Task.builder().execute(() -> {
                 try {
-                    try (PreparedStatement preStat = getConnection().prepareStatement("INSERT INTO " + DATA_TABLE_NAME + " (UUID) VALUES('" + uuid + "');")) {
+                    try (PreparedStatement preStat = getConnection().prepareStatement("INSERT INTO " + TABLE_NAME + " (UUID) VALUES('" + uuid + "');")) {
                         preStat.execute();
                     } catch (SQLException ignore) {
                     }
@@ -145,6 +145,18 @@ public class SqlManager {
         }
 
         @Override
+        public void enableAutoChange(boolean auto) throws SQLException {
+            getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", AUTO_CHANGE_KEY, auto ? 1 : 0, uuid));
+        }
+
+        @Override
+        public boolean isEnabledAutoChange() throws SQLException {
+            ResultSet r = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", AUTO_CHANGE_KEY, TABLE_NAME, uuid));
+            r.next();
+            return r.getByte(AUTO_CHANGE_KEY) >= 1;
+        }
+
+        @Override
         public void init() throws SQLException {
             Optional<List<String>> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
             if (defaultHonors.isPresent()) {
@@ -157,7 +169,7 @@ public class SqlManager {
 
         @Override
         public boolean isUseHonor() throws SQLException {
-            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", USEHONOR_KEY, DATA_TABLE_NAME, uuid));
+            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", USEHONOR_KEY, TABLE_NAME, uuid));
             result.next();
             return result.getByte(USEHONOR_KEY) >= 1;
         }
@@ -193,8 +205,12 @@ public class SqlManager {
             if (!event.isCancelled() && HonorConfig.getHonorText(id).isPresent()) {
                 Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
                         HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
-                return getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'"
+                boolean result = getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'"
                         , HONORS_KEY, honors.stream().reduce((s, s2) -> s + D + s2).orElse("") + D + id, uuid)) < 2;
+                if (result && isEnabledAutoChange()) {
+                    setUseHonor(id);
+                }
+                return result;
             }
             return false;
         }
@@ -206,14 +222,14 @@ public class SqlManager {
 
         @Override
         public void setWhetherEnableEffects(boolean enable) throws SQLException {
-            getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", ENABLEEFFECTS_KEY, enable ? 1 : 0, uuid));
+            getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", ENABLE_EFFECTS_KEY, enable ? 1 : 0, uuid));
         }
 
         @Override
         public boolean isEnableEffects() throws SQLException {
-            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", ENABLEEFFECTS_KEY, DATA_TABLE_NAME, uuid));
+            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", ENABLE_EFFECTS_KEY, TABLE_NAME, uuid));
             result.next();
-            return result.getByte(ENABLEEFFECTS_KEY) >= 1;
+            return result.getByte(ENABLE_EFFECTS_KEY) >= 1;
         }
 
         @Override
@@ -226,14 +242,14 @@ public class SqlManager {
 
         @Override
         public String getUsingHonorID() throws SQLException {
-            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", USING_KEY, DATA_TABLE_NAME, uuid));
+            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", USING_KEY, TABLE_NAME, uuid));
             result.next();
             return result.getString(USING_KEY);
         }
 
         @Override
         public Optional<List<String>> getOwnHonors() throws SQLException {
-            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", HONORS_KEY, DATA_TABLE_NAME, uuid));
+            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", HONORS_KEY, TABLE_NAME, uuid));
             result.next();
             return Optional.ofNullable(result.getString(HONORS_KEY)).map(s -> new ArrayList<>(Arrays.asList(s.split(D))));
         }
