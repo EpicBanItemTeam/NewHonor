@@ -3,12 +3,10 @@ package com.github.euonmyoji.newhonor;
 import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
-import java.util.ConcurrentModificationException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,19 +30,13 @@ class ScoreBoardManager {
 
     static void initPlayer(Player p) {
         if (enable) {
-            Task.builder().execute(() -> {
-                try {
-                    execute(p);
-                } catch (ConcurrentModificationException e) {
-                    Task.builder().execute(() -> {
-                    }).name("NewHonor - execute " + p.getName()).submit(NewHonor.plugin);
-                } catch (Throwable e) {
-                    NewHonor.plugin.logger.warn("Error(s)!", e);
-                }
-            }).async().name("NewHonor - execute " + p.getName()).submit(NewHonor.plugin);
+            try {
+                execute(p);
+            } catch (Exception e) {
+                NewHonor.plugin.logger.warn("init player scoreboard sql e", e);
+            }
             setPlayerScoreBoard(p);
         }
-
     }
 
     private static void execute(Player p) throws Exception {

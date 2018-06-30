@@ -36,6 +36,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -45,7 +46,7 @@ import java.util.UUID;
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-pre-b5";
+    public static final String VERSION = "2.0.0-pre-b6";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     public static final Object DATA_LOCK = new Object();
     @Inject
@@ -165,7 +166,6 @@ public class NewHonor {
             } catch (Throwable e) {
                 logger.error("error while init player", e);
             }
-            ScoreBoardManager.initPlayer(p);
         }).async().name("newhonor - init Player" + p.getName()).submit(this);
     }
 
@@ -247,7 +247,7 @@ public class NewHonor {
     }
 
     public static void doSomething(PlayerConfig pd) {
-        Task.builder().execute(() -> {
+        Runnable r = () -> {
             synchronized (DATA_LOCK) {
                 try {
                     pd.checkUsingHonor();
@@ -262,21 +262,30 @@ public class NewHonor {
                 } catch (Exception e) {
                     plugin.logger.error("error about data!", e);
                 }
-                final String checkPrefix = "newhonor.honor.";
-                Sponge.getServer().getPlayer(pd.getUUID()).ifPresent(player -> {
-                    ScoreBoardManager.initPlayer(player);
-                    HonorConfig.getAllCreatedHonors().forEach(id -> {
-                        if (player.hasPermission(checkPrefix + id)) {
-                            try {
-                                pd.giveHonor(id);
-                            } catch (Exception e) {
-                                plugin.logger.error("error about data!", e);
-                            }
-                        }
-                    });
-                });
             }
-        }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
+        };
+        Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> {
+            ScoreBoardManager.initPlayer(player);
+            HonorConfig.getAllCreatedHonors().forEach(id -> {
+                final String checkPrefix = "newhonor.honor.";
+                if (player.hasPermission(checkPrefix + id)) {
+                    try {
+                        pd.giveHonor(id);
+                    } catch (Exception e) {
+                        plugin.logger.error("error about data!", e);
+                    }
+                }
+            });
+        });
+
+        //r为插件数据修改 异步(有mysql) r2为玩家自身数据修改 可能不存在需要运行的 需要同步
+        if (Sponge.getServer().isMainThread()) {
+            Task.builder().execute(r).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
+            r2.ifPresent(Runnable::run);
+        } else {
+            r.run();
+            r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
+        }
     }
 
     static PluginContainer container() {
