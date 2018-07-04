@@ -46,7 +46,7 @@ import java.util.UUID;
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-pre-b6";
+    public static final String VERSION = "2.0.0-pre-b7";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     public static final Object DATA_LOCK = new Object();
     @Inject
@@ -233,7 +233,6 @@ public class NewHonor {
 
     public void reload() {
         Sponge.getEventManager().post(new NewHonorReloadEvent());
-        NewHonor.plugin.choosePluginMode();
         synchronized (DATA_LOCK) {
             NewHonorConfig.reload();
             LanguageManager.reload();
@@ -244,6 +243,7 @@ public class NewHonor {
                 logger.warn("reload error!", e);
             }
         }
+        NewHonor.plugin.choosePluginMode();
     }
 
     public static void doSomething(PlayerConfig pd) {
