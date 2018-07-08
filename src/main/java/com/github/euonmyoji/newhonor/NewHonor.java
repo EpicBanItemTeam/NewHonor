@@ -45,7 +45,7 @@ import java.util.*;
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-pre-b8";
+    public static final String VERSION = "2.0.0-pre-b9";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     public static final Object DATA_LOCK = new Object();
     @Inject
@@ -139,7 +139,7 @@ public class NewHonor {
     public void onStarted(GameStartedServerEvent event) {
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour");
         logger.info("NewHonor author email:1418780411@qq.com");
-        choosePluginMode();
+        hook();
         try {
             TaskManager.update();
         } catch (IOException e) {
@@ -189,7 +189,10 @@ public class NewHonor {
         }
     }
 
-    private void choosePluginMode() {
+    /**
+     * 各种兼容 额外模式开启?
+     */
+    private void hook() {
         try {
             EventManager eventManager = Sponge.getEventManager();
             eventManager.unregisterListeners(UChatListener);
@@ -242,7 +245,7 @@ public class NewHonor {
                 logger.warn("reload error!", e);
             }
         }
-        NewHonor.plugin.choosePluginMode();
+        NewHonor.plugin.hook();
     }
 
     public static void doSomething(PlayerConfig pd) {

@@ -164,11 +164,6 @@ public class LocalPlayerConfig implements PlayerConfig {
         return this.uuid;
     }
 
-    @Override
-    public boolean isOwnHonor(String id) {
-        return id != null && getOwnHonors().orElse(Collections.emptyList()).contains(id);
-    }
-
     private CommentedConfigurationNode load() {
         try {
             return loader.load();

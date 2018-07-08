@@ -275,11 +275,6 @@ public class SqlManager {
             return uuid;
         }
 
-        @Override
-        public boolean isOwnHonor(String id) throws SQLException {
-            return getOwnHonors().orElse(Collections.emptyList()).contains(id);
-        }
-
         private static Connection getConnection() throws SQLException {
             if (con == null || con.isClosed()) {
                 con = getDataSource(getURL()).getConnection();

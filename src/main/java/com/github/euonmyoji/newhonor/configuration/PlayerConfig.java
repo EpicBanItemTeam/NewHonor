@@ -4,6 +4,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -162,7 +163,9 @@ public interface PlayerConfig {
      * @return true if own
      * @throws SQLException if any Sql E
      */
-    boolean isOwnHonor(String id) throws SQLException;
+    default boolean isOwnHonor(String id) throws SQLException {
+        return getOwnHonors().orElse(Collections.emptyList()).contains(id);
+    }
 
 
     /**
