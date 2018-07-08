@@ -275,7 +275,8 @@ public class SqlManager {
             return uuid;
         }
 
-        private boolean isOwnHonor(String id) throws SQLException {
+        @Override
+        public boolean isOwnHonor(String id) throws SQLException {
             return getOwnHonors().orElse(Collections.emptyList()).contains(id);
         }
 

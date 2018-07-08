@@ -164,6 +164,10 @@ public class LocalPlayerConfig implements PlayerConfig {
         return this.uuid;
     }
 
+    @Override
+    public boolean isOwnHonor(String id) {
+        return id != null && getOwnHonors().orElse(Collections.emptyList()).contains(id);
+    }
 
     private CommentedConfigurationNode load() {
         try {
@@ -171,10 +175,6 @@ public class LocalPlayerConfig implements PlayerConfig {
         } catch (IOException e) {
             return loader.createEmptyNode(ConfigurationOptions.defaults());
         }
-    }
-
-    private boolean isOwnHonor(String id) {
-        return id != null && getOwnHonors().orElse(Collections.emptyList()).contains(id);
     }
 
     private boolean noSaveGive(String id) {

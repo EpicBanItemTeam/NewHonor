@@ -35,9 +35,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * @author yinyangshi
@@ -46,7 +45,7 @@ import java.util.UUID;
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-pre-b7";
+    public static final String VERSION = "2.0.0-pre-b8";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     public static final Object DATA_LOCK = new Object();
     @Inject
@@ -268,12 +267,17 @@ public class NewHonor {
             ScoreBoardManager.initPlayer(player);
             HonorConfig.getAllCreatedHonors().forEach(id -> {
                 final String checkPrefix = "newhonor.honor.";
-                if (player.hasPermission(checkPrefix + id)) {
-                    try {
-                        pd.giveHonor(id);
-                    } catch (Exception e) {
-                        plugin.logger.error("error about data!", e);
+                try {
+                    List<String> ownedHonors = pd.getOwnHonors().orElseGet(ArrayList::new);
+                    if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
+                        try {
+                            pd.giveHonor(id);
+                        } catch (Exception e) {
+                            plugin.logger.warn("error about data!", e);
+                        }
                     }
+                } catch (SQLException e) {
+                    plugin.logger.warn("SQL E when check player honors!", e);
                 }
             });
         });

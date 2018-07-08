@@ -156,6 +156,16 @@ public interface PlayerConfig {
     }
 
     /**
+     * 玩家是否拥有一个头衔
+     *
+     * @param id 那个头衔id
+     * @return true if own
+     * @throws SQLException if any Sql E
+     */
+    boolean isOwnHonor(String id) throws SQLException;
+
+
+    /**
      * 得到这个数据主人的uuid
      *
      * @return uuid
