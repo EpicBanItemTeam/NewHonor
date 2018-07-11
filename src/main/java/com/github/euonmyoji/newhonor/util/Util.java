@@ -23,16 +23,38 @@ import java.util.stream.Stream;
  * @author yinyangshi
  */
 public class Util {
+    /**
+     * 给玩家提供药水效果
+     *
+     * @param player        who
+     * @param potionEffects effects?
+     * @throws ConcurrentModificationException 同时修改了玩家数据
+     */
     public static void offerEffects(Player player, List<PotionEffect> potionEffects) throws ConcurrentModificationException {
         PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(NoSuchFieldError::new);
         potionEffects.forEach(effects::addElement);
         player.tryOffer(effects);
     }
 
+    /**
+     * 药水效果持续多久?
+     *
+     * @param cfg 一个包含potionEffectsDurationTick的节点
+     * @return 持续多少tick
+     */
     public static int getPotionEffectsDurationTick(CommentedConfigurationNode cfg) {
         return cfg.getNode("potionEffectsDurationTick").getInt(60);
     }
 
+    /**
+     * 获得药水效果s
+     *
+     * @param cfg  一个包含effects的node
+     * @param tick 药水持续多少tick
+     * @param show 是否显示粒子效果
+     * @return 药水效果s
+     * @throws ObjectMappingException 解析配置文件时出错
+     */
     public static List<PotionEffect> getPotionEffects(CommentedConfigurationNode cfg, int tick, boolean show) throws ObjectMappingException {
         List<PotionEffect> list = new ArrayList<>();
         getEffectsList(cfg).forEach(s -> {
@@ -48,6 +70,13 @@ public class Util {
         return list;
     }
 
+    /**
+     * 获得那个node里面的药水效果组节点
+     *
+     * @param cfg 那个node
+     * @return 药水效果组节点
+     * @throws ObjectMappingException 配置文件解析出错！
+     */
     public static List<String> getEffectsList(CommentedConfigurationNode cfg) throws ObjectMappingException {
         return cfg.getNode("effects").getList(TypeToken.of(String.class), ArrayList::new);
     }

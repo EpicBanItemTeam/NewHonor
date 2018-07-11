@@ -160,6 +160,11 @@ public class LocalPlayerConfig implements PlayerConfig {
     }
 
     @Override
+    public boolean isOwnHonor(String id) {
+        return getOwnHonors().orElse(Collections.emptyList()).contains(id);
+    }
+
+    @Override
     public UUID getUUID() {
         return this.uuid;
     }
