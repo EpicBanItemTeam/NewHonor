@@ -35,8 +35,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author yinyangshi
@@ -266,24 +267,7 @@ public class NewHonor {
                 }
             }
         };
-        Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> {
-            ScoreBoardManager.initPlayer(player);
-            HonorConfig.getAllCreatedHonors().forEach(id -> {
-                final String checkPrefix = "newhonor.honor.";
-                try {
-                    List<String> ownedHonors = pd.getOwnHonors().orElseGet(ArrayList::new);
-                    if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
-                        try {
-                            pd.giveHonor(id);
-                        } catch (Exception e) {
-                            plugin.logger.warn("error about data!", e);
-                        }
-                    }
-                } catch (SQLException e) {
-                    plugin.logger.warn("SQL E when check player honors!", e);
-                }
-            });
-        });
+        Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> ScoreBoardManager.initPlayer(player));
 
         //r为插件数据修改 异步(有mysql) r2为玩家自身数据修改 可能不存在需要运行的 需要同步
         if (Sponge.getServer().isMainThread()) {

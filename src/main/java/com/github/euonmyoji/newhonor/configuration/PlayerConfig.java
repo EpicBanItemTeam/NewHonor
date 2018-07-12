@@ -1,13 +1,12 @@
 package com.github.euonmyoji.newhonor.configuration;
 
+import com.github.euonmyoji.newhonor.NewHonor;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author yinyangshi
@@ -38,7 +37,25 @@ public interface PlayerConfig {
      * @throws Exception when found any error
      */
     static PlayerConfig get(UUID uuid) throws Exception {
-        return SqlManager.enable ? new SqlManager.SqlPlayerConfig(uuid) : new LocalPlayerConfig(uuid);
+        PlayerConfig pc = SqlManager.enable ? new SqlManager.SqlPlayerConfig(uuid) : new LocalPlayerConfig(uuid);
+        Sponge.getServer().getPlayer(pc.getUUID()).ifPresent(player ->
+                HonorConfig.getAllCreatedHonors().forEach(id -> {
+                    final String checkPrefix = "newhonor.honor.";
+                    try {
+                        List<String> ownedHonors = pc.getOwnHonors().orElseGet(ArrayList::new);
+                        if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
+                            try {
+                                pc.giveHonor(id);
+                                NewHonor.plugin.logger.info("Player {} got a honor: {}", player.getName(), id);
+                            } catch (Exception e) {
+                                NewHonor.plugin.logger.warn("error about data!", e);
+                            }
+                        }
+                    } catch (SQLException e) {
+                        NewHonor.plugin.logger.warn("SQL E when check player honors!", e);
+                    }
+                }));
+        return pc;
     }
 
     /**

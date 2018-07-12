@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class HonorConfig {
     private static CommentedConfigurationNode cfg;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
+    private static Set<String> allCreatedHonors;
 
     static {
         loader = HoconConfigurationLoader.builder()
@@ -42,6 +43,7 @@ public class HonorConfig {
     public static boolean addHonor(String id, String honor) {
         if (isVirtual(id)) {
             cfg.getNode(id, "value").setValue(honor);
+            allCreatedHonors = getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
             return save();
         }
         return false;
@@ -57,6 +59,7 @@ public class HonorConfig {
 
     public static boolean setHonor(String id, String honor) {
         cfg.getNode(id, "value").setValue(honor);
+        allCreatedHonors = getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
         return save();
     }
 
@@ -79,6 +82,7 @@ public class HonorConfig {
 
     public static void reload() {
         cfg = load();
+        allCreatedHonors = getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
     }
 
     private static boolean save() {
@@ -92,7 +96,10 @@ public class HonorConfig {
     }
 
     public static Set<String> getAllCreatedHonors() {
-        return getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
+        if (allCreatedHonors == null) {
+            allCreatedHonors = getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
+        }
+        return allCreatedHonors;
     }
 
     private static Map<Object, ? extends CommentedConfigurationNode> getHonorsMap() {

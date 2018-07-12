@@ -178,9 +178,6 @@ public class LocalPlayerConfig implements PlayerConfig {
     }
 
     private boolean noSaveGive(String id) {
-        if (SqlManager.enable) {
-            return false;
-        }
         Optional<List<String>> honors = getOwnHonors();
         if (HonorConfig.getHonorText(id).isPresent() && honors.isPresent() && !honors.get().contains(id)) {
             honors.get().add(id);
@@ -189,6 +186,7 @@ public class LocalPlayerConfig implements PlayerConfig {
                     HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
             if (isEnabledAutoChange()) {
                 setUseHonor(id);
+                NewHonor.doSomething(this);
             }
             return true;
         }

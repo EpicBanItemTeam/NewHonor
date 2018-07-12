@@ -14,6 +14,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -30,14 +31,14 @@ import static org.spongepowered.api.text.action.TextActions.showText;
  */
 public class HonorCommand {
     private static String ADMIN_PERMISSION = "newhonor.admin";
-    private static HashMap<UUID, Integer> useCD = new HashMap<>();
+    private static final HashMap<UUID, Integer> USE_CD = new HashMap<>();
     private static String ID_KEY = "id";
 
     static {
-        Task.builder().execute(() -> new HashMap<>(useCD).forEach((uuid, integer) -> {
-            useCD.put(uuid, integer - 1);
-            if (useCD.get(uuid) <= 0) {
-                useCD.remove(uuid);
+        Task.builder().execute(() -> new HashMap<>(USE_CD).forEach((uuid, integer) -> {
+            USE_CD.put(uuid, integer - 1);
+            if (USE_CD.get(uuid) <= 0) {
+                USE_CD.remove(uuid);
             }
         })).async().intervalTicks(20).submit(NewHonor.plugin);
     }
@@ -60,8 +61,8 @@ public class HonorCommand {
                     src.sendMessage(getText("newhonor.changehonor.unknownsource"));
                     return CommandResult.empty();
                 }
-                if (!src.hasPermission(ADMIN_PERMISSION) && useCD.containsKey(((Player) src).getUniqueId())) {
-                    int cd = useCD.get(((Player) src).getUniqueId());
+                if (!src.hasPermission(ADMIN_PERMISSION) && USE_CD.containsKey(((Player) src).getUniqueId())) {
+                    int cd = USE_CD.get(((Player) src).getUniqueId());
                     src.sendMessage(of("[NewHonor]You should wait " + cd + " second(s) to change use honor"));
                     return CommandResult.empty();
                 }
@@ -77,7 +78,7 @@ public class HonorCommand {
                         }
                         NewHonor.doSomething(pd);
                         if (!src.hasPermission(ADMIN_PERMISSION)) {
-                            useCD.put(((Player) src).getUniqueId(), 9);
+                            USE_CD.put(((Player) src).getUniqueId(), 9);
                         }
                     } catch (Throwable e) {
                         src.sendMessage(getText("[NewHonor] error!"));
@@ -88,9 +89,16 @@ public class HonorCommand {
             })
             .build();
 
+    private static HashMap<String, LocalDateTime> listCD = new HashMap<>();
     private static CommandSpec list = CommandSpec.builder()
             .arguments(GenericArguments.optional(GenericArguments.user(of("user"))))
             .executor((src, args) -> {
+                boolean free = listCD.containsKey(src.getName()) && listCD.get(src.getName()).plusSeconds(10).isBefore(LocalDateTime.now())
+                        || src.hasPermission(ADMIN_PERMISSION);
+                if (!free) {
+                    src.sendMessage(of("[NewHonor]You should wait a moment to use this command again."));
+                }
+                listCD.put(src.getName(), LocalDateTime.now());
                 Optional<User> optionalUser = args.getOne(of("user"));
                 boolean typedUser = optionalUser.isPresent();
                 boolean pass = src.getName().equals(optionalUser.map(User::getName).orElse(null))
