@@ -97,6 +97,7 @@ public class HonorCommand {
                         || src.hasPermission(ADMIN_PERMISSION);
                 if (!free) {
                     src.sendMessage(of("[NewHonor]You should wait a moment to use this command again."));
+                    return CommandResult.empty();
                 }
                 listCD.put(src.getName(), LocalDateTime.now());
                 Optional<User> optionalUser = args.getOne(of("user"));
