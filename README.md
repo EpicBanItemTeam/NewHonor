@@ -22,10 +22,10 @@ UChat
 nucleus
 {{pl:newhonor:newhonor}}
 
-tab & head display honor √\
-many var √\
-mysql & local data √\
-effects √
+showing honor on tab and head is supported\
+custom path and mysql storage is allowed\
+effect group with custom random refresh time and particle is supported\
+UChat & nucleus TextTemplate is supported
 
 支持tab显示称号 头顶显示称号 兼容多种插件 兼容多种变量\
 允许设置储存路径 也允许使用mysql储存\
