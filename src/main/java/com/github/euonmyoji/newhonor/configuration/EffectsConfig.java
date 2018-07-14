@@ -14,6 +14,7 @@ import org.spongepowered.api.effect.potion.PotionEffectType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +52,7 @@ public class EffectsConfig {
     }
 
     public List<PotionEffect> getEffects() throws ObjectMappingException {
-        return Util.getPotionEffects(cfg.getNode("effects"), potionEffectsTime, cfg.getNode("effects").getNode("show").getBoolean());
+        return cfg.getNode("effects").isVirtual() ? new ArrayList<>() : Util.getPotionEffects(cfg.getNode("effects"), potionEffectsTime, cfg.getNode("effects").getNode("show").getBoolean());
     }
 
     public boolean remove(List<String> list) {

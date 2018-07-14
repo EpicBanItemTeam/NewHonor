@@ -42,9 +42,9 @@ public class ParticleEffectData {
                     .quantity(quantity)
                     .build();
             //如果没有指定半径则用无半径方法 or else
-            consumers.add(radius == -1 ? (o -> o.getExtent().getPlayers()
-                    .forEach(player -> player.spawnParticles(particle, o.getPosition()))) : (o -> o.getExtent().getPlayers()
-                    .forEach(player -> player.spawnParticles(particle, o.getPosition(), radius))));
+            consumers.add(radius > 0 ? (o -> o.getExtent().getPlayers()
+                    .forEach(player -> player.spawnParticles(particle, o.getPosition(), radius))) : (o -> o.getExtent().getPlayers()
+                    .forEach(player -> player.spawnParticles(particle, o.getPosition()))));
         });
     }
 

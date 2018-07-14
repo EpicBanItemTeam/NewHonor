@@ -60,7 +60,7 @@ public class HaloEffectsData {
             double distanceSquared = player.getLocation().getPosition().distanceSquared(o);
             boolean playerPass = include || !(p.getUniqueId().equals(player.getUniqueId()));
             if (playerPass && distanceSquared < (radius * radius)) {
-                OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, effectID, p, potionEffects, true);
+                OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, effectID, p, potionEffects, true, particleEffectData);
                 if (!Sponge.getEventManager().post(event)) {
                     Util.offerEffects(player, potionEffects);
                     if (particleEffectData != null) {

@@ -39,7 +39,7 @@ public class EffectsOffer {
             effects.forEach(id -> {
                 try {
                     EffectsConfig ec = new EffectsConfig(id);
-                    if (!ec.cfg.getNode(EFFECTS_KEY).isVirtual()) {
+                    if (!ec.cfg.getNode(EFFECTS_KEY).isVirtual() || !ec.cfg.getNode(PARTICLES_KEY).isVirtual()) {
                         TASK_DATA.put(id, new SelfTaskData(new EffectsConfig(id)));
                     }
                 } catch (ObjectMappingException e) {
@@ -94,7 +94,7 @@ public class EffectsOffer {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(player -> {
-                        OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, potionEffects, false);
+                        OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, potionEffects, false, particleEffectData);
                         if (!Sponge.getEventManager().post(event)) {
                             Util.offerEffects(player, potionEffects);
                             if (particleEffectData != null) {

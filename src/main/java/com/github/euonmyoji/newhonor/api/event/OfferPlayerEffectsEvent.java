@@ -27,16 +27,24 @@ public class OfferPlayerEffectsEvent implements Event, Cancellable {
     @Nullable
     private Player from;
     private List<PotionEffect> potionEffects;
-    private Cause cause = Cause.builder().append(NewHonor.plugin).build(EventContext.empty());
+    private Cause cause;
     private boolean halo;
     private boolean canceled = false;
 
-    public OfferPlayerEffectsEvent(@Nonnull Player player, @Nonnull String effectsID, @Nullable Player from, @Nonnull List<PotionEffect> potionEffects, boolean halo) {
+    public OfferPlayerEffectsEvent(@Nonnull Player player, @Nonnull String effectsID, @Nullable Player from, @Nonnull List<PotionEffect> potionEffects, boolean halo,
+                                   Object... causes) {
         this.player = player;
         this.effectsID = effectsID;
         this.from = from;
         this.potionEffects = potionEffects;
         this.halo = halo;
+        Cause.Builder builder = Cause.builder();
+        for (Object cause : causes) {
+            if (cause != null) {
+                builder.append(cause);
+            }
+        }
+        this.cause = builder.append(NewHonor.plugin).build(EventContext.empty());
     }
 
     public String getEffectsID() {
