@@ -18,7 +18,6 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
@@ -48,7 +47,6 @@ import java.util.UUID;
 public class NewHonor {
     public static final String VERSION = "2.0.0-pre-b10";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
-    public static final Object DATA_LOCK = new Object();
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path cfgDir;
@@ -61,6 +59,7 @@ public class NewHonor {
     public static NewHonor plugin;
     public final HashMap<UUID, Text> honorTextCache = new HashMap<>();
     public final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
+    private static final Object CACHE_LOCK = new Object();
 
     private static final String OLD_COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
     private static final String OLD_USE_PAPI_NODE_PATH = "usePAPI";
@@ -174,24 +173,16 @@ public class NewHonor {
         }).async().name("newhonor - init Player" + p.getName()).submit(this);
     }
 
-    @Listener
-    public void onPlayerDie(RespawnPlayerEvent event) {
-        Player p = event.getTargetEntity();
-        Task.builder().execute(() -> {
-            try {
-                doSomething(PlayerConfig.get(p));
-            } catch (Throwable e) {
-                logger.error("error while init player", e);
-            }
-        }).async().name("newhonor - (die) init Player" + p.getName()).submit(this);
-    }
-
-
     public static void clearCaches() {
-        synchronized (DATA_LOCK) {
+        synchronized (CACHE_LOCK) {
             plugin.honorTextCache.clear();
             plugin.playerUsingEffectCache.clear();
+        }
+        synchronized (EffectsOffer.TASK_DATA) {
             EffectsOffer.TASK_DATA.clear();
+        }
+        synchronized (HaloEffectsOffer.TASK_DATA) {
+            HaloEffectsOffer.TASK_DATA.clear();
         }
     }
 
@@ -259,24 +250,21 @@ public class NewHonor {
 
     public void reload() {
         Sponge.getEventManager().post(new NewHonorReloadEvent());
-        synchronized (DATA_LOCK) {
-            NewHonorConfig.reload();
-            LanguageManager.reload();
-            HonorConfig.reload();
-            try {
-                TaskManager.update();
-            } catch (IOException e) {
-                logger.warn("reload error!", e);
-            }
+        NewHonorConfig.reload();
+        LanguageManager.reload();
+        HonorConfig.reload();
+        try {
+            TaskManager.update();
+        } catch (IOException e) {
+            logger.warn("reload error!", e);
         }
-
         NewHonor.plugin.hook();
     }
 
     public static void doSomething(PlayerConfig pd) {
         Runnable r = () -> {
-            synchronized (DATA_LOCK) {
-                try {
+            try {
+                synchronized (CACHE_LOCK) {
                     pd.checkUsingHonor();
                     plugin.playerUsingEffectCache.remove(pd.getUUID());
                     plugin.honorTextCache.remove(pd.getUUID());
@@ -286,10 +274,11 @@ public class NewHonor {
                             HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
                         }
                     }
-                } catch (Exception e) {
-                    plugin.logger.error("error about data!", e);
                 }
+            } catch (Exception e) {
+                plugin.logger.error("error about data!", e);
             }
+
         };
         Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> ScoreBoardManager.initPlayer(player));
 
