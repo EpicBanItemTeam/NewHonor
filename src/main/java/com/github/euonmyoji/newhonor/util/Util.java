@@ -81,7 +81,7 @@ public class Util {
     }
 
     public static <T> Stream<T> getStream(List<T> list) {
-        return list.size() > 25 ? list.parallelStream() : list.stream();
+        return list.size() > 16 ? list.parallelStream() : list.stream();
     }
 
     public static List<UUID> getPlayerUsingEffects(String id) {
