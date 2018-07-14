@@ -19,9 +19,8 @@ import java.util.function.Consumer;
  */
 public class ParticleEffectData {
     public static final String PARTICLES_KEY = "particles";
-    private List<ParticleEffect> list = new ArrayList<>();
     private int radius;
-    private Consumer<Location<World>> consumer;
+    private List<Consumer<Location<World>>> consumers = new ArrayList<>();
 
     public ParticleEffectData(CommentedConfigurationNode cfg, String id) {
         cfg.getChildrenMap().forEach((name, node) -> {
@@ -36,20 +35,20 @@ public class ParticleEffectData {
             String[] offset = node.getNode("offset").getString("0,0,0").split(",", 3);
             int quantity = node.getNode("quantity").getInt(1);
             radius = node.getNode("radius").getInt(-1);
-            list.add(ParticleEffect.builder()
+            ParticleEffect particle = ParticleEffect.builder()
                     .type(type)
                     .velocity(new Vector3d(Double.valueOf(velocity[0]), Double.valueOf(velocity[1]), Double.valueOf(velocity[2])))
                     .offset(new Vector3d(Double.valueOf(offset[0]), Double.valueOf(offset[1]), Double.valueOf(offset[2])))
                     .quantity(quantity)
-                    .build());
+                    .build();
             //如果没有指定半径则用无半径方法 or else
-            consumer = radius == -1 ? (o -> o.getExtent().getPlayers()
-                    .forEach(player -> list.forEach(particle -> player.spawnParticles(particle, o.getPosition())))) : (o -> o.getExtent().getPlayers()
-                    .forEach(player -> list.forEach(particle -> player.spawnParticles(particle, o.getPosition(), radius))));
+            consumers.add(radius == -1 ? (o -> o.getExtent().getPlayers()
+                    .forEach(player -> player.spawnParticles(particle, o.getPosition()))) : (o -> o.getExtent().getPlayers()
+                    .forEach(player -> player.spawnParticles(particle, o.getPosition(), radius))));
         });
     }
 
     public void execute(Location<World> o) {
-        consumer.accept(o);
+        consumers.forEach(consumer -> consumer.accept(o));
     }
 }
