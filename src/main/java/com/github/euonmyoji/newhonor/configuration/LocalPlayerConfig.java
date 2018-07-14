@@ -36,6 +36,7 @@ public class LocalPlayerConfig implements PlayerConfig {
         final String oldUseKey = "using";
         if (!cfg.getNode(oldUseKey).isVirtual()) {
             cfg.getNode(USING_KEY).setValue(cfg.getNode(oldUseKey).getString());
+            cfg.removeChild(oldUseKey);
             save();
         }
     }
