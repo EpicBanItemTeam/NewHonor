@@ -16,7 +16,7 @@ public class PlaceHolderManager {
     private static final String HONOR_ID = "newhonor";
     private static PlaceHolderManager instance;
 
-    static void create() {
+    static void create() throws RuntimeException {
         if (instance == null) {
             instance = new PlaceHolderManager();
         }
@@ -27,7 +27,7 @@ public class PlaceHolderManager {
         return NewHonor.plugin.honorTextCache.get(p.getUniqueId());
     }
 
-    private PlaceHolderManager() {
+    private PlaceHolderManager() throws RuntimeException {
         PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
         service.loadAll(this, NewHonor.plugin).forEach(builder -> {
             if (HONOR_ID.equals(builder.getId())) {

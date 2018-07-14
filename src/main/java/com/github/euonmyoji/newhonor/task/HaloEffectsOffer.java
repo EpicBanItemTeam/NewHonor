@@ -24,7 +24,7 @@ public class HaloEffectsOffer {
             synchronized (TASK_DATA) {
                 TASK_DATA.forEach((s, data) -> data.call());
             }
-        }).name("NewHonor - Halo Effects Offer Task").intervalTicks(8).submit(NewHonor.plugin);
+        }).name("NewHonor - Halo Effects Offer Task").intervalTicks(Util.INTERVAL_TICKS).submit(NewHonor.plugin);
     }
 
     static void update(List<String> effects) {

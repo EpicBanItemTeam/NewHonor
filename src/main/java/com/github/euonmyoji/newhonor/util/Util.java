@@ -23,6 +23,8 @@ import java.util.stream.Stream;
  * @author yinyangshi
  */
 public class Util {
+    public static final int INTERVAL_TICKS = 8;
+
     /**
      * 给玩家提供药水效果
      *

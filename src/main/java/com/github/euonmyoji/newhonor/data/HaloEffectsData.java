@@ -16,12 +16,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KEY;
+
 /**
  * @author yinyangshi
  */
 public class HaloEffectsData {
-    private final EffectsDelayData delayData;
+    private final RandomDelayData delayData;
     private final List<PotionEffect> potionEffects;
+    private final ParticleEffectData particleEffectData;
     private final double chance;
     private final double radius;
     private final boolean include;
@@ -31,11 +34,12 @@ public class HaloEffectsData {
 
     public HaloEffectsData(CommentedConfigurationNode cfg, String id) throws ObjectMappingException {
         effectID = id;
-        delayData = new EffectsDelayData(cfg.getNode("delay").getString("0"));
+        delayData = new RandomDelayData(cfg.getNode("delay").getString("0"));
         radius = cfg.getNode("radius").getDouble(5);
         chance = cfg.getNode("chance").getDouble(1);
         include = cfg.getNode("include-me").getBoolean(false);
         potionEffects = Util.getPotionEffects(cfg, Util.getPotionEffectsDurationTick(cfg), cfg.getNode("show").getBoolean(false));
+        particleEffectData = cfg.getNode(PARTICLES_KEY).isVirtual() ? null : new ParticleEffectData(cfg.getNode(PARTICLES_KEY), id);
     }
 
     public void execute(List<UUID> list) {
@@ -57,9 +61,9 @@ public class HaloEffectsData {
             boolean playerPass = include || !(p.getUniqueId().equals(player.getUniqueId()));
             if (playerPass && distanceSquared < (radius * radius)) {
                 OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, effectID, p, potionEffects, true);
-                Sponge.getEventManager().post(event);
-                if (!event.isCancelled()) {
+                if (!Sponge.getEventManager().post(event)) {
                     Util.offerEffects(player, potionEffects);
+                    particleEffectData.execute(player.getLocation());
                 }
             }
         });

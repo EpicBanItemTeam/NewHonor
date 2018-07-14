@@ -3,9 +3,11 @@ package com.github.euonmyoji.newhonor.task;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
-import com.github.euonmyoji.newhonor.data.EffectsDelayData;
+import com.github.euonmyoji.newhonor.data.ParticleEffectData;
+import com.github.euonmyoji.newhonor.data.RandomDelayData;
 import com.github.euonmyoji.newhonor.data.RandomEffectsData;
 import com.github.euonmyoji.newhonor.util.Util;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.potion.PotionEffect;
@@ -13,6 +15,8 @@ import org.spongepowered.api.scheduler.Task;
 
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KEY;
 
 /**
  * @author yinyangshi
@@ -26,7 +30,7 @@ public class EffectsOffer {
             synchronized (TASK_DATA) {
                 TASK_DATA.forEach((s, data) -> data.call());
             }
-        }).name("NewHonor - Effects Offer Task").intervalTicks(8).submit(NewHonor.plugin);
+        }).name("NewHonor - Effects Offer Task").intervalTicks(Util.INTERVAL_TICKS).submit(NewHonor.plugin);
     }
 
     static void update(List<String> effects) {
@@ -46,10 +50,11 @@ public class EffectsOffer {
     }
 
     private static class SelfTaskData {
-        private final EffectsDelayData delayData;
+        private final RandomDelayData delayData;
         private final List<PotionEffect> potionEffects;
         private final String id;
         private final List<RandomEffectsData> randomList = new ArrayList<>();
+        private final ParticleEffectData particleEffectData;
         private LocalDateTime lastRunTime = LocalDateTime.MIN;
         private int lastDelay = 0;
 
@@ -68,7 +73,7 @@ public class EffectsOffer {
         private SelfTaskData(EffectsConfig config) throws ObjectMappingException {
             id = config.getId();
             potionEffects = config.getEffects();
-            delayData = new EffectsDelayData(config.cfg.getNode(EFFECTS_KEY, "delay").getString("0"));
+            delayData = new RandomDelayData(config.cfg.getNode(EFFECTS_KEY, "delay").getString("0"));
             config.cfg.getNode(EFFECTS_KEY, "random").getChildrenMap().forEach((o, cfg) -> {
                 try {
                     randomList.add(new RandomEffectsData(cfg, id));
@@ -77,6 +82,8 @@ public class EffectsOffer {
                             id, o.toString()), e);
                 }
             });
+            CommentedConfigurationNode node = config.cfg.getNode("effects", PARTICLES_KEY);
+            particleEffectData = node.isVirtual() ? null : new ParticleEffectData(node, id);
         }
 
         private void execute(List<UUID> list) {
@@ -88,9 +95,9 @@ public class EffectsOffer {
                     .map(Optional::get)
                     .forEach(player -> {
                         OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, potionEffects, false);
-                        Sponge.getEventManager().post(event);
-                        if (!event.isCancelled()) {
+                        if (!Sponge.getEventManager().post(event)) {
                             Util.offerEffects(player, potionEffects);
+                            particleEffectData.execute(player.getLocation());
                         }
                     })).submit(NewHonor.plugin);
         }

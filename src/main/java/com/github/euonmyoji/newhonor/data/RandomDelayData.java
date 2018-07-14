@@ -9,11 +9,11 @@ import java.util.Random;
 /**
  * @author yinyangshi
  */
-public class EffectsDelayData {
+public class RandomDelayData {
     private final List<Range> ranges = new ArrayList<>();
     private static final Random R = new Random();
 
-    public EffectsDelayData(String arg) {
+    public RandomDelayData(String arg) {
         try {
             String[] ors = arg.split(",");
             for (String value : ors) {

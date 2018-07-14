@@ -14,12 +14,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KEY;
+
 /**
  * @author yinyangshi
  */
 public class RandomEffectsData {
-    private final EffectsDelayData delayData;
+    private final RandomDelayData delayData;
     private final List<PotionEffect> potionEffects;
+    private final ParticleEffectData particleEffectData;
     private final double chance;
     public LocalDateTime lastRunTime = LocalDateTime.MIN;
     public int lastDelay = 0;
@@ -27,9 +30,10 @@ public class RandomEffectsData {
 
     public RandomEffectsData(CommentedConfigurationNode cfg, String id) throws ObjectMappingException {
         this.id = id;
-        delayData = new EffectsDelayData(cfg.getNode("delay").getString("15"));
+        delayData = new RandomDelayData(cfg.getNode("delay").getString("15"));
         potionEffects = Util.getPotionEffects(cfg, Util.getPotionEffectsDurationTick(cfg), cfg.getNode("show").getBoolean());
         chance = cfg.getNode("chance").getDouble(1);
+        particleEffectData = cfg.getNode(PARTICLES_KEY).isVirtual() ? null : new ParticleEffectData(cfg.getNode(PARTICLES_KEY), id);
     }
 
     public void execute(List<UUID> list) {
@@ -42,9 +46,9 @@ public class RandomEffectsData {
                     .map(Optional::get)
                     .forEach(player -> {
                         OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, potionEffects, false);
-                        Sponge.getEventManager().post(event);
-                        if (!event.isCancelled()) {
+                        if (!Sponge.getEventManager().post(event)) {
                             Util.offerEffects(player, potionEffects);
+                            particleEffectData.execute(player.getLocation());
                         }
                     })).submit(NewHonor.plugin);
         }

@@ -46,7 +46,7 @@ import java.util.UUID;
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-pre-b9-f";
+    public static final String VERSION = "2.0.0-pre-b10";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     public static final Object DATA_LOCK = new Object();
     @Inject
@@ -62,14 +62,17 @@ public class NewHonor {
     public final HashMap<UUID, Text> honorTextCache = new HashMap<>();
     public final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
 
-    private static final String COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
+    private static final String OLD_COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
+    private static final String OLD_USE_PAPI_NODE_PATH = "usePAPI";
     private static final String DISPLAY_HONOR_NODE_PATH = "displayHonor";
-    private static final String USE_PAPI_NODE_PATH = "usePAPI";
     private static final String FORCE_ENABLE_DEFAULT_LISTENER = "force-enable-default-listener";
 
     private final UltimateChatEventListener UChatListener = new UltimateChatEventListener();
     private final NewHonorMessageListener NewHonorListener = new NewHonorMessageListener();
 
+    private boolean enabledPlaceHolderAPI = false;
+    private boolean hookedNucleus = false;
+    private boolean hookedUChat = false;
 
     @Listener
     public void onStarting(GameStartingServerEvent event) {
@@ -93,12 +96,14 @@ public class NewHonor {
             } else {
                 logger.info("check update was canceled");
             }
-            NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH)
-                    .setValue(NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false));
+
+            //已经不在使用的N个配置文件node
+            NewHonorConfig.getCfg().removeChild(OLD_USE_PAPI_NODE_PATH);
+            NewHonorConfig.getCfg().removeChild(OLD_COMPATIBLE_UCHAT_NODE_PATH);
+            NewHonorConfig.getCfg().removeChild("nucleus-placeholder");
+
             NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH)
                     .setValue(NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false));
-            NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH)
-                    .setValue(NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false));
             NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER)
                     .setValue(NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
             NewHonorConfig.save();
@@ -149,10 +154,10 @@ public class NewHonor {
         metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EffectsOffer.TASK_DATA.size() > 0 ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usepapi",
-                () -> NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean() ? "true" : "false"));
+                () -> enabledPlaceHolderAPI ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> HaloEffectsOffer.TASK_DATA.size() > 0 ?
                 "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("usenucleus", () -> NewHonorConfig.isUseNucleus() ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("usenucleus", () -> hookedNucleus ? "true" : "false"));
     }
 
     @Listener
@@ -194,43 +199,61 @@ public class NewHonor {
      * 各种兼容 额外模式开启?
      */
     private void hook() {
+        EventManager eventManager = Sponge.getEventManager();
+        eventManager.unregisterListeners(UChatListener);
+        eventManager.unregisterListeners(NewHonorListener);
+        ScoreBoardManager.enable = false;
+        ScoreBoardManager.clear();
+
+        boolean enableDefault = true;
+        //hook nucleus
         try {
-            EventManager eventManager = Sponge.getEventManager();
-            eventManager.unregisterListeners(UChatListener);
-            eventManager.unregisterListeners(NewHonorListener);
-            ScoreBoardManager.enable = false;
-            ScoreBoardManager.clear();
-            boolean allowForce = true;
-            if (NewHonorConfig.getCfg().getNode(COMPATIBLE_UCHAT_NODE_PATH).getBoolean(false)) {
-                Sponge.getEventManager().registerListeners(this, UChatListener);
-                logger.info("uchat mode enabled");
-                allowForce = false;
+            Class.forName("io.github.nucleuspowered.nucleus.api.NucleusAPI");
+            NucleusManager.doIt();
+            enableDefault = false;
+            if (!hookedNucleus) {
+                logger.info("hooked nucleus");
+                logger.info("default listener is disabling, please use {{pl:newhonor:newhonor}} to show honor in chat");
+                logger.info("发现nucleus插件，请在nucleus配置里面的chat里面使用变量{{pl:newhonor:newhonor}}来在聊天栏显示头衔");
             }
-            if (NewHonorConfig.isUseNucleus()) {
-                NucleusManager.doIt();
-                logger.info("nucleus support enabled");
-                allowForce = false;
+            hookedNucleus = true;
+        } catch (ClassNotFoundException ignore) {
+        }
+
+        //hook PAPI
+        try {
+            PlaceHolderManager.create();
+            if (!enableDefault) {
+                logger.info("hooked PAPI, you can use '%newhonor%' now.");
             }
-            if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
-                ScoreBoardManager.enable = true;
-                ScoreBoardManager.init();
-                logger.info("displayHonor mode enabled");
-                logger.info("if there is any wrong with chat and you installed nucleus, try to change config in nucleus(overwrite-early-prefix = true)");
-                if (NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean() && allowForce) {
-                    Sponge.getEventManager().registerListeners(this, NewHonorListener);
-                }
-            } else {
-                if (allowForce) {
-                    Sponge.getEventManager().registerListeners(this, NewHonorListener);
-                }
+            enabledPlaceHolderAPI = true;
+        } catch (RuntimeException ignore) {
+        }
+
+        //hook UChat
+        try {
+            Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent");
+            Sponge.getEventManager().registerListeners(this, UChatListener);
+            if (!hookedUChat) {
+                logger.info("hooked UChat");
+                logger.info("please use {newhonor} in UChat config to show honor in the chat");
             }
-            boolean usePAPI = NewHonorConfig.getCfg().getNode(USE_PAPI_NODE_PATH).getBoolean(false);
-            if (usePAPI) {
-                PlaceHolderManager.create();
-                logger.info("enabled PAPI");
+            hookedUChat = true;
+            enableDefault = false;
+        } catch (ClassNotFoundException ignore) {
+        }
+
+        if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
+            ScoreBoardManager.enable = true;
+            ScoreBoardManager.init();
+            logger.info("displayHonor mode enabled");
+            logger.info("if you find honor shows twice, try to change config in nucleus(overwrite-early-prefix = true)");
+            logger.info("如果发现头衔重复显示，请尝试在nucleus配置文件里面将overwrite-early-prefix设置为true");
+            if (NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean() && enableDefault) {
+                Sponge.getEventManager().registerListeners(this, NewHonorListener);
             }
-        } catch (Exception e) {
-            logger.error("error mode", e);
+        } else if (enableDefault) {
+            Sponge.getEventManager().registerListeners(this, NewHonorListener);
         }
     }
 

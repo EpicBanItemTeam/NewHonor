@@ -28,7 +28,6 @@ public class NewHonorConfig {
     private static final String LANGUAGE = "lang";
     private static final String DEFAULT_HONORS = "honors";
     private static final String DEFAULT_HONORS_SETTINGS = "default-honors-settings";
-    private static final String NUCLEUS_PLACE_HOLDER = "nucleus-placeholder";
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
@@ -38,7 +37,6 @@ public class NewHonorConfig {
         cfg.getNode(CHECK_UPDATE_NODE_PATH).setValue(cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false));
         cfg.getNode(LANGUAGE).setValue(cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
         cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").setValue(cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true));
-        cfg.getNode(NUCLEUS_PLACE_HOLDER).setValue(isUseNucleus());
         try {
             if (cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).isVirtual()) {
                 cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).setValue(LIST_STRING_TYPE, new ArrayList<String>() {{
@@ -51,10 +49,6 @@ public class NewHonorConfig {
         SqlManager.init();
         save();
         reload();
-    }
-
-    public static boolean isUseNucleus() {
-        return cfg.getNode(NUCLEUS_PLACE_HOLDER).getBoolean(false);
     }
 
     static Locale getUsingLang() {

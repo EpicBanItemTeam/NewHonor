@@ -7,6 +7,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -146,6 +147,17 @@ class EffectsCommand {
                     src.sendMessage(Text.of("[NewHonor]IOE!"));
                 }
                 return CommandResult.empty();
+            })
+            .build();
+
+    static CommandSpec listAllParticle = CommandSpec.builder()
+            .executor((src, args) -> {
+                PaginationList.Builder builder = PaginationList.builder();
+                builder.title(Text.of("Particle ID List")).padding(Text.of("-"));
+                builder.contents(Sponge.getRegistry().getAllOf(ParticleType.class)
+                        .stream().map(type -> Text.of(type.getId())).collect(Collectors.toList()));
+                builder.build().sendTo(src);
+                return CommandResult.success();
             })
             .build();
 

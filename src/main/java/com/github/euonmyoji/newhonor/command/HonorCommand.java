@@ -235,6 +235,7 @@ public class HonorCommand {
             .child(EffectsCommand.info, "info")
             .child(EffectsCommand.listAllPotionEffects, "listAllPotionEffects")
             .child(EffectsCommand.listAllCreatedEffects, "listAllCreatedEffects")
+            .child(EffectsCommand.listAllParticle, "listAllParticle")
             .build();
 
     public static CommandSpec honor = CommandSpec.builder()
