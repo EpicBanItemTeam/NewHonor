@@ -269,6 +269,7 @@ public class NewHonor {
                 logger.warn("reload error!", e);
             }
         }
+
         NewHonor.plugin.hook();
     }
 
