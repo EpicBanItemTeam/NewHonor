@@ -63,7 +63,9 @@ public class HaloEffectsData {
                 OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, effectID, p, potionEffects, true);
                 if (!Sponge.getEventManager().post(event)) {
                     Util.offerEffects(player, potionEffects);
-                    particleEffectData.execute(player.getLocation());
+                    if (particleEffectData != null) {
+                        particleEffectData.execute(player.getLocation());
+                    }
                 }
             }
         });

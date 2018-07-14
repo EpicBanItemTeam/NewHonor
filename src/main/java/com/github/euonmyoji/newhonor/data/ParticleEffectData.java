@@ -11,7 +11,7 @@ import org.spongepowered.api.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -25,7 +25,9 @@ public class ParticleEffectData {
 
     public ParticleEffectData(CommentedConfigurationNode cfg, String id) {
         cfg.getChildrenMap().forEach((name, node) -> {
-            String type = node.getNode("type").getString();
+            ParticleType type = Optional.ofNullable(node.getNode("type").getString())
+                    .flatMap(s -> Sponge.getRegistry().getType(ParticleType.class, s))
+                    .orElse(null);
             if (type == null) {
                 NewHonor.plugin.logger.warn("The effects group: {} ParticleEffect {} type is null", id, name);
                 return;
@@ -35,7 +37,7 @@ public class ParticleEffectData {
             int quantity = node.getNode("quantity").getInt(1);
             radius = node.getNode("radius").getInt(-1);
             list.add(ParticleEffect.builder()
-                    .type(Sponge.getRegistry().getType(ParticleType.class, type).orElseThrow(NoSuchElementException::new))
+                    .type(type)
                     .velocity(new Vector3d(Double.valueOf(velocity[0]), Double.valueOf(velocity[1]), Double.valueOf(velocity[2])))
                     .offset(new Vector3d(Double.valueOf(offset[0]), Double.valueOf(offset[1]), Double.valueOf(offset[2])))
                     .quantity(quantity)

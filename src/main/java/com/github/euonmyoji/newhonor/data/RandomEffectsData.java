@@ -48,7 +48,9 @@ public class RandomEffectsData {
                         OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, potionEffects, false);
                         if (!Sponge.getEventManager().post(event)) {
                             Util.offerEffects(player, potionEffects);
-                            particleEffectData.execute(player.getLocation());
+                            if (particleEffectData != null) {
+                                particleEffectData.execute(player.getLocation());
+                            }
                         }
                     })).submit(NewHonor.plugin);
         }
