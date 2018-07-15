@@ -93,7 +93,7 @@ public class HonorCommand {
     private static CommandSpec list = CommandSpec.builder()
             .arguments(GenericArguments.optional(GenericArguments.user(of("user"))))
             .executor((src, args) -> {
-                boolean free = listCD.containsKey(src.getName()) && listCD.get(src.getName()).plusSeconds(10).isBefore(LocalDateTime.now())
+                boolean free = !listCD.containsKey(src.getName()) || listCD.get(src.getName()).plusSeconds(10).isBefore(LocalDateTime.now())
                         || src.hasPermission(ADMIN_PERMISSION);
                 if (!free) {
                     src.sendMessage(of("[NewHonor]You should wait a moment to use this command again."));
