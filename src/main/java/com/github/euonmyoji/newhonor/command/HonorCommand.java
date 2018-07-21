@@ -115,6 +115,7 @@ public class HonorCommand {
                             if (honors.isPresent()) {
                                 if (honors.get().isEmpty()) {
                                     src.sendMessage(getText("newhonor.listhonors.empty"));
+                                    return;
                                 }
                                 PaginationList.Builder builder = PaginationList.builder()
                                         .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
@@ -157,8 +158,8 @@ public class HonorCommand {
                             } else {
                                 src.sendMessage(of("unknown error"));
                             }
-                        } catch (Throwable e) {
-                            src.sendMessage(getText("[NewHonor] error!"));
+                        } catch (SQLException e) {
+                            src.sendMessage(getText("[NewHonor] sql error!"));
                             e.printStackTrace();
                         }
                     }).async().name("newhonor - List Player" + user.getName() + " Honors").submit(NewHonor.plugin);

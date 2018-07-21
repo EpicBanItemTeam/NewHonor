@@ -23,9 +23,9 @@ public interface PlayerConfig {
      *
      * @param user user对象
      * @return data
-     * @throws Exception when found any error
+     * @throws SQLException when found any error
      */
-    static PlayerConfig get(User user) throws Exception {
+    static PlayerConfig get(User user) throws SQLException {
         return get(user.getUniqueId());
     }
 
@@ -34,9 +34,9 @@ public interface PlayerConfig {
      *
      * @param uuid 玩家uuid
      * @return data
-     * @throws Exception when found any error
+     * @throws SQLException when found any error
      */
-    static PlayerConfig get(UUID uuid) throws Exception {
+    static PlayerConfig get(UUID uuid) throws SQLException {
         PlayerConfig pc = SqlManager.enable ? new SqlManager.SqlPlayerConfig(uuid) : new LocalPlayerConfig(uuid);
         Sponge.getServer().getPlayer(pc.getUUID()).ifPresent(player ->
                 HonorConfig.getAllCreatedHonors().forEach(id -> {

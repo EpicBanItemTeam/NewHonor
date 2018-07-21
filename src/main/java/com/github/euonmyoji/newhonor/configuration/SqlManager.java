@@ -117,7 +117,7 @@ public class SqlManager {
             }).async().intervalTicks(20).submit(NewHonor.plugin);
         }
 
-        public SqlPlayerConfig(UUID uuid) throws Exception {
+        public SqlPlayerConfig(UUID uuid) throws SQLException {
             this.uuid = uuid;
             Task.builder().execute(() -> {
                 try {
@@ -138,7 +138,7 @@ public class SqlManager {
                 }
             }
             if (es.size() > 0) {
-                Exception e = new Exception();
+                SQLException e = new SQLException();
                 es.forEach(e::addSuppressed);
                 throw e;
             }
@@ -250,8 +250,12 @@ public class SqlManager {
         @Override
         public Optional<List<String>> getOwnHonors() throws SQLException {
             ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", HONORS_KEY, TABLE_NAME, uuid));
-            result.next();
-            return Optional.ofNullable(result.getString(HONORS_KEY)).map(s -> new ArrayList<>(Arrays.asList(s.split(D))));
+            if (result.next()) {
+                String honors = result.getString(HONORS_KEY);
+                return honors == null ? Optional.of(new ArrayList<>()) :
+                        Optional.of(honors).map(s -> new ArrayList<>(Arrays.asList(s.split(D))));
+            }
+            return Optional.empty();
         }
 
         @Override
