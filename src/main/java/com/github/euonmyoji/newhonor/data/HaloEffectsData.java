@@ -19,6 +19,8 @@ import java.util.UUID;
 import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KEY;
 
 /**
+ * 光环特效数据
+ *
  * @author yinyangshi
  */
 public class HaloEffectsData {
@@ -64,10 +66,14 @@ public class HaloEffectsData {
                 if (!Sponge.getEventManager().post(event)) {
                     Util.offerEffects(player, potionEffects);
                     if (particleEffectData != null) {
-                        particleEffectData.execute(p.getLocation());
+                        particleEffectData.execute(player.getLocation());
                     }
                 }
             }
         });
+
+        if (particleEffectData != null) {
+            particleEffectData.execute(p.getLocation());
+        }
     }
 }

@@ -7,6 +7,7 @@ import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,22 +25,36 @@ class ScoreBoardManager {
         }
     }
 
+    /**
+     * 清掉scoreboard数据
+     */
     static void clear() {
         getScoreBoard().getTeams().forEach(team -> team.getMembers().forEach(team::removeMember));
     }
 
+    /**
+     * 初始化玩家
+     *
+     * @param p 玩家
+     */
     static void initPlayer(Player p) {
         if (enable) {
             try {
                 execute(p);
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 NewHonor.plugin.logger.warn("init player scoreboard sql e", e);
             }
             setPlayerScoreBoard(p);
         }
     }
 
-    private static void execute(Player p) throws Exception {
+    /**
+     * 更新玩家拥有头衔到scoreboard上 并加入对应队伍
+     *
+     * @param p 玩家
+     * @throws SQLException 读取玩家配置发生SQLE
+     */
+    private static void execute(Player p) throws SQLException {
         UUID uuid = p.getUniqueId();
         PlayerConfig pd = PlayerConfig.get(p);
         String honorID = pd.getUsingHonorID();

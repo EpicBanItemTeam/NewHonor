@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * 随机延迟数据
+ *
  * @author yinyangshi
  */
 public class RandomDelayData {

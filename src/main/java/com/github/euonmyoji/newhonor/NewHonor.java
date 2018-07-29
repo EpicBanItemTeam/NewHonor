@@ -113,6 +113,9 @@ public class NewHonor {
         }
     }
 
+    /**
+     * 几乎不会被使用的代码 检查更新
+     */
     private void checkUpdate() {
         Task.builder().async().name("NewHonor - check for update").execute(() -> {
             try {
@@ -173,6 +176,9 @@ public class NewHonor {
         }).async().name("newhonor - init Player" + p.getName()).submit(this);
     }
 
+    /**
+     * 清掉插件缓存 任务缓存
+     */
     public static void clearCaches() {
         synchronized (CACHE_LOCK) {
             plugin.honorTextCache.clear();
@@ -187,7 +193,7 @@ public class NewHonor {
     }
 
     /**
-     * 各种兼容 额外模式开启?
+     * 探测插件 添加变量
      */
     private void hook() {
         EventManager eventManager = Sponge.getEventManager();
@@ -261,6 +267,11 @@ public class NewHonor {
         NewHonor.plugin.hook();
     }
 
+    /**
+     * 对玩家配置进行检查 然后更新缓存
+     *
+     * @param pd 玩家配置
+     */
     public static void doSomething(PlayerConfig pd) {
         Runnable r = () -> {
             try {

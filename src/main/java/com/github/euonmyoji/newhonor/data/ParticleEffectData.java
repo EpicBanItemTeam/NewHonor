@@ -12,6 +12,7 @@ import org.spongepowered.api.effect.particle.ParticleOptions;
 import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.effect.potion.PotionEffectType;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.util.Color;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -80,6 +81,11 @@ public class ParticleEffectData {
         });
     }
 
+    /**
+     * 以这个位置参数原点执行粒子效果
+     *
+     * @param o 原点
+     */
     public void execute(Location<World> o) {
         consumers.forEach(consumer -> consumer.accept(o));
     }

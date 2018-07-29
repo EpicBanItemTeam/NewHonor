@@ -17,6 +17,8 @@ import java.util.UUID;
 import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KEY;
 
 /**
+ * 随机特效数据
+ *
  * @author yinyangshi
  */
 public class RandomEffectsData {
