@@ -251,8 +251,8 @@ public class NewHonor {
                             .execute(() -> Sponge.getScheduler().getScheduledTasks(that).forEach(Task::cancel))
                             .intervalTicks(20)
                             .submit(plugin);
-                    plugin.logger.warn("The plugin easyscoreboard is updating scoreboard, please uninstall it to use 'displayHonor' (trying cancel it)");
-                    plugin.logger.warn("请卸载EasyScoreBoard来保证displayHonor功能正常");
+                    plugin.logger.warn("The plugin easyscoreboard is updating scoreboard, please uninstall it to use 'displayHonor' (trying cancel it), or Do not use 'displayHonor'");
+                    plugin.logger.warn("请卸载EasyScoreBoard来保证displayHonor功能正常, 或者不使用displayHonor功能");
                 }
             });
             ScoreBoardManager.enable = true;
