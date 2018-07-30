@@ -192,6 +192,8 @@ public class NewHonor {
         }
     }
 
+    private boolean killingEasyScoreBoard = false;
+
     /**
      * 探测插件 添加变量
      */
@@ -240,7 +242,19 @@ public class NewHonor {
         } catch (ClassNotFoundException ignore) {
         }
 
+        //display
         if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
+            Sponge.getPluginManager().getPlugin("de_yottaflops_easyscoreboard").flatMap(PluginContainer::getInstance).ifPresent(that -> {
+                if (!killingEasyScoreBoard) {
+                    killingEasyScoreBoard = true;
+                    Task.builder().name("NewHonor - cancel easy scoreboard tasks")
+                            .execute(() -> Sponge.getScheduler().getScheduledTasks(that).forEach(Task::cancel))
+                            .intervalTicks(20)
+                            .submit(plugin);
+                    plugin.logger.warn("The plugin easyscoreboard is updating scoreboard, please uninstall it to use 'displayHonor' (trying cancel it)");
+                    plugin.logger.warn("请卸载EasyScoreBoard来保证displayHonor功能正常");
+                }
+            });
             ScoreBoardManager.enable = true;
             ScoreBoardManager.init();
             logger.info("displayHonor mode enabled");
@@ -303,7 +317,7 @@ public class NewHonor {
         }
     }
 
-    static PluginContainer container() {
+    static PluginContainer getContainer() {
         return plugin.pluginContainer;
     }
 }
