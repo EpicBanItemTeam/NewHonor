@@ -38,6 +38,8 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.*;
+
 /**
  * @author yinyangshi
  */
@@ -60,11 +62,6 @@ public class NewHonor {
     public final HashMap<UUID, Text> honorTextCache = new HashMap<>();
     public final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
     private static final Object CACHE_LOCK = new Object();
-
-    private static final String OLD_COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
-    private static final String OLD_USE_PAPI_NODE_PATH = "usePAPI";
-    private static final String DISPLAY_HONOR_NODE_PATH = "displayHonor";
-    private static final String FORCE_ENABLE_DEFAULT_LISTENER = "force-enable-default-listener";
 
     private final UltimateChatEventListener UChatListener = new UltimateChatEventListener();
     private final NewHonorMessageListener NewHonorListener = new NewHonorMessageListener();
@@ -105,6 +102,8 @@ public class NewHonor {
                     .setValue(NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false));
             NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER)
                     .setValue(NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
+            NewHonorConfig.getCfg().getNode(PERMISSION_MANAGE)
+                    .setValue(NewHonorConfig.getCfg().getNode(PERMISSION_MANAGE).getBoolean(false));
             NewHonorConfig.save();
             LanguageManager.reload();
             SqlManager.init();

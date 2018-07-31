@@ -29,6 +29,12 @@ public class NewHonorConfig {
     private static final String DEFAULT_HONORS = "honors";
     private static final String DEFAULT_HONORS_SETTINGS = "default-honors-settings";
 
+    public static final String OLD_COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
+    public static final String OLD_USE_PAPI_NODE_PATH = "usePAPI";
+    public static final String DISPLAY_HONOR_NODE_PATH = "displayHonor";
+    public static final String FORCE_ENABLE_DEFAULT_LISTENER = "force-enable-default-listener";
+    public static final String PERMISSION_MANAGE = "permission-manage";
+
     public static void init() {
         loader = HoconConfigurationLoader.builder()
                 .setPath(defaultCfgDir.resolve("config.conf")).build();

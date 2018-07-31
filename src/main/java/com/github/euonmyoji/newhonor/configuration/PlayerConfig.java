@@ -43,12 +43,21 @@ public interface PlayerConfig {
                     final String checkPrefix = "newhonor.honor.";
                     try {
                         List<String> ownedHonors = pc.getOwnHonors().orElseGet(ArrayList::new);
+                        //如果移除没权限的头衔
+                        if (NewHonorConfig.getCfg().getNode(NewHonorConfig.PERMISSION_MANAGE).getBoolean(false)) {
+                            try {
+                                pc.takeHonor(((String[]) ownedHonors.stream().filter(s -> !player.hasPermission(checkPrefix + s)).toArray()));
+                            } catch (Exception e) {
+                                NewHonor.plugin.logger.warn("error about data! (take honors)", e);
+                            }
+                        }
+
                         if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
                             try {
                                 pc.giveHonor(id);
                                 NewHonor.plugin.logger.info("Player {} got a honor: {}", player.getName(), id);
                             } catch (Exception e) {
-                                NewHonor.plugin.logger.warn("error about data!", e);
+                                NewHonor.plugin.logger.warn("error about data! (give honors)", e);
                             }
                         }
                     } catch (SQLException e) {
