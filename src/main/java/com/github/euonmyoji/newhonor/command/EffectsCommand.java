@@ -98,7 +98,7 @@ class EffectsCommand {
                                         .ifPresent(t -> list.remove(s));
                             }
                             if (ed.remove(list)) {
-                                src.sendMessage(Text.of("[NewHonor]remove effects " + effectID + "PotionEffects successful"));
+                                src.sendMessage(Text.of("[NewHonor]remove effects " + effectID + " PotionEffects successful"));
                                 return CommandResult.success();
                             }
                         }

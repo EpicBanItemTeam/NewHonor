@@ -183,7 +183,7 @@ class AdminCommand {
                         return CommandResult.success();
                     }
                 } else {
-                    src.sendMessage(of("[NewHonor]Effects:" + effectsID + "not found"));
+                    src.sendMessage(of("[NewHonor]Effects:" + effectsID + " is not found"));
                 }
                 src.sendMessage(of("[NewHonor]set honor effects failed"));
                 return CommandResult.empty();
