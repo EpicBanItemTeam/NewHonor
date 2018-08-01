@@ -33,6 +33,10 @@ public class SqlManager {
     private static CommentedConfigurationNode node = cfg.getNode("SQL-settings");
     private static SqlService sql;
 
+    private static volatile Connection con;
+    private static volatile Statement statement;
+    private static byte time_out = 0;
+
     public static void init() {
         reloadSQLInfo();
         node.getNode("enable").setValue(enable);
@@ -55,7 +59,9 @@ public class SqlManager {
         update_encoding = node.getNode("update-encoding").getString("latin1");
         if (enable) {
             Task.builder().execute(() -> {
-                try (Statement s = getDataSource(getURL()).getConnection().createStatement()) {
+
+                try {
+                    Statement s = getStatement();
                     s.execute("use " + database);
                     s.execute("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) not null primary key," +
                             USING_KEY + " varchar(64)," +
@@ -73,11 +79,16 @@ public class SqlManager {
         }
     }
 
+    private static DataSource dataSource;
+
     private static DataSource getDataSource(String jdbcUrl) throws SQLException {
         if (sql == null) {
             sql = Sponge.getServiceManager().provide(SqlService.class).orElseThrow(NoSuchFieldError::new);
         }
-        return sql.getDataSource(jdbcUrl);
+        if (dataSource == null) {
+            dataSource = sql.getDataSource(jdbcUrl);
+        }
+        return dataSource;
     }
 
     private static String getURL() {
@@ -86,36 +97,11 @@ public class SqlManager {
     }
 
     public static class SqlPlayerConfig implements PlayerConfig {
-        private static volatile Connection con;
-        private static volatile Statement statement;
         private UUID uuid;
         private List<SQLException> es = new ArrayList<>();
         private boolean done;
-        private static byte time_out = 0;
 
         private static final String D = ",";
-
-        static {
-            Task.builder().execute(() -> {
-                if (time_out >= 0) {
-                    time_out--;
-                }
-                if (time_out == 0) {
-                    try {
-                        if (con != null && !con.isClosed()) {
-                            con.close();
-                        }
-                    } catch (SQLException ignore) {
-                    }
-                    try {
-                        if (statement != null && !statement.isClosed()) {
-                            statement.close();
-                        }
-                    } catch (SQLException ignore) {
-                    }
-                }
-            }).async().intervalTicks(20).submit(NewHonor.plugin);
-        }
 
         public SqlPlayerConfig(UUID uuid) throws SQLException {
             this.uuid = uuid;
@@ -278,21 +264,43 @@ public class SqlManager {
         public UUID getUUID() {
             return uuid;
         }
+    }
 
-        private static Connection getConnection() throws SQLException {
-            if (con == null || con.isClosed()) {
-                con = getDataSource(getURL()).getConnection();
+    static {
+        Task.builder().execute(() -> {
+            if (time_out >= 0) {
+                time_out--;
             }
-            time_out = 30;
-            return con;
-        }
+            if (time_out == 0) {
+                try {
+                    if (con != null && !con.isClosed()) {
+                        con.close();
+                    }
+                } catch (SQLException ignore) {
+                }
+                try {
+                    if (statement != null && !statement.isClosed()) {
+                        statement.close();
+                    }
+                } catch (SQLException ignore) {
+                }
+            }
+        }).async().intervalTicks(20).submit(NewHonor.plugin);
+    }
 
-        private static Statement getStatement() throws SQLException {
-            if (statement == null || statement.isClosed()) {
-                statement = getConnection().createStatement();
-            }
-            time_out = 30;
-            return statement;
+    private static Connection getConnection() throws SQLException {
+        if (con == null || con.isClosed()) {
+            con = getDataSource(getURL()).getConnection();
         }
+        time_out = 30;
+        return con;
+    }
+
+    private static Statement getStatement() throws SQLException {
+        if (statement == null || statement.isClosed()) {
+            statement = getConnection().createStatement();
+        }
+        time_out = 30;
+        return statement;
     }
 }

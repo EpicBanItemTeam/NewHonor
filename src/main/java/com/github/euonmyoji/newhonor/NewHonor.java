@@ -48,7 +48,7 @@ import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.*;
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-pre-b13";
+    public static final String VERSION = "2.0.0-pre-b14";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
