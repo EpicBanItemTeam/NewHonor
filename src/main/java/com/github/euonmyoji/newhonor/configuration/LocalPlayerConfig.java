@@ -106,7 +106,7 @@ public class LocalPlayerConfig implements PlayerConfig {
     }
 
     @Override
-    public boolean isEnableEffects() {
+    public boolean isEnabledEffects() {
         return cfg.getNode(ENABLE_EFFECTS_KEY).getBoolean(true);
     }
 

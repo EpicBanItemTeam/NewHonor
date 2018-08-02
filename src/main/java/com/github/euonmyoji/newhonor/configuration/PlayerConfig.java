@@ -122,7 +122,7 @@ public interface PlayerConfig {
      * @return boolean
      * @throws SQLException when found any error
      */
-    boolean isEnableEffects() throws SQLException;
+    boolean isEnabledEffects() throws SQLException;
 
     /**
      * 设置玩家使用的头衔

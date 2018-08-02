@@ -34,7 +34,6 @@ public class SqlManager {
     private static SqlService sql;
 
     private static volatile Connection con;
-    private static volatile Statement statement;
     private static byte time_out = 0;
 
     public static void init() {
@@ -59,10 +58,7 @@ public class SqlManager {
         update_encoding = node.getNode("update-encoding").getString("latin1");
         if (enable) {
             Task.builder().execute(() -> {
-
-                try {
-                    Statement s = getStatement();
-                    s.execute("use " + database);
+                try (Statement s = getConnection().createStatement()) {
                     s.execute("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) not null primary key," +
                             USING_KEY + " varchar(64)," +
                             HONORS_KEY + " TEXT," +
@@ -79,16 +75,11 @@ public class SqlManager {
         }
     }
 
-    private static DataSource dataSource;
-
     private static DataSource getDataSource(String jdbcUrl) throws SQLException {
         if (sql == null) {
             sql = Sponge.getServiceManager().provide(SqlService.class).orElseThrow(NoSuchFieldError::new);
         }
-        if (dataSource == null) {
-            dataSource = sql.getDataSource(jdbcUrl);
-        }
-        return dataSource;
+        return sql.getDataSource(jdbcUrl);
     }
 
     private static String getURL() {
@@ -111,7 +102,9 @@ public class SqlManager {
                         preStat.execute();
                     } catch (SQLException ignore) {
                     }
-                    getStatement().execute("set names " + update_encoding + ";");
+                    try (PreparedStatement state = getConnection().prepareStatement("set names " + update_encoding + ";")) {
+                        state.execute();
+                    }
                 } catch (SQLException e) {
                     es.add(e);
                 }
@@ -132,14 +125,18 @@ public class SqlManager {
 
         @Override
         public void enableAutoChange(boolean auto) throws SQLException {
-            getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", AUTO_CHANGE_KEY, auto ? 1 : 0, uuid));
+            try (PreparedStatement state = getConnection().prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", AUTO_CHANGE_KEY, auto ? 1 : 0, uuid))) {
+                state.executeUpdate();
+            }
         }
 
         @Override
         public boolean isEnabledAutoChange() throws SQLException {
-            ResultSet r = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", AUTO_CHANGE_KEY, TABLE_NAME, uuid));
-            r.next();
-            return r.getByte(AUTO_CHANGE_KEY) >= 1;
+            try (PreparedStatement state = getConnection().prepareStatement(String.format("select %s from %s where UUID = '%s'", AUTO_CHANGE_KEY, TABLE_NAME, uuid))) {
+                ResultSet r = state.executeQuery();
+                r.next();
+                return r.getByte(AUTO_CHANGE_KEY) >= 1;
+            }
         }
 
         @Override
@@ -155,9 +152,11 @@ public class SqlManager {
 
         @Override
         public boolean isUseHonor() throws SQLException {
-            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", USEHONOR_KEY, TABLE_NAME, uuid));
-            result.next();
-            return result.getByte(USEHONOR_KEY) >= 1;
+            try (PreparedStatement state = getConnection().prepareStatement(String.format("select %s from %s where UUID = '%s'", USEHONOR_KEY, TABLE_NAME, uuid))) {
+                ResultSet result = state.executeQuery();
+                result.next();
+                return result.getByte(USEHONOR_KEY) >= 1;
+            }
         }
 
         @Override
@@ -173,9 +172,12 @@ public class SqlManager {
             }
             if (took) {
                 PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
-                return !Sponge.getEventManager().post(event) && getStatement().executeUpdate(
-                        String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'",
-                                HONORS_KEY, honors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""), uuid)) < 2;
+                if (!Sponge.getEventManager().post(event)) {
+                    try (PreparedStatement state = getConnection().prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'",
+                            HONORS_KEY, honors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""), uuid))) {
+                        return state.executeUpdate() < 2;
+                    }
+                }
             }
             return false;
         }
@@ -191,55 +193,69 @@ public class SqlManager {
             if (!event.isCancelled() && HonorConfig.getHonorText(id).isPresent()) {
                 Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
                         HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
-                boolean result = getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'"
-                        , HONORS_KEY, honors.stream().reduce((s, s2) -> s + D + s2).orElse("") + D + id, uuid)) < 2;
-                if (result && isEnabledAutoChange()) {
-                    setUseHonor(id);
+                try (PreparedStatement state = getConnection().prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'"
+                        , HONORS_KEY, honors.stream().reduce((s, s2) -> s + D + s2).orElse("") + D + id, uuid))) {
+                    boolean result = state.executeUpdate() < 2;
+                    if (result && isEnabledAutoChange()) {
+                        setUseHonor(id);
+                    }
+                    return result;
                 }
-                return result;
             }
             return false;
         }
 
         @Override
         public void setWhetherUseHonor(boolean use) throws SQLException {
-            getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", USEHONOR_KEY, use ? 1 : 0, uuid));
+            try (PreparedStatement state = getConnection().prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", USEHONOR_KEY, use ? 1 : 0, uuid))) {
+                state.executeUpdate();
+            }
         }
 
         @Override
         public void setWhetherEnableEffects(boolean enable) throws SQLException {
-            getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", ENABLE_EFFECTS_KEY, enable ? 1 : 0, uuid));
+            try (PreparedStatement state = getConnection().prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", ENABLE_EFFECTS_KEY, enable ? 1 : 0, uuid))) {
+                state.executeUpdate();
+            }
         }
 
         @Override
-        public boolean isEnableEffects() throws SQLException {
-            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", ENABLE_EFFECTS_KEY, TABLE_NAME, uuid));
-            result.next();
-            return result.getByte(ENABLE_EFFECTS_KEY) >= 1;
+        public boolean isEnabledEffects() throws SQLException {
+            try (PreparedStatement state = getConnection().prepareStatement(String.format("select %s from %s where UUID = '%s'", ENABLE_EFFECTS_KEY, TABLE_NAME, uuid))) {
+                ResultSet result = state.executeQuery();
+                result.next();
+                return result.getByte(ENABLE_EFFECTS_KEY) >= 1;
+            }
         }
 
         @Override
         public boolean setUseHonor(String id) throws SQLException {
-            if (isOwnHonor(id) && HonorConfig.getHonorText(id).isPresent()) {
-                return getStatement().executeUpdate(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", USING_KEY, id, uuid)) < 2;
+            try (PreparedStatement state = getConnection().prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", USING_KEY, id, uuid))) {
+                if (isOwnHonor(id) && HonorConfig.getHonorText(id).isPresent()) {
+                    return state.executeUpdate() < 2;
+                }
             }
             return false;
         }
 
         @Override
         public String getUsingHonorID() throws SQLException {
-            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", USING_KEY, TABLE_NAME, uuid));
-            result.next();
-            return result.getString(USING_KEY);
+            try (PreparedStatement state = getConnection().prepareStatement(String.format("select %s from %s where UUID = '%s'", USING_KEY, TABLE_NAME, uuid))) {
+                ResultSet result = state.executeQuery();
+                result.next();
+                return result.getString(USING_KEY);
+            }
         }
 
         @Override
         public Optional<List<String>> getOwnHonors() throws SQLException {
-            ResultSet result = getStatement().executeQuery(String.format("select %s from %s where UUID = '%s'", HONORS_KEY, TABLE_NAME, uuid));
-            if (result.next()) {
-                String honors = result.getString(HONORS_KEY);
-                return honors == null ? Optional.of(new ArrayList<>()) :
-                        Optional.of(honors).map(s -> new ArrayList<>(Arrays.asList(s.split(D))));
+            try (PreparedStatement state = getConnection().prepareStatement(String.format("select %s from %s where UUID = '%s'", HONORS_KEY, TABLE_NAME, uuid))) {
+                ResultSet result = state.executeQuery();
+                if (result.next()) {
+                    String honors = result.getString(HONORS_KEY);
+                    return honors == null ? Optional.of(new ArrayList<>()) :
+                            Optional.of(honors).map(s -> new ArrayList<>(Arrays.asList(s.split(D))));
+                }
             }
             return Optional.empty();
         }
@@ -278,12 +294,6 @@ public class SqlManager {
                     }
                 } catch (SQLException ignore) {
                 }
-                try {
-                    if (statement != null && !statement.isClosed()) {
-                        statement.close();
-                    }
-                } catch (SQLException ignore) {
-                }
             }
         }).async().intervalTicks(20).submit(NewHonor.plugin);
     }
@@ -294,13 +304,5 @@ public class SqlManager {
         }
         time_out = 30;
         return con;
-    }
-
-    private static Statement getStatement() throws SQLException {
-        if (statement == null || statement.isClosed()) {
-            statement = getConnection().createStatement();
-        }
-        time_out = 30;
-        return statement;
     }
 }

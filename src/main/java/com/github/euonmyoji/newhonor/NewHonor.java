@@ -48,7 +48,7 @@ import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.*;
         dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "nucleus", optional = true)})
 public class NewHonor {
-    public static final String VERSION = "2.0.0-pre-b14";
+    public static final String VERSION = "2.0.0-pre-b15";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -288,7 +288,7 @@ public class NewHonor {
                     plugin.honorTextCache.remove(pd.getUUID());
                     if (pd.isUseHonor()) {
                         pd.getUsingHonorText().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
-                        if (pd.isEnableEffects()) {
+                        if (pd.isEnabledEffects()) {
                             HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
                         }
                     }

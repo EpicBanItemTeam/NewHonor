@@ -42,7 +42,7 @@ class SqlCommand {
                                 sqlCfg.giveHonor(optHonors.get().stream().reduce((s1, s2) -> s1 + "," + s2)
                                         .orElseThrow(NoSuchFieldError::new));
                             }
-                            sqlCfg.setWhetherEnableEffects(localCfg.isEnableEffects());
+                            sqlCfg.setWhetherEnableEffects(localCfg.isEnabledEffects());
                             sqlCfg.setWhetherUseHonor(localCfg.isUseHonor());
                         }
                         src.sendMessage(of("[NewHonor] update finished successful"));
@@ -71,7 +71,7 @@ class SqlCommand {
                             sqlCfg.checkUsingHonor();
                             localCfg.setUseHonor(sqlCfg.getUsingHonorID());
                             sqlCfg.getOwnHonors().ifPresent(strings -> strings.forEach(localCfg::giveHonor));
-                            localCfg.setWhetherEnableEffects(sqlCfg.isEnableEffects());
+                            localCfg.setWhetherEnableEffects(sqlCfg.isEnabledEffects());
                             localCfg.setWhetherUseHonor(sqlCfg.isUseHonor());
                             localCfg.save();
                         }
