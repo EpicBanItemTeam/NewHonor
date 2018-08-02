@@ -1,5 +1,5 @@
-group = 'com.github.euonmyoji.newhonor'
-version = '2.0.0-pre-b15'
+import org.ajoberstar.grgit.Grgit
+
 apply plugin: 'java'
 
 sourceCompatibility = '1.8'
@@ -11,6 +11,30 @@ jar {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.Main'
     }
 }
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.ajoberstar:grgit:1.7.0'
+    }
+}
+
+def buildNumber = ""
+ext {
+    //noinspection GrDeprecatedAPIUsage  不会用新版
+    git = Grgit.open(file(".git"))
+    parents = git.head().parentIds
+    index = 0// Offset to match CI
+    for (; parents != null && !parents.isEmpty(); index++) {
+        parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
+    }
+    //noinspection GrReassignedInClosureLocalVar
+    buildNumber = "${index}"
+}
+version = "$version-b$buildNumber"
 
 repositories {
     mavenCentral()
