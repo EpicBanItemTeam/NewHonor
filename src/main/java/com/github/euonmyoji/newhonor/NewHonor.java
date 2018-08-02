@@ -109,7 +109,7 @@ public class NewHonor {
             LanguageManager.reload();
             SqlManager.init();
         } catch (IOException e) {
-            e.printStackTrace();
+            NewHonor.plugin.logger.warn("init plugin IOE!", e);
         }
     }
 

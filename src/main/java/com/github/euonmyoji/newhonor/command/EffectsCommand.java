@@ -30,7 +30,7 @@ class EffectsCommand {
                         Files.delete(path);
                         src.sendMessage(Text.of("[NewHonor]delete a effects successful"));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        NewHonor.plugin.logger.warn("delete a effects IOE", e);
                         src.sendMessage(Text.of("[NewHonor]delete a effects successful"));
                     }
                 } else {
@@ -143,7 +143,7 @@ class EffectsCommand {
                     builder.build().sendTo(src);
                     return CommandResult.success();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    NewHonor.plugin.logger.warn("IOE when list all created effects", e);
                     src.sendMessage(Text.of("[NewHonor]IOE!"));
                 }
                 return CommandResult.empty();
