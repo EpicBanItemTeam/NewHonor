@@ -94,6 +94,8 @@ public class NewHonor {
                 logger.info("check update was canceled");
             }
 
+            HonorConfig.init();
+
             //已经不在使用的N个配置文件node
             NewHonorConfig.getCfg().removeChild(OLD_USE_PAPI_NODE_PATH);
             NewHonorConfig.getCfg().removeChild(OLD_COMPATIBLE_UCHAT_NODE_PATH);

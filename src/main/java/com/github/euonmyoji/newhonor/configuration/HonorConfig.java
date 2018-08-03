@@ -22,7 +22,7 @@ public class HonorConfig {
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     private static Set<String> allCreatedHonors;
 
-    static {
+    public static void init() {
         loader = HoconConfigurationLoader.builder()
                 .setPath(NewHonorConfig.cfgDir.resolve("honor.conf")).build();
         cfg = load();
