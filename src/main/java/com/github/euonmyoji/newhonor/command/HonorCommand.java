@@ -114,7 +114,7 @@ public class HonorCommand {
                             Optional<List<String>> honors = pd.getOwnHonors();
                             if (honors.isPresent()) {
                                 if (honors.get().isEmpty()) {
-                                    src.sendMessage(getText("newhonor.listhonors.empty"));
+                                    src.sendMessage(langBuilder("newhonor.listhonors.empty").replace("%player%", user.getName()).build());
                                     return;
                                 }
                                 PaginationList.Builder builder = PaginationList.builder()

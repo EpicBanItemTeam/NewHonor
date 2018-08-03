@@ -38,7 +38,7 @@ newhonor.listhonors.title = &e%ownername% &a拥有的头衔
 newhonor.listhonors.header = &e%ownername% &a正在使用的头衔 &r%honor%&r &a，药水效果组: &d%effectsID%
 newhonor.listhonors.contexts = &a头衔: &r%honor%&r &a，药水效果组: &6%effectsID%
 newhonor.listhonors.clickuse = &e点击使用头衔 &r%honor%&r
-newhonor.listhonors.empty = &e[&b头衔插件&e] &e你目前没有任何头衔
+newhonor.listhonors.empty = &e[&b头衔插件&e] &e%player%目前没有任何头衔
 newhonor.listhonors.nopermission = &e[&b头衔插件&e] &c你目前没有权限 &6newhonor.admin &c来查看别人拥有的头衔
 
 newhonor.listcreatedhonors.title = &a&l所有创建的头衔
