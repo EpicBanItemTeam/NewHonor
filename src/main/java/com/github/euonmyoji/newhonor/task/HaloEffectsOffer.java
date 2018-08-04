@@ -7,10 +7,7 @@ import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.scheduler.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author yinyangshi
@@ -27,7 +24,7 @@ public class HaloEffectsOffer {
         }).name("NewHonor - Halo Effects Offer Task").intervalTicks(Util.INTERVAL_TICKS).submit(NewHonor.plugin);
     }
 
-    static void update(List<String> effects) {
+    static void update(Iterable<String> effects) {
         synchronized (TASK_DATA) {
             TASK_DATA.clear();
             effects.forEach(id -> {
@@ -40,7 +37,7 @@ public class HaloEffectsOffer {
     }
 
     private static class HaloTaskData {
-        private final List<HaloEffectsData> randomList = new ArrayList<>();
+        private final Collection<HaloEffectsData> randomList = new ArrayList<>();
         private final String id;
 
         private void call() {

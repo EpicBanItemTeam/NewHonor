@@ -21,6 +21,8 @@ import java.util.stream.Stream;
  */
 public class Util {
     public static final int INTERVAL_TICKS = 8;
+    private static final int DEFAULT_DURATION_TICK = 60;
+    private static final int PARALLEL_GOAL = 16;
 
     /**
      * 给玩家提供药水效果
@@ -42,7 +44,7 @@ public class Util {
      * @return 持续多少tick
      */
     public static int getPotionEffectsDurationTick(CommentedConfigurationNode cfg) {
-        return cfg.getNode("potionEffectsDurationTick").getInt(60);
+        return cfg.getNode("potionEffectsDurationTick").getInt(DEFAULT_DURATION_TICK);
     }
 
     /**
@@ -81,7 +83,7 @@ public class Util {
     }
 
     public static <T> Stream<T> getStream(List<T> list) {
-        return list.size() > 16 ? list.parallelStream() : list.stream();
+        return list.size() > PARALLEL_GOAL ? list.parallelStream() : list.stream();
     }
 
     public static List<UUID> getPlayerUsingEffects(String id) {

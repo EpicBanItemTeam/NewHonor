@@ -6,12 +6,12 @@ import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.util.Identifiable;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -57,12 +57,12 @@ public class HonorCommand {
     private static CommandSpec use = CommandSpec.builder()
             .arguments(GenericArguments.string(of(ID_KEY)))
             .executor((src, args) -> {
-                if (!(src instanceof Player)) {
+                if (!(src instanceof Identifiable)) {
                     src.sendMessage(getText("newhonor.changehonor.unknownsource"));
                     return CommandResult.empty();
                 }
-                if (!src.hasPermission(ADMIN_PERMISSION) && USE_CD.containsKey(((Player) src).getUniqueId())) {
-                    int cd = USE_CD.get(((Player) src).getUniqueId());
+                if (!src.hasPermission(ADMIN_PERMISSION) && USE_CD.containsKey(((Identifiable) src).getUniqueId())) {
+                    int cd = USE_CD.get(((Identifiable) src).getUniqueId());
                     src.sendMessage(of("[NewHonor]You should wait " + cd + " second(s) to change use honor"));
                     return CommandResult.empty();
                 }
@@ -78,7 +78,7 @@ public class HonorCommand {
                         }
                         NewHonor.doSomething(pd);
                         if (!src.hasPermission(ADMIN_PERMISSION)) {
-                            USE_CD.put(((Player) src).getUniqueId(), 9);
+                            USE_CD.put(((Identifiable) src).getUniqueId(), 9);
                         }
                     } catch (Throwable e) {
                         src.sendMessage(getText("[NewHonor] error!"));

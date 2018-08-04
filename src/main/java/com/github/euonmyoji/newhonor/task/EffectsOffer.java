@@ -33,7 +33,7 @@ public class EffectsOffer {
         }).name("NewHonor - Effects Offer Task").intervalTicks(Util.INTERVAL_TICKS).submit(NewHonor.plugin);
     }
 
-    static void update(List<String> effects) {
+    static void update(Iterable<String> effects) {
         synchronized (TASK_DATA) {
             TASK_DATA.clear();
             effects.forEach(id -> {
@@ -53,7 +53,7 @@ public class EffectsOffer {
         private final RandomDelayData delayData;
         private final List<PotionEffect> potionEffects;
         private final String id;
-        private final List<RandomEffectsData> randomList = new ArrayList<>();
+        private final Collection<RandomEffectsData> randomList = new ArrayList<>();
         private final ParticleEffectData particleEffectData;
         private LocalDateTime lastRunTime = LocalDateTime.MIN;
         private int lastDelay = 0;

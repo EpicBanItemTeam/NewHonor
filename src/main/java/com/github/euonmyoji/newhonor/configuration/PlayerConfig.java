@@ -46,7 +46,8 @@ public interface PlayerConfig {
                         //如果移除没权限的头衔
                         if (NewHonorConfig.getCfg().getNode(NewHonorConfig.PERMISSION_MANAGE).getBoolean(false)) {
                             try {
-                                pc.takeHonor(((String[]) ownedHonors.stream().filter(s -> !player.hasPermission(checkPrefix + s)).toArray()));
+                                //noinspection OverlyStrongTypeCast BAKA!
+                                pc.takeHonor((String[]) ownedHonors.stream().filter(s -> !player.hasPermission(checkPrefix + s)).toArray());
                             } catch (Exception e) {
                                 NewHonor.plugin.logger.warn("error about data! (take honors)", e);
                             }
