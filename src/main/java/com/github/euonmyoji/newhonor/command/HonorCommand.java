@@ -102,11 +102,11 @@ public class HonorCommand {
                 listCD.put(src.getName(), LocalDateTime.now());
                 Optional<User> optionalUser = args.getOne(of("user"));
                 boolean typedUser = optionalUser.isPresent();
-                boolean pass = src.getName().equals(optionalUser.map(User::getName).orElse(null))
-                        || src.hasPermission(ADMIN_PERMISSION);
+                boolean isSelf = src.getName().equals(optionalUser.map(User::getName).orElse(src.getName()));
+                boolean permissionPass = isSelf || src.hasPermission(ADMIN_PERMISSION);
                 User user = typedUser ? optionalUser.get()
                         : src instanceof User ? (User) src : null;
-                boolean execute = typedUser ? pass : user != null;
+                boolean execute = typedUser ? permissionPass : user != null;
                 if (execute) {
                     Task.builder().execute(() -> {
                         try {
