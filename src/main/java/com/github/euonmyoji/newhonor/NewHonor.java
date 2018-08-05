@@ -45,9 +45,13 @@ import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.*;
  * @author yinyangshi
  */
 @Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
-        dependencies = {@Dependency(id = "ultimatechat", optional = true), @Dependency(id = "placeholderapi", optional = true),
-                @Dependency(id = "nucleus", optional = true)})
+        dependencies = {@Dependency(id = NewHonor.UCHAT_ID, optional = true), @Dependency(id = NewHonor.PAPI_ID, optional = true),
+                @Dependency(id = NewHonor.NUCLEUS_ID, optional = true)})
 public class NewHonor {
+    static final String NUCLEUS_ID = "nucleus";
+    static final String PAPI_ID = "placeholderapi";
+    static final String UCHAT_ID = "ultimatechat";
+
     public static final String VERSION = "2.0.0-pre-16";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
@@ -204,61 +208,54 @@ public class NewHonor {
         ScoreBoardManager.enable = false;
         ScoreBoardManager.clear();
 
-        boolean enableDefault = true;
         //hook nucleus
-        try {
-            Class.forName("io.github.nucleuspowered.nucleus.api.NucleusAPI");
+        if (Sponge.getPluginManager().getPlugin(NUCLEUS_ID).isPresent()) {
             NucleusManager.doIt();
-            enableDefault = false;
             if (!hookedNucleus) {
                 logger.info("hooked nucleus");
                 logger.info("default listener is disabling, please use {{pl:newhonor:newhonor}} to show honor in chat");
                 logger.info("发现nucleus插件，请在nucleus配置里面的chat里面使用变量{{pl:newhonor:newhonor}}来在聊天栏显示头衔");
             }
             hookedNucleus = true;
-        } catch (ClassNotFoundException ignore) {
         }
 
         //hook PAPI
-        try {
+        if (Sponge.getPluginManager().getPlugin(PAPI_ID).isPresent()) {
             PlaceHolderManager.create();
-            if (!enableDefault) {
+            if (!enabledPlaceHolderAPI) {
                 logger.info("hooked PAPI, you can use '%newhonor%' now.");
             }
             enabledPlaceHolderAPI = true;
-        } catch (Throwable ignore) {
         }
-
         //hook UChat
-        try {
-            Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent");
+        if (Sponge.getPluginManager().getPlugin(UCHAT_ID).isPresent()) {
             Sponge.getEventManager().registerListeners(this, UChatListener);
             if (!hookedUChat) {
                 logger.info("hooked UChat");
                 logger.info("please use {newhonor} in UChat config to show honor in the chat");
             }
             hookedUChat = true;
-            enableDefault = false;
-        } catch (ClassNotFoundException ignore) {
         }
-
-        //display
+        //没用uchat  开了nucleus就必须force 或者不开直接用
+        //displayHonor
         if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
             final String esbID = "de_yottaflops_easyscoreboard";
             if (Sponge.getPluginManager().getPlugin(esbID).isPresent()) {
                 plugin.logger.warn("The plugin easyscoreboard is updating scoreboard, please uninstall it to use 'displayHonor' (trying cancel it), or Do not use 'displayHonor'");
-                plugin.logger.warn("请卸载EasyScoreBoard来保证displayHonor功能正常, 或者不使用displayHonor功能");
                 Sponge.getServer().getBroadcastChannel().send(Text.of(TextColors.RED, "'displayHonor' may work not correctly, because plugin[EasyScoreboard]?"));
             }
             ScoreBoardManager.enable = true;
             ScoreBoardManager.init();
             logger.info("displayHonor mode enabled");
-            logger.info("if you find honor shows twice, try to change config in nucleus(overwrite-early-prefix = true)");
-            logger.info("如果发现头衔重复显示，请尝试在nucleus配置文件里面将overwrite-early-prefix设置为true");
-            if (NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean() && enableDefault) {
-                Sponge.getEventManager().registerListeners(this, NewHonorListener);
+            if (hookedNucleus) {
+                logger.info("if you find honor shows twice, try to change config in nucleus(overwrite-early-prefix = true) and use {{pl:newhonor:newhonor}}");
+                logger.info("如果发现头衔重复显示，请尝试在nucleus配置文件里面将overwrite-early-prefix设置为true 并且使用{{pl:newhonor:newhonor}}变量");
             }
-        } else if (enableDefault) {
+        }
+
+        //default listener
+        boolean forcePass = !hookedNucleus || NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean();
+        if (forcePass && !hookedUChat) {
             Sponge.getEventManager().registerListeners(this, NewHonorListener);
         }
     }
