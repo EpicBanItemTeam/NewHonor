@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.data;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.OfferType;
 import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -47,7 +48,7 @@ public class RandomEffectsData {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(player -> {
-                        OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, potionEffects, false);
+                        OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner);
                         if (!Sponge.getEventManager().post(event)) {
                             Util.offerEffects(player, potionEffects);
                             if (particleEffectData != null) {

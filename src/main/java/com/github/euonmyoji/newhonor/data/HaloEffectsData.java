@@ -2,6 +2,7 @@ package com.github.euonmyoji.newhonor.data;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.OfferType;
 import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -62,7 +63,7 @@ public class HaloEffectsData {
             double distanceSquared = player.getLocation().getPosition().distanceSquared(o);
             boolean playerPass = include || !(p.getUniqueId().equals(player.getUniqueId()));
             if (playerPass && distanceSquared < (radius * radius)) {
-                OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, effectID, p, potionEffects, true, particleEffectData);
+                OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, effectID, p, OfferType.Halo, particleEffectData, potionEffects);
                 if (!Sponge.getEventManager().post(event)) {
                     Util.offerEffects(player, potionEffects);
                     if (particleEffectData != null) {
@@ -71,9 +72,11 @@ public class HaloEffectsData {
                 }
             }
         });
-
         if (particleEffectData != null) {
-            particleEffectData.execute(p.getLocation());
+            OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(p, effectID, null, OfferType.Owner, particleEffectData);
+            if (!Sponge.getEventManager().post(event)) {
+                particleEffectData.execute(p.getLocation());
+            }
         }
     }
 }

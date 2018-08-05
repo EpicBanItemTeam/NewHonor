@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.task;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.OfferType;
 import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.data.ParticleEffectData;
@@ -94,7 +95,7 @@ public class EffectsOffer {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(player -> {
-                        OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, potionEffects, false, particleEffectData);
+                        OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner, particleEffectData);
                         if (!Sponge.getEventManager().post(event)) {
                             Util.offerEffects(player, potionEffects);
                             if (particleEffectData != null) {

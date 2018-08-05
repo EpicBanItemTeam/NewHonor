@@ -1,17 +1,15 @@
 package com.github.euonmyoji.newhonor.api.event;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import org.spongepowered.api.effect.potion.PotionEffect;
+import com.github.euonmyoji.newhonor.api.OfferType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,28 +17,24 @@ import java.util.Optional;
  *
  * @author yinyangshi
  */
-@NonnullByDefault
-@SuppressWarnings("unused")
 public class OfferPlayerEffectsEvent implements Event, Cancellable {
     private String effectsID;
     private Player player;
     @Nullable
     private Player from;
-    private List<PotionEffect> potionEffects;
     private Cause cause;
-    private boolean halo;
+    private OfferType offerType;
     private boolean canceled = false;
 
-    public OfferPlayerEffectsEvent(@Nonnull Player player, @Nonnull String effectsID, @Nullable Player from, @Nonnull List<PotionEffect> potionEffects, boolean halo,
+    public OfferPlayerEffectsEvent(@Nonnull Player player, @Nonnull String effectsID, @Nullable Player from, OfferType type,
                                    Object... causes) {
         this.player = player;
         this.effectsID = effectsID;
         this.from = from;
-        this.potionEffects = potionEffects;
-        this.halo = halo;
+        this.offerType = type;
         Cause.Builder builder = Cause.builder();
-        for (Object cause : causes) {
-            if (cause != null) {
+        if (causes != null) {
+            for (Object cause : causes) {
                 builder.append(cause);
             }
         }
@@ -55,19 +49,16 @@ public class OfferPlayerEffectsEvent implements Event, Cancellable {
         return this.player;
     }
 
-    public List<PotionEffect> getPotionEffects() {
-        return this.potionEffects;
-    }
-
     public Optional<Player> getFrom() {
         return Optional.ofNullable(from);
     }
 
     public boolean isHalo() {
-        return this.halo;
+        return this.offerType == OfferType.Halo;
     }
 
     @Override
+    @Nonnull
     public Cause getCause() {
         return cause;
     }
