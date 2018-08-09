@@ -52,7 +52,7 @@ public class NewHonor {
     static final String PAPI_ID = "placeholderapi";
     static final String UCHAT_ID = "ultimatechat";
 
-    public static final String VERSION = "2.0.0-pre-16";
+    public static final String VERSION = "2.0.0-pre-17";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -137,11 +137,12 @@ public class NewHonor {
                     if (c > 0) {
                         logger.info("found a latest version:" + version + ".Your version now:" + VERSION);
                     } else if (c < 0) {
-                        logger.info("the latest version in com.github:" + version + "[Your version:" + VERSION + "]");
+                        logger.info("the latest version in github.com:" + version + "[Your version:" + VERSION + "]");
                     }
                 }
             } catch (Exception e) {
                 logger.info("check for updating failed");
+                logger.debug("check update error", e);
             }
         }).submit(this);
     }
@@ -238,7 +239,8 @@ public class NewHonor {
         }
         //没用uchat  开了nucleus就必须force 或者不开直接用
         //displayHonor
-        if (NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false)) {
+        boolean displayHonor = NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false);
+        if (displayHonor) {
             final String esbID = "de_yottaflops_easyscoreboard";
             if (Sponge.getPluginManager().getPlugin(esbID).isPresent()) {
                 plugin.logger.warn("The plugin easyscoreboard is updating scoreboard, please uninstall it to use 'displayHonor' (trying cancel it), or Do not use 'displayHonor'");
@@ -254,7 +256,7 @@ public class NewHonor {
         }
 
         //default listener
-        boolean forcePass = !hookedNucleus || NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean();
+        boolean forcePass = !(hookedNucleus || displayHonor) || NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean();
         if (forcePass && !hookedUChat) {
             Sponge.getEventManager().registerListeners(this, NewHonorListener);
         }
