@@ -214,7 +214,7 @@ public class NewHonor {
             NucleusManager.doIt();
             if (!hookedNucleus) {
                 logger.info("hooked nucleus");
-                logger.info("default listener is disabling, please use {{pl:newhonor:newhonor}} to show honor in chat");
+                logger.info("default listener is disabling, please use {{pl:newhonor:newhonor}} in nucleus configuration to show honor in chat");
                 logger.info("发现nucleus插件，请在nucleus配置里面的chat里面使用变量{{pl:newhonor:newhonor}}来在聊天栏显示头衔");
             }
             hookedNucleus = true;
