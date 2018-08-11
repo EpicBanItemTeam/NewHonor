@@ -51,7 +51,7 @@ public class HonorConfig {
     }
 
     public static Optional<HonorValueData> getHonorValueData(String id) {
-        return isVirtual(id) ? Optional.empty() : Optional.of(new HonorValueData(cfg.getNode(id, "value")));
+        return isVirtual(id) ? Optional.empty() : Optional.of(new HonorValueData(cfg.getNode(id)));
     }
 
     public static boolean setHonor(String id, String honor) {
