@@ -4,6 +4,7 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.task.TaskManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -113,7 +114,8 @@ class AdminCommand {
                     PaginationList.Builder builder = PaginationList.builder().title(getText("newhonor.listcreatedhonors.title")).padding(of("-"));
                     builder.contents(HonorConfig.getAllCreatedHonors().stream().map(id -> langBuilder("newhonor.listcreatedhonors.contexts")
                             .replace("%honorid%", id)
-                            .replace("%honor%", FORMATTING_CODE.serialize(HonorConfig.getHonorText(id).orElse(of("there is something wrong"))))
+                            .replace("%honor%", FORMATTING_CODE.serialize(HonorConfig.getHonorValueData(id).map(HonorValueData::getValue)
+                                    .orElse(of("there is something wrong"))))
                             .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
                             .build())
                             .filter(text -> !text.toString().contains("there is something wrong"))

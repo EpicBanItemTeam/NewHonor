@@ -120,22 +120,22 @@ public class HonorCommand {
                                 PaginationList.Builder builder = PaginationList.builder()
                                         .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
                                 String usingID = pd.getUsingHonorID();
-                                HonorConfig.getHonorRawText(usingID)
-                                        .ifPresent(text -> builder.header(langBuilder("newhonor.listhonors.header")
+                                HonorConfig.getHonorValueData(usingID)
+                                        .ifPresent(data -> builder.header(langBuilder("newhonor.listhonors.header")
                                                 .replace("%ownername%", user.getName())
-                                                .replace("%honor%", text)
+                                                .replace("%honor%", data.getRawValue())
                                                 .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
                                                 .build()));
                                 List<Text> texts = honors.get().stream()
-                                        .map(id -> HonorConfig.getHonorRawText(id).map(honor -> Text.builder()
+                                        .map(id -> HonorConfig.getHonorValueData(id).map(data -> Text.builder()
                                                 //显示头衔 药水效果组
                                                 .append(langBuilder("newhonor.listhonors.contexts")
                                                         .replace("%honorid%", id)
-                                                        .replace("%honor%", honor)
+                                                        .replace("%honor%", data.getRawValue())
                                                         .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
                                                         .build())
                                                 .onHover(showText(langBuilder("newhonor.listhonors.clickuse")
-                                                        .replace("%honor%", honor)
+                                                        .replace("%honor%", data.getRawValue())
                                                         .replace("%honorid%", id)
                                                         .build()))
                                                 .onClick(runCommand("/honor use " + id))
@@ -146,7 +146,7 @@ public class HonorCommand {
                                 builder.contents(texts).build().sendTo(src);
                                 Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
                                         .execute(() -> honors.get().forEach(s -> {
-                                            if (!HonorConfig.getHonorRawText(s).isPresent()) {
+                                            if (HonorConfig.isVirtual(s)) {
                                                 try {
                                                     pd.takeHonor(s);
                                                 } catch (SQLException e) {

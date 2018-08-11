@@ -22,7 +22,7 @@ public class UltimateChatEventListener {
             UUID uuid = ((Identifiable) source).getUniqueId();
             if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
                 event.addTag("{newhonor}",
-                        TextSerializers.FORMATTING_CODE.serialize(NewHonor.plugin.honorTextCache.get(uuid)));
+                        NewHonor.plugin.honorTextCache.get(uuid).getRawValue());
             }
         }
     }

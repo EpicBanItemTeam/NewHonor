@@ -1,6 +1,8 @@
 package com.github.euonmyoji.newhonor;
 
 import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.task.DisplayHonorTask;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scoreboard.Scoreboard;
@@ -8,6 +10,7 @@ import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +32,7 @@ class ScoreBoardManager {
      * 清掉scoreboard数据
      */
     static void clear() {
+        DisplayHonorTask.clear();
         getScoreBoard().getTeams().forEach(team -> team.getMembers().forEach(team::removeMember));
     }
 
@@ -67,7 +71,9 @@ class ScoreBoardManager {
             optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
             if (pd.isUseHonor()) {
                 if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
-                    Text prefix = NewHonor.plugin.honorTextCache.get(uuid);
+                    HonorValueData valueData = NewHonor.plugin.honorTextCache.get(uuid);
+                    List<Text> prefixes = valueData.getDisplayValue();
+                    Text prefix = prefixes.get(0);
                     if (isTeamPresent) {
                         optionalTeam.get().setPrefix(prefix);
                     } else {
@@ -78,6 +84,9 @@ class ScoreBoardManager {
                         getScoreBoard().registerTeam(optionalTeam.get());
                     }
                     optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
+                    if (prefixes.size() > 1) {
+                        new DisplayHonorTask(honorID, prefixes, getScoreBoard(), valueData.getIntervalTicks());
+                    }
                 }
             }
         }

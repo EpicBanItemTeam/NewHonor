@@ -3,8 +3,10 @@ package com.github.euonmyoji.newhonor;
 import com.github.euonmyoji.newhonor.api.event.NewHonorReloadEvent;
 import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.*;
+import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
+import com.github.euonmyoji.newhonor.task.DisplayHonorTask;
 import com.github.euonmyoji.newhonor.task.EffectsOffer;
 import com.github.euonmyoji.newhonor.task.HaloEffectsOffer;
 import com.github.euonmyoji.newhonor.task.TaskManager;
@@ -52,7 +54,7 @@ public class NewHonor {
     static final String PAPI_ID = "placeholderapi";
     static final String UCHAT_ID = "ultimatechat";
 
-    public static final String VERSION = "2.0.0-pre-17";
+    public static final String VERSION = "2.0.0-pre-18";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -64,7 +66,7 @@ public class NewHonor {
     private PluginContainer pluginContainer;
 
     public static NewHonor plugin;
-    public final HashMap<UUID, Text> honorTextCache = new HashMap<>();
+    public final HashMap<UUID, HonorValueData> honorTextCache = new HashMap<>();
     public final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
     private static final Object CACHE_LOCK = new Object();
 
@@ -288,7 +290,7 @@ public class NewHonor {
                     plugin.playerUsingEffectCache.remove(pd.getUUID());
                     plugin.honorTextCache.remove(pd.getUUID());
                     if (pd.isUseHonor()) {
-                        pd.getUsingHonorText().ifPresent(text -> plugin.honorTextCache.put(pd.getUUID(), text));
+                        pd.getUsingHonorValue().ifPresent(data -> plugin.honorTextCache.put(pd.getUUID(), data));
                         if (pd.isEnabledEffects()) {
                             HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
                         }

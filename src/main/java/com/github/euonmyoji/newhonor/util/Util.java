@@ -10,6 +10,8 @@ import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -99,5 +101,9 @@ public class Util {
 
     public static double getTimeDuration(LocalDateTime start) {
         return Duration.between(start, LocalDateTime.now()).getSeconds();
+    }
+
+    public static Text toText(String str) {
+        return TextSerializers.FORMATTING_CODE.deserialize(str);
     }
 }

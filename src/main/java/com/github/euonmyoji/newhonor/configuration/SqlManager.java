@@ -190,7 +190,7 @@ public class SqlManager {
             if (honors.contains(id)) {
                 event.setCancelled(true);
             }
-            if (!event.isCancelled() && HonorConfig.getHonorText(id).isPresent()) {
+            if (!event.isCancelled() && !HonorConfig.isVirtual(id)) {
                 Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
                         HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
                 try (PreparedStatement state = getConnection().prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'"
@@ -231,7 +231,7 @@ public class SqlManager {
         @Override
         public boolean setUseHonor(String id) throws SQLException {
             try (PreparedStatement state = getConnection().prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", USING_KEY, id, uuid))) {
-                if (isOwnHonor(id) && HonorConfig.getHonorText(id).isPresent()) {
+                if (isOwnHonor(id) && !HonorConfig.isVirtual(id)) {
                     return state.executeUpdate() < 2;
                 }
             }

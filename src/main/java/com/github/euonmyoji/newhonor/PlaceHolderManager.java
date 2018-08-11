@@ -24,7 +24,7 @@ public class PlaceHolderManager {
 
     @Placeholder(id = "newhonor")
     public Text getNewHonorText(@Source Player p) {
-        return NewHonor.plugin.honorTextCache.get(p.getUniqueId());
+        return NewHonor.plugin.honorTextCache.get(p.getUniqueId()).getValue();
     }
 
     private PlaceHolderManager() throws RuntimeException {

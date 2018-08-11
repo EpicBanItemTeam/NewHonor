@@ -18,7 +18,7 @@ class NucleusManager {
                 done = true;
                 NucleusAPI.getMessageTokenService().register(NewHonor.getContainer(), (tokenInput, source, variables) -> {
                     if (NewHonor.getContainer().getId().equals(tokenInput) && source instanceof Identifiable) {
-                        return Optional.ofNullable(NewHonor.plugin.honorTextCache.get((((Identifiable) source).getUniqueId())));
+                        return Optional.ofNullable(NewHonor.plugin.honorTextCache.get((((Identifiable) source).getUniqueId())).getValue());
                     }
                     return Optional.empty();
                 });

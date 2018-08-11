@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.data.HonorValueData;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -49,12 +50,8 @@ public class HonorConfig {
         return false;
     }
 
-    public static Optional<Text> getHonorText(String id) {
-        return getHonorRawText(id).map(TextSerializers.FORMATTING_CODE::deserialize);
-    }
-
-    public static Optional<String> getHonorRawText(String id) {
-        return Optional.ofNullable(cfg.getNode(id, "value").getString(null));
+    public static Optional<HonorValueData> getHonorValueData(String id) {
+        return isVirtual(id) ? Optional.empty() : Optional.of(new HonorValueData(cfg.getNode(id, "value")));
     }
 
     public static boolean setHonor(String id, String honor) {
@@ -102,6 +99,10 @@ public class HonorConfig {
         return allCreatedHonors;
     }
 
+    public static boolean isVirtual(String id) {
+        return cfg.getNode(id).isVirtual();
+    }
+
     private static Map<Object, ? extends CommentedConfigurationNode> getHonorsMap() {
         return cfg.getChildrenMap();
     }
@@ -110,11 +111,7 @@ public class HonorConfig {
         //noinspection ConstantConditions 之前有检查
         return Optional.ofNullable(cfg.getNode(id, "getMessage").getString(null))
                 .map(s -> "&r" + s.replace("{playername}", playername))
-                .map(s -> "&r" + s.replace("{newhonor}", TextSerializers.FORMATTING_CODE.serialize(HonorConfig.getHonorText(id).get())) + "&f")
+                .map(s -> "&r" + s.replace("{newhonor}", HonorConfig.getHonorValueData(id).get().getRawValue() + "&r"))
                 .map(TextSerializers.FORMATTING_CODE::deserialize);
-    }
-
-    private static boolean isVirtual(String id) {
-        return cfg.getNode(id).isVirtual();
     }
 }

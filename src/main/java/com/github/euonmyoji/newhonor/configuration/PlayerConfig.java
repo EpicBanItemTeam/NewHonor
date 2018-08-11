@@ -1,9 +1,9 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.data.HonorValueData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.text.Text;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -179,8 +179,8 @@ public interface PlayerConfig {
      * @return text
      * @throws SQLException when found any error
      */
-    default Optional<Text> getUsingHonorText() throws SQLException {
-        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorConfig::getHonorText);
+    default Optional<HonorValueData> getUsingHonorValue() throws SQLException {
+        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorConfig::getHonorValueData);
     }
 
     /**

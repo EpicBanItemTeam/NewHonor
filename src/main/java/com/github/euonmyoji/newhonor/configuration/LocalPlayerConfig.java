@@ -112,7 +112,7 @@ public class LocalPlayerConfig implements PlayerConfig {
 
     @Override
     public boolean setUseHonor(String id) {
-        if (isOwnHonor(id) && HonorConfig.getHonorText(id).isPresent()) {
+        if (isOwnHonor(id) && !HonorConfig.isVirtual(id)) {
             cfg.getNode(USING_KEY).setValue(id);
             return save();
         }
@@ -180,7 +180,7 @@ public class LocalPlayerConfig implements PlayerConfig {
 
     private boolean noSaveGive(String id) {
         Optional<List<String>> honors = getOwnHonors();
-        if (HonorConfig.getHonorText(id).isPresent() && honors.isPresent() && !honors.get().contains(id)) {
+        if (!HonorConfig.isVirtual(id) && honors.isPresent() && !honors.get().contains(id)) {
             honors.get().add(id);
             cfg.getNode(HONORS_KEY).setValue(honors.get());
             Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
