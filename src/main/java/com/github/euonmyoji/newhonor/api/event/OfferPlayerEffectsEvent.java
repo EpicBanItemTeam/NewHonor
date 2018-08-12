@@ -33,8 +33,8 @@ public class OfferPlayerEffectsEvent implements Event, Cancellable {
         this.from = from;
         this.offerType = type;
         Cause.Builder builder = Cause.builder();
-        if (causes != null) {
-            for (Object cause : causes) {
+        for (Object cause : causes) {
+            if (cause != null) {
                 builder.append(cause);
             }
         }

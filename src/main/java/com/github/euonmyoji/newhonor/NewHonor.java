@@ -19,8 +19,8 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
@@ -77,7 +77,7 @@ public class NewHonor {
     private boolean hookedUChat = false;
 
     @Listener
-    public void onStarting(GameStartingServerEvent event) {
+    public void onPreInit(GamePreInitializationEvent event) {
         plugin = this;
         try {
             NewHonorConfig.defaultCfgDir = cfgDir;
