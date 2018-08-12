@@ -17,31 +17,29 @@ public class DisplayHonorTask {
 
     public DisplayHonorTask(String id, List<Text> values, Scoreboard scoreboard, int speed) {
         synchronized (TASKS) {
-            Task o = TASKS.get(id);
-            if (o != null) {
-                o.cancel();
-            }
-            Task task = Task.builder().delayTicks(1).name("NewHonor - display task:" + id).intervalTicks(speed)
-                    .execute(new Consumer<Task>() {
-                        private int index = 0;
+            if (TASKS.get(id) == null) {
+                Task task = Task.builder().delayTicks(1).name("NewHonor - display task:" + id).intervalTicks(speed)
+                        .execute(new Consumer<Task>() {
+                            private int index = 0;
 
-                        @Override
-                        public void accept(Task task) {
-                            try {
-                                scoreboard.getTeam(id).orElseThrow(NoSuchFieldException::new).setPrefix(values.get(index));
-                                index++;
-                                if (index == values.size()) {
-                                    index = 0;
-                                }
-                            } catch (Throwable ignore) {
-                                synchronized (TASKS) {
-                                    task.cancel();
-                                    TASKS.remove(id);
+                            @Override
+                            public void accept(Task task) {
+                                try {
+                                    scoreboard.getTeam(id).orElseThrow(NoSuchFieldException::new).setPrefix(values.get(index));
+                                    index++;
+                                    if (index == values.size()) {
+                                        index = 0;
+                                    }
+                                } catch (Throwable ignore) {
+                                    synchronized (TASKS) {
+                                        task.cancel();
+                                        TASKS.remove(id);
+                                    }
                                 }
                             }
-                        }
-                    }).submit(NewHonor.plugin);
-            TASKS.put(id, task);
+                        }).submit(NewHonor.plugin);
+                TASKS.put(id, task);
+            }
         }
     }
 

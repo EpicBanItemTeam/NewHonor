@@ -227,6 +227,7 @@ class AdminCommand {
                     })
                     .filter(Objects::nonNull)
                     .forEach(NewHonor::doSomething);
+            System.gc();
             src.sendMessage(of("[NewHonor]refresh successful"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);
     }
