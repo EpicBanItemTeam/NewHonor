@@ -85,7 +85,7 @@ class ScoreBoardManager {
                     }
                     optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
                     if (prefixes.size() > 1) {
-                        new DisplayHonorTask(honorID, prefixes, getScoreBoard(), valueData.getIntervalTicks());
+                        DisplayHonorTask.submit(honorID, prefixes, getScoreBoard(), valueData.getIntervalTicks());
                     }
                 }
             }
@@ -118,5 +118,9 @@ class ScoreBoardManager {
 
     private static void initAllPlayers() {
         Sponge.getServer().getOnlinePlayers().forEach(ScoreBoardManager::initPlayer);
+    }
+
+    private ScoreBoardManager() {
+        throw new UnsupportedOperationException();
     }
 }

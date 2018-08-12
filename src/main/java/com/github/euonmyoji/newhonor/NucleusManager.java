@@ -27,4 +27,8 @@ class NucleusManager {
             NewHonor.plugin.logger.warn("Unknown error", e);
         }
     }
+
+    private NucleusManager() {
+        throw new UnsupportedOperationException();
+    }
 }

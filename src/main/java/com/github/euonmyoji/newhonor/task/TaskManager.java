@@ -19,4 +19,8 @@ public class TaskManager {
         EffectsOffer.update(effects);
         HaloEffectsOffer.update(effects);
     }
+
+    private TaskManager() {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 public class DisplayHonorTask {
     private static final HashMap<String, Task> TASKS = new HashMap<>();
 
-    public DisplayHonorTask(String id, List<Text> values, Scoreboard scoreboard, int speed) {
+    public static void submit(String id, List<Text> values, Scoreboard scoreboard, int speed ) {
         synchronized (TASKS) {
             if (TASKS.get(id) == null) {
                 Task task = Task.builder().delayTicks(1).name("NewHonor - display task:" + id).intervalTicks(speed)
@@ -48,5 +48,9 @@ public class DisplayHonorTask {
             TASKS.values().forEach(Task::cancel);
             TASKS.clear();
         }
+    }
+
+    private DisplayHonorTask() {
+        throw new UnsupportedOperationException();
     }
 }
