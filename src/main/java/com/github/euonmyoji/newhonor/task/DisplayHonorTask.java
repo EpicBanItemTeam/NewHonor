@@ -30,6 +30,12 @@ public class DisplayHonorTask {
                                     if (index == values.size()) {
                                         index = 0;
                                     }
+                                } catch (IllegalArgumentException e) {
+                                    NewHonor.plugin.logger.warn("The display value is wrong", e);
+                                    synchronized (TASKS) {
+                                        task.cancel();
+                                        TASKS.remove(id);
+                                    }
                                 } catch (Throwable ignore) {
                                     synchronized (TASKS) {
                                         task.cancel();
