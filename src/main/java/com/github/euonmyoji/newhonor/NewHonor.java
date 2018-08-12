@@ -6,7 +6,6 @@ import com.github.euonmyoji.newhonor.configuration.*;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
-import com.github.euonmyoji.newhonor.task.DisplayHonorTask;
 import com.github.euonmyoji.newhonor.task.EffectsOffer;
 import com.github.euonmyoji.newhonor.task.HaloEffectsOffer;
 import com.github.euonmyoji.newhonor.task.TaskManager;
