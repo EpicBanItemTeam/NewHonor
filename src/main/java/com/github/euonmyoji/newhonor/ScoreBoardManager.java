@@ -2,7 +2,7 @@ package com.github.euonmyoji.newhonor;
 
 import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
-import com.github.euonmyoji.newhonor.task.DisplayHonorTask;
+import com.github.euonmyoji.newhonor.task.DisplayHonorTaskManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scoreboard.Scoreboard;
@@ -32,7 +32,7 @@ class ScoreBoardManager {
      * 清掉scoreboard数据
      */
     static void clear() {
-        DisplayHonorTask.clear();
+        DisplayHonorTaskManager.clear();
         getScoreBoard().getTeams().forEach(team -> team.getMembers().forEach(team::removeMember));
     }
 
@@ -85,7 +85,7 @@ class ScoreBoardManager {
                     }
                     optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
                     if (prefixes.size() > 1) {
-                        DisplayHonorTask.submit(honorID, prefixes, getScoreBoard(), valueData.getIntervalTicks());
+                        DisplayHonorTaskManager.submit(honorID, prefixes, optionalTeam.orElseThrow(NoSuchFieldError::new), valueData.getDelay());
                     }
                 }
             }

@@ -1,62 +1,57 @@
 package com.github.euonmyoji.newhonor.task;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.scoreboard.Scoreboard;
+import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
+
+import static com.github.euonmyoji.newhonor.task.DisplayHonorTaskManager.TASKS;
 
 /**
  * @author yinyangshi
  */
-public class DisplayHonorTask {
-    private static final HashMap<String, Task> TASKS = new HashMap<>();
+public class DisplayHonorTask implements Runnable {
+    private String id;
+    private List<Text> values;
+    private Team team;
+    private int[] delays;
+    private int index;
+    private volatile boolean running = true;
 
-    public static void submit(String id, List<Text> values, Scoreboard scoreboard, int speed) {
-        synchronized (TASKS) {
-            if (TASKS.get(id) == null) {
-                Task task = Task.builder().delayTicks(1).name("NewHonor - display task:" + id).intervalTicks(speed)
-                        .execute(new Consumer<Task>() {
-                            private int index = 0;
+    DisplayHonorTask(String id, List<Text> values, Team team, int[] delay) {
+        if (values.size() > delay.length) {
+            throw new IllegalArgumentException();
+        }
+        this.id = id;
+        this.values = values;
+        this.team = team;
+        this.delays = delay;
+    }
 
-                            @Override
-                            public void accept(Task task) {
-                                try {
-                                    scoreboard.getTeam(id).orElseThrow(NoSuchFieldException::new).setPrefix(values.get(index));
-                                    index++;
-                                    if (index == values.size()) {
-                                        index = 0;
-                                    }
-                                } catch (IllegalArgumentException e) {
-                                    NewHonor.plugin.logger.warn("The display value is wrong", e);
-                                    synchronized (TASKS) {
-                                        task.cancel();
-                                        TASKS.remove(id);
-                                    }
-                                } catch (Throwable ignore) {
-                                    synchronized (TASKS) {
-                                        task.cancel();
-                                        TASKS.remove(id);
-                                    }
-                                }
-                            }
-                        }).submit(NewHonor.plugin);
-                TASKS.put(id, task);
+    @Override
+    public void run() {
+        while (running) {
+            try {
+                team.setPrefix(values.get(index));
+                Thread.sleep(delays[index] * 50);
+                index++;
+                if (index == values.size()) {
+                    index = 0;
+                }
+            } catch (IllegalArgumentException e) {
+                NewHonor.plugin.logger.warn("The display value is wrong", e);
+                cancel();
+            } catch (Throwable ignore) {
+                cancel();
             }
         }
     }
 
-    public static void clear() {
+    void cancel() {
         synchronized (TASKS) {
-            TASKS.values().forEach(Task::cancel);
-            TASKS.clear();
+            running = false;
+            TASKS.remove(id);
         }
-    }
-
-    private DisplayHonorTask() {
-        throw new UnsupportedOperationException();
     }
 }
