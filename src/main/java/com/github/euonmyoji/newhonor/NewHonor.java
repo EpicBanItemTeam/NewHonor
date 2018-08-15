@@ -57,7 +57,7 @@ public class NewHonor {
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
-    public Path defaultCfgDir;
+    private Path defaultCfgDir;
 
     @Inject
     public Logger logger;
@@ -99,6 +99,7 @@ public class NewHonor {
             }
 
             HonorConfig.init();
+            EffectsConfig.init();
 
             //已经不在使用的N个配置文件node
             NewHonorConfig.getCfg().removeChild(OLD_USE_PAPI_NODE_PATH);

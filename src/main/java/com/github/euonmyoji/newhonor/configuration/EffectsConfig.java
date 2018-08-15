@@ -29,7 +29,7 @@ public class EffectsConfig {
     private final int potionEffectsTime;
     private String id;
 
-    static {
+    public static void init() {
         if (!Files.exists(PATH)) {
             try {
                 Files.createDirectory(PATH);

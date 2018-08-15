@@ -35,13 +35,13 @@ public class DisplayHonorTask implements Runnable {
         if (running) {
             try {
                 team.setPrefix(values.get(index));
+                Task.builder().execute(this)
+                        .delayTicks(delays[index]).name("NewHonor - displayHonor Task " + id + "#" + index)
+                        .submit(NewHonor.plugin);
                 index++;
                 if (index == values.size()) {
                     index = 0;
                 }
-                Task.builder().execute(this)
-                        .delayTicks(delays[index]).name("NewHonor - displayHonor Task " + id + "#" + index)
-                        .submit(NewHonor.plugin);
             } catch (IllegalArgumentException e) {
                 NewHonor.plugin.logger.warn("The display value is wrong", e);
                 cancel();
