@@ -196,9 +196,11 @@ class AdminCommand {
     static CommandSpec reload = CommandSpec.builder()
             .executor((src, args) -> {
                 src.sendMessage(of("[NewHonor]start reload"));
+                long startTime = System.currentTimeMillis();
                 NewHonor.plugin.reload();
+                long endTime = System.currentTimeMillis();
+                src.sendMessage(of("[NewHonor]reloaded successful in " + (endTime - startTime) + " ms"));
                 refreshCache(src);
-                src.sendMessage(of("[NewHonor]reload successful"));
                 return CommandResult.success();
             })
             .build();
@@ -211,6 +213,7 @@ class AdminCommand {
     private static void refreshCache(CommandSource src) {
         Task.builder().execute(() -> {
             src.sendMessage(of("[NewHonor]start refresh"));
+            long startTime = System.currentTimeMillis();
             NewHonor.clearCaches();
             try {
                 TaskManager.update();
@@ -229,7 +232,8 @@ class AdminCommand {
                     .filter(Objects::nonNull)
                     .forEach(NewHonor::doSomething);
             System.gc();
-            src.sendMessage(of("[NewHonor]refresh successful"));
+            long endTime = System.currentTimeMillis();
+            src.sendMessage(of("[NewHonor]refreshed successful in " + (endTime - startTime) + " ms"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);
     }
 }
