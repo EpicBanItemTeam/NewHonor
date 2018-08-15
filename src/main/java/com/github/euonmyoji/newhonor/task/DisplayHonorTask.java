@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.task;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
@@ -31,14 +32,16 @@ public class DisplayHonorTask implements Runnable {
 
     @Override
     public void run() {
-        while (running) {
+        if (running) {
             try {
                 team.setPrefix(values.get(index));
-                Thread.sleep(delays[index] * 50);
                 index++;
                 if (index == values.size()) {
                     index = 0;
                 }
+                Task.builder().execute(this)
+                        .delayTicks(delays[index]).name("NewHonor - displayHonor Task " + id + "#" + index)
+                        .submit(NewHonor.plugin);
             } catch (IllegalArgumentException e) {
                 NewHonor.plugin.logger.warn("The display value is wrong", e);
                 cancel();
