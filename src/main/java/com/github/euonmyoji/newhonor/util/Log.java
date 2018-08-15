@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.util;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import org.spongepowered.api.scheduler.Task;
 
 import java.io.IOException;
@@ -26,7 +27,8 @@ public class Log {
             .optionalStart()
             .appendLiteral(':')
             .appendValue(SECOND_OF_MINUTE, 2).toFormatter();
-    private static final Path PATH = NewHonor.plugin.defaultCfgDir.resolve("logs");
+    private static final Path PATH = NewHonorConfig.cfgDir.resolve("logs");
+    private static final Object LOCK = new Object();
 
     static {
         if (Files.notExists(PATH)) {
@@ -40,14 +42,16 @@ public class Log {
 
     public static void info(String msg) {
         Task.builder().async().execute(() -> {
-            try {
-                try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(PATH.resolve(getFileName()),
-                        StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
-                    out.println(getTime() + msg);
+            synchronized (LOCK) {
+                try {
+                    try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(PATH.resolve(getFileName()),
+                            StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
+                        out.println(getTime() + msg);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    NewHonor.plugin.logger.debug("记录头衔info异常", e);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                NewHonor.plugin.logger.debug("记录头衔info异常", e);
             }
         }).submit(NewHonor.plugin);
     }
