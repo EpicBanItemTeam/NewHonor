@@ -84,7 +84,6 @@ public class NewHonor {
             if (Files.notExists(defaultCfgDir)) {
                 Files.createDirectory(defaultCfgDir);
             }
-            defaultCfgDir = null;
             NewHonorConfig.init();
             if (Files.notExists(NewHonorConfig.cfgDir)) {
                 Files.createDirectory(NewHonorConfig.cfgDir);
