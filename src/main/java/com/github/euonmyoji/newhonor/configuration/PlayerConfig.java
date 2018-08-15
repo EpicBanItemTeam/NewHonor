@@ -2,6 +2,7 @@ package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.util.Log;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
 
@@ -46,8 +47,10 @@ public interface PlayerConfig {
                         //如果移除没权限的头衔
                         if (NewHonorConfig.getCfg().getNode(NewHonorConfig.PERMISSION_MANAGE).getBoolean(false)) {
                             try {
-                                //noinspection OverlyStrongTypeCast BAKA!
-                                pc.takeHonor((String[]) ownedHonors.stream().filter(s -> !player.hasPermission(checkPrefix + s)).toArray());
+                                String[] honors = (String[]) ownedHonors.stream().filter(s -> !player.hasPermission(checkPrefix + s)).toArray();
+                                if (pc.takeHonor()) {
+                                    Log.info(String.format("Player %s lost honors: %s", player.getName(), Arrays.asList(honors)));
+                                }
                             } catch (Exception e) {
                                 NewHonor.plugin.logger.warn("error about data! (take honors)", e);
                             }
@@ -55,8 +58,9 @@ public interface PlayerConfig {
 
                         if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
                             try {
-                                pc.giveHonor(id);
-                                NewHonor.plugin.logger.info("Player {} got a honor: {}", player.getName(), id);
+                                if (pc.giveHonor(id)) {
+                                    Log.info(String.format("Player %s got a honor: %s", player.getName(), id));
+                                }
                             } catch (Exception e) {
                                 NewHonor.plugin.logger.warn("error about data! (give honors)", e);
                             }

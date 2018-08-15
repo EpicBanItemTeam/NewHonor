@@ -57,7 +57,7 @@ public class NewHonor {
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
-    private Path cfgDir;
+    public Path defaultCfgDir;
 
     @Inject
     public Logger logger;
@@ -80,11 +80,11 @@ public class NewHonor {
     public void onPreInit(GamePreInitializationEvent event) {
         plugin = this;
         try {
-            NewHonorConfig.defaultCfgDir = cfgDir;
-            if (Files.notExists(cfgDir)) {
-                Files.createDirectory(cfgDir);
+            NewHonorConfig.defaultCfgDir = defaultCfgDir;
+            if (Files.notExists(defaultCfgDir)) {
+                Files.createDirectory(defaultCfgDir);
             }
-            cfgDir = null;
+            defaultCfgDir = null;
             NewHonorConfig.init();
             if (Files.notExists(NewHonorConfig.cfgDir)) {
                 Files.createDirectory(NewHonorConfig.cfgDir);

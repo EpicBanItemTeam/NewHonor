@@ -6,6 +6,7 @@ import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.task.TaskManager;
+import com.github.euonmyoji.newhonor.util.Log;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -54,10 +55,10 @@ class AdminCommand {
                             try {
                                 if (pd.giveHonor(id)) {
                                     src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " successful"));
-                                    plugin.logger.info(src.getName() + " gave " + user.getName() + " honor " + id + " successful");
+                                    Log.info(src.getName() + " gave " + user.getName() + " honor " + id + " successful");
                                 } else {
                                     src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed"));
-                                    plugin.logger.info(src.getName() + " gave " + user.getName() + " honor " + id + " failed");
+                                    Log.info(src.getName() + " gave " + user.getName() + " honor " + id + " failed");
                                 }
                             } catch (Exception e) {
                                 src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed(error!)"));
@@ -87,10 +88,10 @@ class AdminCommand {
                                 try {
                                     if (pd.takeHonor(id)) {
                                         src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " successful"));
-                                        plugin.logger.info(src.getName() + " took " + user.getName() + " honor " + id + " successful");
+                                        Log.info(src.getName() + " took " + user.getName() + " honor " + id + " successful");
                                     } else {
                                         src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " failed"));
-                                        plugin.logger.info(src.getName() + " took " + user.getName() + " honor " + id + " failed");
+                                        Log.info(src.getName() + " took " + user.getName() + " honor " + id + " failed");
                                     }
                                 } catch (Exception e) {
                                     src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed(error!)"));
@@ -133,7 +134,7 @@ class AdminCommand {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
                 if (HonorConfig.setHonor(id, honor)) {
-                    plugin.logger.info(src.getName() + "set a honor" + id);
+                    Log.info(src.getName() + "set a honor" + id);
                     src.sendMessage(of("[NewHonor]set a honor successful(start refresh)"));
                     refreshCache(src);
                     return CommandResult.success();
@@ -148,7 +149,7 @@ class AdminCommand {
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 if (HonorConfig.deleteHonor(id)) {
-                    plugin.logger.info(src.getName() + "deleted a honor" + id);
+                    Log.info(src.getName() + "deleted a honor" + id);
                     src.sendMessage(of("[NewHonor]deleted a honor successful(start refresh)"));
                     refreshCache(src);
                     return CommandResult.success();
@@ -165,7 +166,7 @@ class AdminCommand {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
                 if (HonorConfig.addHonor(id, honor)) {
-                    plugin.logger.info(src.getName() + "add a honor :" + id);
+                    Log.info(src.getName() + "add a honor :" + id);
                     src.sendMessage(of("[NewHonor]add a honor successful"));
                     return CommandResult.success();
                 }
