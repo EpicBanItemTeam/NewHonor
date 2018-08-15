@@ -49,7 +49,7 @@ public interface PlayerConfig {
                             try {
                                 String[] honors = (String[]) ownedHonors.stream().filter(s -> !player.hasPermission(checkPrefix + s)).toArray();
                                 if (pc.takeHonor()) {
-                                    Log.info(String.format("Player %s lost honors: %s", player.getName(), Arrays.asList(honors)));
+                                    Log.info(String.format("[Cause:permission not pass]Player %s lost honors: %s", player.getName(), Arrays.asList(honors)));
                                 }
                             } catch (Exception e) {
                                 NewHonor.plugin.logger.warn("error about data! (take honors)", e);
@@ -59,7 +59,7 @@ public interface PlayerConfig {
                         if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
                             try {
                                 if (pc.giveHonor(id)) {
-                                    Log.info(String.format("Player %s got a honor: %s", player.getName(), id));
+                                    Log.info(String.format("[Cause:Permission pass]Player %s got a honor: %s", player.getName(), id));
                                 }
                             } catch (Exception e) {
                                 NewHonor.plugin.logger.warn("error about data! (give honors)", e);
