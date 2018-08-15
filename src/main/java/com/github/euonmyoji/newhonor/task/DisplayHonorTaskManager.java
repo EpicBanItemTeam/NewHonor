@@ -27,7 +27,7 @@ public class DisplayHonorTaskManager {
 
     public static void clear() {
         synchronized (TASKS) {
-            TASKS.values().forEach(DisplayHonorTask::cancel);
+            new HashMap<>(TASKS).values().forEach(DisplayHonorTask::cancel);
             TASKS.clear();
         }
     }
