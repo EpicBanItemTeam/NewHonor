@@ -1,10 +1,14 @@
 package com.github.euonmyoji.newhonor.data;
 
+import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.util.Util;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +26,52 @@ public class HonorValueData {
 
     public HonorValueData(CommentedConfigurationNode cfg) {
         rawValue = cfg.getNode("value").getString("[default]");
-        value = Util.toText(rawValue);
+        Text.Builder valueBuilder = Text.builder().append(Util.toText(rawValue));
+
+        CommentedConfigurationNode hoverNode = cfg.getNode("hoverValue");
+        if (!hoverNode.isVirtual()) {
+            String type = hoverNode.getNode("type").getString("text");
+            switch (type) {
+                case "item": {
+                    try {
+                        valueBuilder.onHover(TextActions.showItem(hoverNode.getNode("value").getValue(TypeToken.of(ItemStackSnapshot.class))));
+                    } catch (ObjectMappingException e) {
+                        NewHonor.plugin.logger.warn("Error about honor.conf (item may be wrong?)", e);
+                    }
+                    break;
+                }
+                case "entity": {
+                    try {
+                        valueBuilder.onHover(TextActions.showEntity(hoverNode.getNode("entity").getValue(TypeToken.of(Entity.class)),
+                                hoverNode.getNode("name").getString("name")));
+                    } catch (ObjectMappingException e) {
+                        NewHonor.plugin.logger.warn("Error about honor.conf (entity may be wrong?)", e);
+                    }
+                    break;
+                }
+                default: {
+                    valueBuilder.onHover(TextActions.showText(Util.toText(hoverNode.getNode("value").getString(""))));
+                    break;
+                }
+            }
+        }
+
+        CommentedConfigurationNode clickNode = cfg.getNode("clickValue");
+        if (!clickNode.isVirtual()) {
+            String type = clickNode.getNode("type").getString("runCommand");
+            switch (type) {
+                case "suggestCommand": {
+                    valueBuilder.onClick(TextActions.suggestCommand(clickNode.getNode("value").getString("")));
+                    break;
+                }
+                default: {
+                    valueBuilder.onClick(TextActions.runCommand(clickNode.getNode("value").getString("")));
+                    break;
+                }
+            }
+        }
+
+        value = valueBuilder.build();
         int defaultDelay = cfg.getNode("intervalTicks").getInt(1);
         try {
             List<String> rawDisplayValue = cfg.getNode("displayValue").getList(TypeToken.of(String.class), Collections.singletonList(rawValue));
