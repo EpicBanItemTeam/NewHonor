@@ -104,4 +104,8 @@ public class NewHonorConfig {
             return loader.createEmptyNode(ConfigurationOptions.defaults());
         }
     }
+
+    private NewHonorConfig() {
+        throw new UnsupportedOperationException();
+    }
 }

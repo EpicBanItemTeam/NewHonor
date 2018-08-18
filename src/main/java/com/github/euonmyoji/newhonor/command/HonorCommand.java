@@ -259,4 +259,8 @@ public class HonorCommand {
             .child(effects, "effects")
             .child(data, "data")
             .build();
+
+    private HonorCommand() {
+        throw new UnsupportedOperationException();
+    }
 }

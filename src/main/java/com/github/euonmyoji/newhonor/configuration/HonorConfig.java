@@ -114,4 +114,8 @@ public class HonorConfig {
                 .map(s -> "&r" + s.replace("{newhonor}", HonorConfig.getHonorValueData(id).get().getStrValue() + "&r"))
                 .map(TextSerializers.FORMATTING_CODE::deserialize);
     }
+
+    private HonorConfig() {
+        throw new UnsupportedOperationException();
+    }
 }

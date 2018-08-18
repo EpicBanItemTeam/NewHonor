@@ -61,4 +61,8 @@ public class HaloEffectsOffer {
             });
         }
     }
+
+    private HaloEffectsOffer() {
+        throw new UnsupportedOperationException();
+    }
 }

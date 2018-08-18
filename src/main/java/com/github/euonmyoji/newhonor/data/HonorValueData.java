@@ -11,6 +11,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -63,6 +65,14 @@ public class HonorValueData {
         if (!clickNode.isVirtual()) {
             String type = clickNode.getNode("type").getString("runCommand");
             switch (type) {
+                case "open_url": {
+                    try {
+                        valueBuilder.onClick(TextActions.openUrl(new URL(clickNode.getNode("value").getString())));
+                    } catch (MalformedURLException e) {
+                        NewHonor.plugin.logger.warn("error with open_url", e);
+                    }
+                    break;
+                }
                 case "suggestCommand": {
                     valueBuilder.onClick(TextActions.suggestCommand(clickNode.getNode("value").getString("")));
                     break;
@@ -94,6 +104,7 @@ public class HonorValueData {
             e.printStackTrace();
         }
     }
+
 
     public Text getValue() {
         return this.value;

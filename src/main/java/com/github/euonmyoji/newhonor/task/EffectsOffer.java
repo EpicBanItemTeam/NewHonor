@@ -105,4 +105,8 @@ public class EffectsOffer {
                     })).submit(NewHonor.plugin);
         }
     }
+
+    private EffectsOffer() {
+        throw new UnsupportedOperationException();
+    }
 }

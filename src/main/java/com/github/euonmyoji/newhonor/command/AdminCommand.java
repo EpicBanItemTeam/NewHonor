@@ -236,4 +236,8 @@ class AdminCommand {
             src.sendMessage(of("[NewHonor]refreshed successful in " + (endTime - startTime) + " ms"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);
     }
+
+    private AdminCommand() {
+        throw new UnsupportedOperationException();
+    }
 }

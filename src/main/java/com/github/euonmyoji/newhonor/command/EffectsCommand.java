@@ -171,4 +171,8 @@ class EffectsCommand {
                 return CommandResult.success();
             })
             .build();
+
+    private EffectsCommand() {
+        throw new UnsupportedOperationException();
+    }
 }

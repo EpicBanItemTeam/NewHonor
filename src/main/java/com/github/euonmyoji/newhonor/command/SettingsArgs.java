@@ -76,4 +76,7 @@ class SettingsArgs {
             })
             .build();
 
+    private SettingsArgs() {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -84,4 +84,8 @@ class SqlCommand {
                 return CommandResult.success();
             })
             .build();
+
+    private SqlCommand() {
+        throw new UnsupportedOperationException();
+    }
 }

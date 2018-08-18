@@ -305,4 +305,8 @@ public class SqlManager {
         time_out = 30;
         return con;
     }
+
+    private SqlManager() {
+        throw new UnsupportedOperationException();
+    }
 }
