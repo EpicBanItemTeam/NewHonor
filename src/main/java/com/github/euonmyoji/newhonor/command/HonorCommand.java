@@ -123,7 +123,7 @@ public class HonorCommand {
                                 HonorConfig.getHonorValueData(usingID)
                                         .ifPresent(data -> builder.header(langBuilder("newhonor.listhonors.header")
                                                 .replace("%ownername%", user.getName())
-                                                .replace("%honor%", data.getRawValue())
+                                                .replace("%honor%", data.getStrValue())
                                                 .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
                                                 .build()));
                                 List<Text> texts = honors.get().stream()
@@ -131,11 +131,11 @@ public class HonorCommand {
                                                 //显示头衔 药水效果组
                                                 .append(langBuilder("newhonor.listhonors.contexts")
                                                         .replace("%honorid%", id)
-                                                        .replace("%honor%", data.getRawValue())
+                                                        .replace("%honor%", data.getStrValue())
                                                         .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
                                                         .build())
                                                 .onHover(showText(langBuilder("newhonor.listhonors.clickuse")
-                                                        .replace("%honor%", data.getRawValue())
+                                                        .replace("%honor%", data.getStrValue())
                                                         .replace("%honorid%", id)
                                                         .build()))
                                                 .onClick(runCommand("/honor use " + id))

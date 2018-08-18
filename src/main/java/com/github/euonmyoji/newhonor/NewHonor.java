@@ -54,7 +54,7 @@ public class NewHonor {
     static final String PAPI_ID = "placeholderapi";
     static final String UCHAT_ID = "ultimatechat";
 
-    public static final String VERSION = "2.1.0-pre-1";
+    public static final String VERSION = "2.1.0-pre-2";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -133,7 +133,7 @@ public class NewHonor {
                 connection.getResponseCode();
                 try (InputStreamReader reader = new InputStreamReader(connection.getInputStream(), Charsets.UTF_8)) {
                     JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
-                    String version = jsonObject.get("tag_name").getAsString().replace("v", "")
+                    String version = jsonObject.get("tag_name").getAsString().replaceFirst("v", "")
                             .replace("version", "");
                     int c = new ComparableVersion(version).compareTo(new ComparableVersion(VERSION));
                     if (c > 0) {

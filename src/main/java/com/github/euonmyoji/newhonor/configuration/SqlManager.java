@@ -30,7 +30,6 @@ public class SqlManager {
     private static String user;
     private static String password;
     private static String update_encoding;
-    private static CommentedConfigurationNode node = cfg.getNode("SQL-settings");
     private static SqlService sql;
 
     private static volatile Connection con;
@@ -38,6 +37,7 @@ public class SqlManager {
 
     public static void init() {
         reloadSQLInfo();
+        CommentedConfigurationNode node = cfg.getNode("SQL-settings");
         node.getNode("enable").setValue(enable);
         node.getNode("address").setValue(address);
         node.getNode("port").setValue(port);

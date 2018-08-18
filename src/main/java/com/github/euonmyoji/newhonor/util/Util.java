@@ -11,6 +11,7 @@ import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextParseException;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.time.Duration;
@@ -104,6 +105,10 @@ public class Util {
     }
 
     public static Text toText(String str) {
-        return TextSerializers.FORMATTING_CODE.deserialize(str);
+        try {
+            return TextSerializers.JSON.deserialize(str);
+        } catch (TextParseException e) {
+            return TextSerializers.FORMATTING_CODE.deserialize(str);
+        }
     }
 }

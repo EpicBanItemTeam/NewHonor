@@ -3,9 +3,7 @@ package com.github.euonmyoji.newhonor.listener;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import com.github.euonmyoji.newhonor.NewHonor;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.util.Identifiable;
 
 import java.util.UUID;
@@ -22,7 +20,7 @@ public class UltimateChatEventListener {
             UUID uuid = ((Identifiable) source).getUniqueId();
             if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
                 event.addTag("{newhonor}",
-                        NewHonor.plugin.honorTextCache.get(uuid).getRawValue());
+                        NewHonor.plugin.honorTextCache.get(uuid).getStrValue());
             }
         }
     }

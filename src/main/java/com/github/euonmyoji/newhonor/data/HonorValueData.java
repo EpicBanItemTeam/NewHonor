@@ -9,6 +9,7 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,13 +21,15 @@ import java.util.stream.Collectors;
  */
 public class HonorValueData {
     private Text value;
-    private String rawValue;
+    private String strValue;
     private List<Text> displayValue;
     private int[] delay;
 
     public HonorValueData(CommentedConfigurationNode cfg) {
-        rawValue = cfg.getNode("value").getString("[default]");
-        Text.Builder valueBuilder = Text.builder().append(Util.toText(rawValue));
+        String rawValue = cfg.getNode("value").getString("[default]");
+        Text temp = Util.toText(rawValue);
+        Text.Builder valueBuilder = Text.builder().append(temp);
+        strValue = TextSerializers.FORMATTING_CODE.serialize(temp);
 
         CommentedConfigurationNode hoverNode = cfg.getNode("hoverValue");
         if (!hoverNode.isVirtual()) {
@@ -74,7 +77,7 @@ public class HonorValueData {
         value = valueBuilder.build();
         int defaultDelay = cfg.getNode("intervalTicks").getInt(1);
         try {
-            List<String> rawDisplayValue = cfg.getNode("displayValue").getList(TypeToken.of(String.class), Collections.singletonList(rawValue));
+            List<String> rawDisplayValue = cfg.getNode("displayValue").getList(TypeToken.of(String.class), Collections.singletonList(strValue));
             delay = new int[rawDisplayValue.size()];
             displayValue = rawDisplayValue.stream().map(new Function<String, Text>() {
                 private int index = 0;
@@ -100,8 +103,8 @@ public class HonorValueData {
         return this.displayValue;
     }
 
-    public String getRawValue() {
-        return this.rawValue;
+    public String getStrValue() {
+        return this.strValue;
     }
 
     public int[] getDelay() {
