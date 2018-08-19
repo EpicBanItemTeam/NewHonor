@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor;
 
+import com.github.euonmyoji.newhonor.data.HonorValueData;
 import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import io.github.nucleuspowered.nucleus.api.exceptions.PluginAlreadyRegisteredException;
 import org.spongepowered.api.util.Identifiable;
@@ -18,7 +19,8 @@ class NucleusManager {
                 done = true;
                 NucleusAPI.getMessageTokenService().register(NewHonor.getContainer(), (tokenInput, source, variables) -> {
                     if (NewHonor.getContainer().getId().equals(tokenInput) && source instanceof Identifiable) {
-                        return Optional.ofNullable(NewHonor.plugin.honorTextCache.get((((Identifiable) source).getUniqueId())).getValue());
+                        return Optional.ofNullable(NewHonor.plugin.honorTextCache.get((((Identifiable) source).getUniqueId())))
+                                .map(HonorValueData::getValue);
                     }
                     return Optional.empty();
                 });
