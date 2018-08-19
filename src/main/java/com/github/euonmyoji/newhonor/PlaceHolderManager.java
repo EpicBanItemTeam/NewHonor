@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor;
 
+import com.github.euonmyoji.newhonor.data.HonorValueData;
 import me.rojo8399.placeholderapi.Listening;
 import me.rojo8399.placeholderapi.Placeholder;
 import me.rojo8399.placeholderapi.PlaceholderService;
@@ -24,7 +25,8 @@ public class PlaceHolderManager {
 
     @Placeholder(id = "newhonor")
     public Text getNewHonorText(@Source Player p) {
-        return NewHonor.plugin.honorTextCache.get(p.getUniqueId()).getValue();
+        HonorValueData value = NewHonor.plugin.honorTextCache.get(p.getUniqueId());
+        return value == null ? Text.of("") : value.getValue();
     }
 
     private PlaceHolderManager() throws RuntimeException {
