@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.util.Util;
 import com.google.common.base.Charsets;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.text.Text;
@@ -30,7 +31,7 @@ public class LanguageManager {
     }
 
     public Text build() {
-        return TextSerializers.FORMATTING_CODE.deserialize(value);
+        return Util.toText(value);
     }
 
     public static LanguageManager langBuilder(String key) {
@@ -47,7 +48,7 @@ public class LanguageManager {
      */
 
     public static Text getCommandDescribe(String commandName) {
-        return TextSerializers.FORMATTING_CODE.deserialize(getStringSafely("newhonor.command.describe." + commandName));
+        return Util.toText(getStringSafely("newhonor.command.describe." + commandName));
     }
 
     private static void init() {

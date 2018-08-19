@@ -9,6 +9,7 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.serializer.TextParseException;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.net.MalformedURLException;
@@ -29,7 +30,7 @@ public class HonorValueData {
 
     public HonorValueData(CommentedConfigurationNode cfg) {
         String rawValue = cfg.getNode("value").getString("[default]");
-        Text temp = Util.toText(rawValue);
+        Text temp = jsonToText(rawValue);
         Text.Builder valueBuilder = Text.builder().append(temp);
         strValue = TextSerializers.FORMATTING_CODE.serialize(temp);
 
@@ -105,6 +106,13 @@ public class HonorValueData {
         }
     }
 
+    private static Text jsonToText(String str) {
+        try {
+            return TextSerializers.JSON.deserialize(str);
+        } catch (TextParseException e) {
+            return TextSerializers.FORMATTING_CODE.deserialize(str);
+        }
+    }
 
     public Text getValue() {
         return this.value;
