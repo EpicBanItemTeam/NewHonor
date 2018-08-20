@@ -64,14 +64,14 @@ public class LanguageManager {
                             .copyToFile(langFile);
                 }
             } catch (FileNotFoundException ignore) {
-                NewHonor.plugin.logger.info("locale language file not found");
+                NewHonor.logger.info("locale language file not found");
                 langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(Locale.US.toString() + ".lang");
                 Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/" + Locale.US.toString() + ".lang")
                         .orElseThrow(() -> new IOException("asset didn't found language file!"))
                         .copyToFile(langFile);
             }
         } catch (IOException e) {
-            NewHonor.plugin.logger.error("IOE", e);
+            NewHonor.logger.error("IOE", e);
         }
     }
 
@@ -82,7 +82,7 @@ public class LanguageManager {
             init();
             res = new PropertyResourceBundle(new InputStreamReader(Files.newInputStream(langFile), Charsets.UTF_8));
         } catch (IOException e) {
-            NewHonor.plugin.logger.error("reload language file error!", e);
+            NewHonor.logger.error("reload language file error!", e);
         }
     }
 

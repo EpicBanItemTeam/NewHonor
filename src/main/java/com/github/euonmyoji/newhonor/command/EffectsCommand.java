@@ -30,7 +30,7 @@ class EffectsCommand {
                         Files.delete(path);
                         src.sendMessage(Text.of("[NewHonor]delete a effects successful"));
                     } catch (IOException e) {
-                        NewHonor.plugin.logger.warn("delete a effects IOE", e);
+                        NewHonor.logger.warn("delete a effects IOE", e);
                         src.sendMessage(Text.of("[NewHonor]delete a effects successful"));
                     }
                 } else {
@@ -62,7 +62,7 @@ class EffectsCommand {
                             src.sendMessage(Text.of("[NewHonor]a error while saving data"));
                         }
                     } catch (ObjectMappingException e) {
-                        NewHonor.plugin.logger.warn("ObjectMappingException while parse effects |ID:" + effectID);
+                        NewHonor.logger.warn("ObjectMappingException while parse effects |ID:" + effectID);
                         src.sendMessage(Text.of("[NewHonor]ObjectMappingException!"));
                     }
                 } else {
@@ -103,7 +103,7 @@ class EffectsCommand {
                             }
                         }
                     } catch (ObjectMappingException e) {
-                        NewHonor.plugin.logger.warn("ObjectMappingException while getting EffectsData", e);
+                        NewHonor.logger.warn("ObjectMappingException while getting EffectsData", e);
                         src.sendMessage(Text.of("[NewHonor]ObjectMappingException while getting EffectsData"));
                     }
                 }
@@ -143,7 +143,7 @@ class EffectsCommand {
                     builder.build().sendTo(src);
                     return CommandResult.success();
                 } catch (IOException e) {
-                    NewHonor.plugin.logger.warn("IOE when list all created effects", e);
+                    NewHonor.logger.warn("IOE when list all created effects", e);
                     src.sendMessage(Text.of("[NewHonor]IOE!"));
                 }
                 return CommandResult.empty();

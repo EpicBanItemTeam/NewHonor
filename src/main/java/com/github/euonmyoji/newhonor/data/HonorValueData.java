@@ -42,7 +42,7 @@ public class HonorValueData {
                     try {
                         valueBuilder.onHover(TextActions.showItem(hoverNode.getNode("value").getValue(TypeToken.of(ItemStackSnapshot.class))));
                     } catch (ObjectMappingException e) {
-                        NewHonor.plugin.logger.warn("Error about honor.conf (item may be wrong?)", e);
+                        NewHonor.logger.warn("Error about honor.conf (item may be wrong?)", e);
                     }
                     break;
                 }
@@ -51,7 +51,7 @@ public class HonorValueData {
                         valueBuilder.onHover(TextActions.showEntity(hoverNode.getNode("entity").getValue(TypeToken.of(Entity.class)),
                                 hoverNode.getNode("name").getString("name")));
                     } catch (ObjectMappingException e) {
-                        NewHonor.plugin.logger.warn("Error about honor.conf (entity may be wrong?)", e);
+                        NewHonor.logger.warn("Error about honor.conf (entity may be wrong?)", e);
                     }
                     break;
                 }
@@ -70,7 +70,7 @@ public class HonorValueData {
                     try {
                         valueBuilder.onClick(TextActions.openUrl(new URL(clickNode.getNode("value").getString())));
                     } catch (MalformedURLException e) {
-                        NewHonor.plugin.logger.warn("error with open_url", e);
+                        NewHonor.logger.warn("error with open_url", e);
                     }
                     break;
                 }

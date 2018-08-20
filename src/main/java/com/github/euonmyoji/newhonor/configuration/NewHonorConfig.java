@@ -50,7 +50,7 @@ public class NewHonorConfig {
                 }});
             }
         } catch (ObjectMappingException e) {
-            NewHonor.plugin.logger.error("Exception while set default has honors!", e);
+            NewHonor.logger.error("Exception while set default has honors!", e);
         }
         SqlManager.init();
         save();
@@ -70,7 +70,7 @@ public class NewHonorConfig {
         cfg = load();
         String path = cfg.getNode(DATA_PATH_NODE).getString("default");
         cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
-        NewHonor.plugin.logger.info("using data dir path:" + cfgDir);
+        NewHonor.logger.info("using data dir path:" + cfgDir);
         SqlManager.reloadSQLInfo();
     }
 
@@ -92,7 +92,7 @@ public class NewHonorConfig {
             return cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true) ?
                     Optional.ofNullable(cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).getValue(LIST_STRING_TYPE)) : Optional.empty();
         } catch (ObjectMappingException e) {
-            NewHonor.plugin.logger.error("default own honor is error!", e);
+            NewHonor.logger.error("default own honor is error!", e);
             return Optional.of(Collections.emptyList());
         }
     }

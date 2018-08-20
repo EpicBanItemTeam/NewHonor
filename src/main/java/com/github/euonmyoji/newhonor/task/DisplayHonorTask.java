@@ -43,7 +43,7 @@ public class DisplayHonorTask implements Runnable {
                     index = 0;
                 }
             } catch (IllegalArgumentException e) {
-                NewHonor.plugin.logger.warn("The display value is wrong", e);
+                NewHonor.logger.warn("The display value is wrong", e);
                 cancel();
             } catch (Throwable ignore) {
                 cancel();

@@ -48,7 +48,7 @@ class SqlCommand {
                         src.sendMessage(of("[NewHonor] update finished successful"));
                     } catch (Exception e) {
                         src.sendMessage(of("[NewHonor] error!"));
-                        NewHonor.plugin.logger.warn("update to sql error", e);
+                        NewHonor.logger.warn("update to sql error", e);
                     }
                 }).name("NewHonor - update player cfg to sql").submit(NewHonor.plugin);
                 return CommandResult.success();
@@ -78,7 +78,7 @@ class SqlCommand {
                         src.sendMessage(of("[NewHonor] download finished successful"));
                     } catch (Exception e) {
                         src.sendMessage(of("[NewHonor] error!"));
-                        NewHonor.plugin.logger.warn("update to sql error", e);
+                        NewHonor.logger.warn("update to sql error", e);
                     }
                 }).name("NewHonor - update player cfg to sql").submit(NewHonor.plugin);
                 return CommandResult.success();

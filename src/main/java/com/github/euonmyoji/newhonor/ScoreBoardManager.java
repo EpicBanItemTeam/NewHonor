@@ -46,7 +46,7 @@ class ScoreBoardManager {
             try {
                 execute(p);
             } catch (SQLException e) {
-                NewHonor.plugin.logger.warn("init player scoreboard sql e", e);
+                NewHonor.logger.warn("init player scoreboard sql e", e);
             }
             setPlayerScoreBoard(p);
         }
@@ -99,7 +99,7 @@ class ScoreBoardManager {
             try {
                 p.setScoreboard(getScoreBoard());
             } catch (NullPointerException e2) {
-                NewHonor.plugin.logger.warn("Something deleted the honor scoreboard!");
+                NewHonor.logger.warn("Something deleted the honor scoreboard!");
             }
         }
     }
@@ -108,7 +108,7 @@ class ScoreBoardManager {
         if (scoreboard == null) {
             synchronized (LOCK) {
                 if (scoreboard == null) {
-                    NewHonor.plugin.logger.warn("The scoreboard was unexpected removed! Building a new one.");
+                    NewHonor.logger.warn("The scoreboard was unexpected removed! Building a new one.");
                     scoreboard = Scoreboard.builder().build();
                 }
             }

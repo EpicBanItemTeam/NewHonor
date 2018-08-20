@@ -22,7 +22,7 @@ public class RandomDelayData {
                 ranges.add(new Range(value.split("~", 2)));
             }
         } catch (Exception e) {
-            NewHonor.plugin.logger.warn("There is something wrong with EffectsDelay: " + arg, e);
+            NewHonor.logger.warn("There is something wrong with EffectsDelay: " + arg, e);
         }
     }
 

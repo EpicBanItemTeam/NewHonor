@@ -69,7 +69,7 @@ public class SqlManager {
                     } catch (Exception ignore) {
                     }
                 } catch (SQLException e) {
-                    NewHonor.plugin.logger.warn("SQLException while init newhonor sql", e);
+                    NewHonor.logger.warn("SQLException while init newhonor sql", e);
                 }
             }).async().submit(NewHonor.plugin);
         }

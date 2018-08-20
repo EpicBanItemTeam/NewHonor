@@ -219,14 +219,14 @@ class AdminCommand {
             try {
                 TaskManager.update();
             } catch (Exception e) {
-                NewHonor.plugin.logger.warn("Update Task error!", e);
+                NewHonor.logger.warn("Update Task error!", e);
             }
             Sponge.getServer().getOnlinePlayers().stream().map(Player::getUniqueId)
                     .map(uuid -> {
                         try {
                             return PlayerConfig.get(uuid);
                         } catch (Throwable e) {
-                            NewHonor.plugin.logger.error("error about sql!", e);
+                            NewHonor.logger.error("error about sql!", e);
                         }
                         return null;
                     })

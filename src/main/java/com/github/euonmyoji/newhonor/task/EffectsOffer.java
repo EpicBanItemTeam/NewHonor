@@ -44,7 +44,7 @@ public class EffectsOffer {
                         TASK_DATA.put(id, new SelfTaskData(new EffectsConfig(id)));
                     }
                 } catch (ObjectMappingException e) {
-                    NewHonor.plugin.logger.warn("The Effects is error | id:" + id, e);
+                    NewHonor.logger.warn("The Effects is error | id:" + id, e);
                 }
             });
         }
@@ -79,7 +79,7 @@ public class EffectsOffer {
                 try {
                     randomList.add(new RandomEffectsData(cfg, id));
                 } catch (ObjectMappingException e) {
-                    NewHonor.plugin.logger.warn(String.format("There is something wrong with effects id:%s, random id:%s",
+                    NewHonor.logger.warn(String.format("There is something wrong with effects id:%s, random id:%s",
                             id, o.toString()), e);
                 }
             });

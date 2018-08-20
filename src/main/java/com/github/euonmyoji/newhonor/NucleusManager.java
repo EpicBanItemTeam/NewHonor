@@ -26,7 +26,7 @@ class NucleusManager {
                 });
             }
         } catch (PluginAlreadyRegisteredException e) {
-            NewHonor.plugin.logger.warn("Unknown error", e);
+            NewHonor.logger.warn("Unknown error", e);
         }
     }
 

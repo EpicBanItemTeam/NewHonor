@@ -35,7 +35,7 @@ public class ParticleEffectData {
                     .flatMap(s -> Sponge.getRegistry().getType(ParticleType.class, s))
                     .orElse(null);
             if (type == null) {
-                NewHonor.plugin.logger.warn("The effects group: {} ParticleEffect {} type is null", id, name);
+                NewHonor.logger.warn("The effects group: {} ParticleEffect {} type is null", id, name);
                 return;
             }
             final String nullValue = "null";
@@ -57,7 +57,7 @@ public class ParticleEffectData {
                     builder.option(ParticleOptions.BLOCK_STATE, blockState);
                 }
             } catch (ObjectMappingException e) {
-                NewHonor.plugin.logger.warn("The effects group: {} ParticleEffect {} blockState is error", id, name);
+                NewHonor.logger.warn("The effects group: {} ParticleEffect {} blockState is error", id, name);
             }
             if (!nullValue.equals(color[0])) {
                 builder.option(ParticleOptions.COLOR, Color.ofRgb(Integer.valueOf(color[0]), Integer.valueOf(color[1]), Integer.valueOf(color[2])));
@@ -67,7 +67,7 @@ public class ParticleEffectData {
                     builder.option(ParticleOptions.POTION_EFFECT_TYPE, Optional.ofNullable(node.getNode("potion-type").getString())
                             .flatMap(s -> Sponge.getRegistry().getType(PotionEffectType.class, s)).orElseThrow(NoSuchFieldException::new));
                 } catch (NoSuchFieldException e) {
-                    NewHonor.plugin.logger.warn("The effects group: {} ParticleEffect {} potion-type is null", id, name);
+                    NewHonor.logger.warn("The effects group: {} ParticleEffect {} potion-type is null", id, name);
                 }
             }
 

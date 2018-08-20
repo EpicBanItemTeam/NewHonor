@@ -72,7 +72,7 @@ public class HonorConfig {
         try {
             return loader.load();
         } catch (IOException e) {
-            NewHonor.plugin.logger.error("HonorData Config has error!", e);
+            NewHonor.logger.error("HonorData Config has error!", e);
             return loader.createEmptyNode(ConfigurationOptions.defaults());
         }
     }

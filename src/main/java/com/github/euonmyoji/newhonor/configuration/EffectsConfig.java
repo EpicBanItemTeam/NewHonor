@@ -70,7 +70,7 @@ public class EffectsConfig {
         try {
             return loader.load();
         } catch (IOException e) {
-            NewHonor.plugin.logger.error("EffectsData Config has error!", e);
+            NewHonor.logger.error("EffectsData Config has error!", e);
             return loader.createEmptyNode(ConfigurationOptions.defaults());
         }
     }
