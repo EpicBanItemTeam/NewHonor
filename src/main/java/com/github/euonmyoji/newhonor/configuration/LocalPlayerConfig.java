@@ -61,14 +61,16 @@ public class LocalPlayerConfig implements PlayerConfig {
     @Override
     public boolean takeHonor(String... ids) {
         boolean took = false;
-        Optional<List<String>> honors = getOwnHonors();
-        for (String id : ids) {
-            if (honors.isPresent() && honors.get().remove(id)) {
-                took = true;
+        List<String> honors = getOwnHonors().orElse(null);
+        if (honors != null) {
+            for (String id : ids) {
+                if (honors.remove(id)) {
+                    took = true;
+                }
             }
         }
         if (took) {
-            cfg.getNode(HONORS_KEY).setValue(honors.get());
+            cfg.getNode(HONORS_KEY).setValue(honors);
             PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
             return !Sponge.getEventManager().post(event) && save();
         }
