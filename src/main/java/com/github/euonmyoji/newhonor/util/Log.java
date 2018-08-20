@@ -11,22 +11,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-
-import static java.time.temporal.ChronoField.*;
 
 /**
  * @author yinyangshi
  */
 public class Log {
-    private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
-            .appendValue(HOUR_OF_DAY, 2)
-            .appendLiteral(':')
-            .appendValue(MINUTE_OF_HOUR, 2)
-            .optionalStart()
-            .appendLiteral(':')
-            .appendValue(SECOND_OF_MINUTE, 2).toFormatter();
     private static final Path PATH = NewHonorConfig.cfgDir.resolve("logs");
     private static final Object LOCK = new Object();
 
@@ -35,7 +24,7 @@ public class Log {
             try {
                 Files.createDirectory(PATH);
             } catch (IOException e) {
-                NewHonor.plugin.logger.warn("create log dir error", e);
+                NewHonor.logger.warn("create log dir error", e);
             }
         }
     }
@@ -50,14 +39,14 @@ public class Log {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    NewHonor.plugin.logger.debug("记录头衔info异常", e);
+                    NewHonor.logger.debug("记录头衔info异常", e);
                 }
             }
         }).submit(NewHonor.plugin);
     }
 
     private static String getTime() {
-        return String.format("[%s] ", LocalTime.now().format(FORMATTER));
+        return String.format("[%s]", LocalTime.now());
     }
 
     private static String getFileName() {

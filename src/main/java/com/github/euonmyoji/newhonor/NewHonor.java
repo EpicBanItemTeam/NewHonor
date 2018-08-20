@@ -60,8 +60,13 @@ public class NewHonor {
     @ConfigDir(sharedRoot = false)
     private Path defaultCfgDir;
 
+    public static Logger logger;
+
     @Inject
-    public Logger logger;
+    public void setLogger(Logger l) {
+        logger = l;
+    }
+
     @Inject
     private PluginContainer pluginContainer;
 
@@ -117,7 +122,7 @@ public class NewHonor {
             LanguageManager.reload();
             SqlManager.init();
         } catch (IOException e) {
-            NewHonor.plugin.logger.warn("init plugin IOE!", e);
+            logger.warn("init plugin IOE!", e);
         }
     }
 
@@ -246,7 +251,7 @@ public class NewHonor {
         if (displayHonor) {
             final String esbID = "de_yottaflops_easyscoreboard";
             if (Sponge.getPluginManager().getPlugin(esbID).isPresent()) {
-                plugin.logger.warn("The plugin easyscoreboard is updating scoreboard, please uninstall it to use 'displayHonor' (trying cancel it), or Do not use 'displayHonor'");
+                logger.warn("The plugin easyscoreboard is updating scoreboard, please uninstall it to use 'displayHonor' (trying cancel it), or Do not use 'displayHonor'");
                 Sponge.getServer().getBroadcastChannel().send(Text.of(TextColors.RED, "'displayHonor' may work not correctly, because plugin[EasyScoreboard]?"));
             }
             ScoreBoardManager.enable = true;
@@ -298,7 +303,7 @@ public class NewHonor {
                     }
                 }
             } catch (Exception e) {
-                plugin.logger.error("error about data!", e);
+                logger.error("error about data!", e);
             }
 
         };

@@ -41,32 +41,26 @@ public interface PlayerConfig {
         PlayerConfig pc = SqlManager.enable ? new SqlManager.SqlPlayerConfig(uuid) : new LocalPlayerConfig(uuid);
         Sponge.getServer().getPlayer(pc.getUUID()).ifPresent(player ->
                 HonorConfig.getAllCreatedHonors().forEach(id -> {
+                    //已经在遍历每一个创建的头衔了！
                     final String checkPrefix = "newhonor.honor.";
                     try {
                         List<String> ownedHonors = pc.getOwnHonors().orElseGet(ArrayList::new);
                         //如果移除没权限的头衔
-                        if (NewHonorConfig.getCfg().getNode(NewHonorConfig.PERMISSION_MANAGE).getBoolean(false)) {
-                            try {
-                                String[] honors = (String[]) ownedHonors.stream().filter(s -> !player.hasPermission(checkPrefix + s)).toArray();
-                                if (pc.takeHonor()) {
-                                    Log.info(String.format("[Cause:permission not pass]Player %s lost honors: %s", player.getName(), Arrays.asList(honors)));
-                                }
-                            } catch (Exception e) {
-                                NewHonor.plugin.logger.warn("error about data! (take honors)", e);
+                        if (!player.hasPermission(checkPrefix + id)) {
+                            if (pc.takeHonor(id)) {
+                                Log.info(String.format("[Cause:permission not pass]Player %s lost honors: %s", player.getName(), id));
                             }
-                        }
-
-                        if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
+                        } else if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
                             try {
                                 if (pc.giveHonor(id)) {
-                                    Log.info(String.format("[Cause:Permission pass]Player %s got a honor: %s", player.getName(), id));
+                                    Log.info(String.format("[Cause:Permission pass]Player %s got an honor: %s", player.getName(), id));
                                 }
                             } catch (Exception e) {
-                                NewHonor.plugin.logger.warn("error about data! (give honors)", e);
+                                NewHonor.logger.warn("error about data! (give honor)", e);
                             }
                         }
                     } catch (SQLException e) {
-                        NewHonor.plugin.logger.warn("SQL E when check player honors!", e);
+                        NewHonor.logger.warn("SQL E when check player honors!", e);
                     }
                 }));
         return pc;

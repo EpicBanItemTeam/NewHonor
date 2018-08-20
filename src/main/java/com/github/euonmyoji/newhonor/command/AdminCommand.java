@@ -18,6 +18,7 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
 
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -60,7 +61,7 @@ class AdminCommand {
                                     src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed"));
                                     Log.info(src.getName() + " gave " + user.getName() + " honor " + id + " failed");
                                 }
-                            } catch (Exception e) {
+                            } catch (SQLException e) {
                                 src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed(error!)"));
                                 e.printStackTrace();
                             }
