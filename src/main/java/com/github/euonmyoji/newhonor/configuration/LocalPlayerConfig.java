@@ -129,7 +129,7 @@ public class LocalPlayerConfig implements PlayerConfig {
         try {
             return Optional.of(cfg.getNode(HONORS_KEY).getList(type, ArrayList::new));
         } catch (ObjectMappingException e) {
-            e.printStackTrace();
+            NewHonor.plugin.logger.warn("Player data " + uuid + " is wrong!", e);
             return Optional.empty();
         }
     }
@@ -155,7 +155,7 @@ public class LocalPlayerConfig implements PlayerConfig {
             loader.save(cfg);
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            NewHonor.plugin.logger.warn("IOE when saving player data!", e);
         }
         return false;
     }

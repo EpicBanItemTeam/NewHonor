@@ -54,7 +54,7 @@ public class NewHonor {
     static final String PAPI_ID = "placeholderapi";
     static final String UCHAT_ID = "ultimatechat";
 
-    public static final String VERSION = "2.1.0-pre-3";
+    public static final String VERSION = "2.1.0-pre-4";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)
