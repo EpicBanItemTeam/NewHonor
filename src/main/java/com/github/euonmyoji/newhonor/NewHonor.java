@@ -305,9 +305,12 @@ public class NewHonor {
         Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> ScoreBoardManager.initPlayer(player));
 
         //r为插件数据修改 异步(有mysql) r2为玩家自身数据修改 可能不存在需要运行的 需要同步
+        //为了保证更新时缓存为最新 r需要先运行
         if (Sponge.getServer().isMainThread()) {
-            Task.builder().execute(r).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
-            r2.ifPresent(Runnable::run);
+            Task.builder().execute(() -> {
+                r.run();
+                r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
+            }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
         } else {
             r.run();
             r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
