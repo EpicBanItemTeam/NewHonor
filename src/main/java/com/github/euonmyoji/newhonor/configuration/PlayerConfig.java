@@ -46,7 +46,7 @@ public interface PlayerConfig {
                     try {
                         List<String> ownedHonors = pc.getOwnHonors().orElseGet(ArrayList::new);
                         //如果移除没权限的头衔
-                        if (!player.hasPermission(checkPrefix + id)) {
+                        if (NewHonorConfig.getCfg().getNode(NewHonorConfig.PERMISSION_MANAGE).getBoolean() && !player.hasPermission(checkPrefix + id)) {
                             if (pc.takeHonor(id)) {
                                 Log.info(String.format("[Cause:permission not pass]Player %s lost honors: %s", player.getName(), id));
                             }
