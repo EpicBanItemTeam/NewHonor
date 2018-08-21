@@ -20,8 +20,7 @@ public class NewHonorMessageChannel implements MessageChannel {
     @Override
     public Optional<Text> transformMessage(@Nullable Object sender, MessageReceiver recipient, Text text, ChatType type) {
         if (sender instanceof Identifiable && NewHonor.plugin.honorTextCache.containsKey(((Identifiable) sender).getUniqueId())) {
-            Identifiable p = (Identifiable) sender;
-            return Optional.of(Text.of(NewHonor.plugin.honorTextCache.get(p.getUniqueId()).getValue(), text));
+            return Optional.of(Text.of(NewHonor.plugin.honorTextCache.get(((Identifiable) sender).getUniqueId()).getValue(), text));
         }
         return Optional.of(text);
     }

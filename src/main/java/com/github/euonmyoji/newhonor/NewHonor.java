@@ -27,8 +27,6 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.plugin.meta.version.ComparableVersion;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -46,10 +44,11 @@ import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.*;
 /**
  * @author yinyangshi
  */
-@Plugin(id = "newhonor", name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
+@Plugin(id = NewHonor.NEWHONOR_ID, name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
         dependencies = {@Dependency(id = NewHonor.UCHAT_ID, optional = true), @Dependency(id = NewHonor.PAPI_ID, optional = true),
                 @Dependency(id = NewHonor.NUCLEUS_ID, optional = true)})
 public class NewHonor {
+    static final String NEWHONOR_ID = "newhonor";
     static final String NUCLEUS_ID = "nucleus";
     static final String PAPI_ID = "placeholderapi";
     static final String UCHAT_ID = "ultimatechat";
@@ -66,9 +65,6 @@ public class NewHonor {
     public void setLogger(Logger l) {
         logger = l;
     }
-
-    @Inject
-    private PluginContainer pluginContainer;
 
     public static NewHonor plugin;
     public final HashMap<UUID, HonorValueData> honorTextCache = new HashMap<>();
@@ -101,7 +97,7 @@ public class NewHonor {
             if (NewHonorConfig.isCheckUpdate()) {
                 checkUpdate();
             } else {
-                logger.info("check update was canceled");
+                logger.info("§2check update was canceled");
             }
 
             HonorConfig.init();
@@ -126,28 +122,30 @@ public class NewHonor {
         }
     }
 
-    /**
-     * 几乎不会被使用的代码 检查更新
-     */
     private void checkUpdate() {
         Task.builder().async().name("NewHonor - check for update").execute(() -> {
             try {
-                URL url = new URL("https://api.github.com/repos/euOnmyoji/NewHonor-plugin-for-sponge/releases");
-                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.getResponseCode();
-                try (InputStreamReader reader = new InputStreamReader(connection.getInputStream(), Charsets.UTF_8)) {
-                    JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
-                    String version = jsonObject.get("tag_name").getAsString().replaceFirst("v", "")
-                            .replace("version", "");
-                    int c = new ComparableVersion(version).compareTo(new ComparableVersion(VERSION));
-                    if (c > 0) {
-                        logger.info("found a latest version:" + version + ".Your version now:" + VERSION);
-                    } else if (c < 0) {
-                        logger.info("the latest version in github.com:" + version + "[Your version:" + VERSION + "]");
+                final String u = "https://api.github.com/repos/euOnmyoji/NewHonor-plugin-for-sponge/releases";
+                HttpsURLConnection con = (HttpsURLConnection) new URL(u)
+                        .openConnection();
+                con.setRequestMethod("GET");
+                con.getResponseCode();
+                try (InputStreamReader reader = new InputStreamReader(con.getInputStream(), Charsets.UTF_8)) {
+                    JsonObject json = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
+                    String v = json.get("tag_name").getAsString()
+                            .replaceFirst("v", "")
+                            .replaceAll("version", "");
+                    String preKey = "pre";
+                    if (!v.contains(preKey)) {
+                        int c = new ComparableVersion(v).compareTo(new ComparableVersion(VERSION));
+                        if (c > 0) {
+                            logger.info("found a latest version:" + v + ".Your version now:" + VERSION);
+                        } else if (c < 0) {
+                            logger.info("the latest version in github.com:" + v + "[Your version:" + VERSION + "]");
+                        }
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.info("check for updating failed");
                 logger.debug("check update error", e);
             }
@@ -212,7 +210,6 @@ public class NewHonor {
      */
     private void hook() {
         EventManager eventManager = Sponge.getEventManager();
-        eventManager.unregisterListeners(UChatListener);
         eventManager.unregisterListeners(NewHonorListener);
         ScoreBoardManager.enable = false;
         ScoreBoardManager.clear();
@@ -222,8 +219,6 @@ public class NewHonor {
             NucleusManager.doIt();
             if (!hookedNucleus) {
                 logger.info("hooked nucleus");
-                logger.info("default listener is disabling, please use {{pl:newhonor:newhonor}} in nucleus configuration to show honor in chat");
-                logger.info("发现nucleus插件，请在nucleus配置里面的chat里面使用变量{{pl:newhonor:newhonor}}来在聊天栏显示头衔");
             }
             hookedNucleus = true;
         }
@@ -241,7 +236,6 @@ public class NewHonor {
             Sponge.getEventManager().registerListeners(this, UChatListener);
             if (!hookedUChat) {
                 logger.info("hooked UChat");
-                logger.info("please use {newhonor} in UChat config to show honor in the chat");
             }
             hookedUChat = true;
         }
@@ -249,17 +243,11 @@ public class NewHonor {
         //displayHonor
         boolean displayHonor = NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false);
         if (displayHonor) {
-            final String esbID = "de_yottaflops_easyscoreboard";
-            if (Sponge.getPluginManager().getPlugin(esbID).isPresent()) {
-                logger.warn("The plugin easyscoreboard is updating scoreboard, please uninstall it to use 'displayHonor' (trying cancel it), or Do not use 'displayHonor'");
-                Sponge.getServer().getBroadcastChannel().send(Text.of(TextColors.RED, "'displayHonor' may work not correctly, because plugin[EasyScoreboard]?"));
-            }
             ScoreBoardManager.enable = true;
             ScoreBoardManager.init();
             logger.info("displayHonor mode enabled");
             if (hookedNucleus) {
-                logger.info("if you find honor shows twice, try to change config in nucleus(overwrite-early-prefix = true) and use {{pl:newhonor:newhonor}}");
-                logger.info("如果发现头衔重复显示，请尝试在nucleus配置文件里面将overwrite-early-prefix设置为true 并且使用{{pl:newhonor:newhonor}}变量");
+                logger.info("DisplayHonor enabled");
             }
         }
 
@@ -320,9 +308,5 @@ public class NewHonor {
             r.run();
             r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
         }
-    }
-
-    static PluginContainer getContainer() {
-        return plugin.pluginContainer;
     }
 }

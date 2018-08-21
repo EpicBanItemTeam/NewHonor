@@ -48,7 +48,7 @@ public interface PlayerConfig {
                         //如果移除没权限的头衔
                         if (NewHonorConfig.getCfg().getNode(NewHonorConfig.PERMISSION_MANAGE).getBoolean() && !player.hasPermission(checkPrefix + id)) {
                             if (pc.takeHonor(id)) {
-                                Log.info(String.format("[Cause:permission not pass]Player %s lost honors: %s", player.getName(), id));
+                                Log.info(String.format("[Cause:permission not pass]Player %s lost honor: %s", player.getName(), id));
                             }
                         } else if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
                             try {

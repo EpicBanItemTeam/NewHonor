@@ -14,7 +14,6 @@ import org.spongepowered.api.text.Text;
  */
 @Listening
 public class PlaceHolderManager {
-    private static final String HONOR_ID = "newhonor";
     private static PlaceHolderManager instance;
 
     static void create() throws RuntimeException {
@@ -23,7 +22,7 @@ public class PlaceHolderManager {
         }
     }
 
-    @Placeholder(id = "newhonor")
+    @Placeholder(id = NewHonor.NEWHONOR_ID)
     public Text getNewHonorText(@Source Player p) {
         HonorValueData value = NewHonor.plugin.honorTextCache.get(p.getUniqueId());
         return value == null ? Text.of("") : value.getValue();
@@ -32,7 +31,7 @@ public class PlaceHolderManager {
     private PlaceHolderManager() throws RuntimeException {
         PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
         service.loadAll(this, NewHonor.plugin).forEach(builder -> {
-            if (HONOR_ID.equals(builder.getId())) {
+            if (NewHonor.NEWHONOR_ID.equals(builder.getId())) {
                 try {
                     builder.description("newhonor text").version("1.5").author("yinyangshi").plugin(NewHonor.plugin)
                             .buildAndRegister();

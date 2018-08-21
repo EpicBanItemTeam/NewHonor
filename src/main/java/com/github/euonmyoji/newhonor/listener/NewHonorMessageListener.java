@@ -11,7 +11,7 @@ import org.spongepowered.api.text.channel.MessageChannel;
  */
 public class NewHonorMessageListener {
 
-    @Listener(order = Order.LATE)
+    @Listener(order = Order.LAST)
     public void onChat(MessageChannelEvent.Chat event) {
         MessageChannel originalChannel = event.getOriginalChannel();
         MessageChannel newChannel = MessageChannel.combined(originalChannel,
