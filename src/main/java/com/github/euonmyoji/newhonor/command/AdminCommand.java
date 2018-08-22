@@ -232,7 +232,6 @@ class AdminCommand {
                     })
                     .filter(Objects::nonNull)
                     .forEach(NewHonor::doSomething);
-            System.gc();
             long endTime = System.currentTimeMillis();
             src.sendMessage(of("[NewHonor]refreshed successful in " + (endTime - startTime) + " ms"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);
