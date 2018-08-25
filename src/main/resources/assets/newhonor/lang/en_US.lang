@@ -39,7 +39,7 @@ newhonor.listhonors.header=%ownername% is using %honor%&r，effects:%effectsID%
 newhonor.listhonors.contexts=honor:&r%honor%&r，effects:%effectsID%
 newhonor.listhonors.clickuse=click to use honor:&r%honor%&r
 newhonor.listhonors.empty=[NewHonor]%player% doesn't have any honor
-newhonor.listhonors.nopermission=[NewHonor]You don't have permission to see other users' honors
+newhonor.listhonors.nopermission=[NewHonor]You don't have permission to see another user's honors
 
 newhonor.listcreatedhonors.title=all created honor
 newhonor.listcreatedhonors.contexts=honorid:%honorid%，text:&r%honor%&r，effectsID:%effectsID%
