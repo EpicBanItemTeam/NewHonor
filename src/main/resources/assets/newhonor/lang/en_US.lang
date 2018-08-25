@@ -3,7 +3,7 @@ newhonor.command.describe.list=list all honors that you have
 newhonor.command.describe.settings=personal honor settings
 newhonor.command.describe.effects=effect group commands
 
-newhonor.command.describe.admin.effects=set an honor effects
+newhonor.command.describe.admin.effects=set an honor effect
 newhonor.command.describe.admin.add=add an honor
 newhonor.command.describe.admin.set=set an honor
 newhonor.command.describe.admin.delete=delete an honor
