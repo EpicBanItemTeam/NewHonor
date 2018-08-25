@@ -25,7 +25,7 @@ newhonor.command.describe.effects.listAllPotionEffects=list all PotionEffects
 newhonor.command.describe.effects.listAllCreatedEffects=list all created EffectGroup
 
 newhonor.command.hovermessage.list=click to list your honors
-newhonor.command.hovermessage.settings=click to changee settings
+newhonor.command.hovermessage.settings=click to change settings
 newhonor.hovermessage.settings.usehonor=left-click and type true/false to change settings
 newhonor.hovermessage.settings.enableeffects=left-click and type true/false to change settings
 newhonor.hovermessage.settings.autochange=left-click and type true/false to change settings
@@ -39,7 +39,7 @@ newhonor.listhonors.header=%ownername% is using %honor%&r，effects:%effectsID%
 newhonor.listhonors.contexts=honor:&r%honor%&r，effects:%effectsID%
 newhonor.listhonors.clickuse=click to use honor:&r%honor%&r
 newhonor.listhonors.empty=[NewHonor]%player% doesn't have any honor
-newhonor.listhonors.nopermission=[NewHonor]You don't have permissions to see other users' honors
+newhonor.listhonors.nopermission=[NewHonor]You don't have permission to see other users' honors
 
 newhonor.listcreatedhonors.title=all created honor
 newhonor.listcreatedhonors.contexts=honorid:%honorid%，text:&r%honor%&r，effectsID:%effectsID%
