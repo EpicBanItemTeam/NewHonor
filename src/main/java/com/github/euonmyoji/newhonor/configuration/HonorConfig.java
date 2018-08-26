@@ -10,10 +10,10 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author yinyangshi
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class HonorConfig {
     private static CommentedConfigurationNode cfg;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
-    private static Set<String> allCreatedHonors;
+    private static HashMap<String, HonorValueData> valueMap = new HashMap<>();
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
@@ -30,6 +30,7 @@ public class HonorConfig {
         NewHonorConfig.getDefaultOwnHonors().ifPresent(strings -> strings.forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]"))));
         cfg.removeChild("created-honors");
         save();
+        reload();
     }
 
     public static boolean setHonorEffects(String id, String effectsID) {
@@ -44,19 +45,19 @@ public class HonorConfig {
     public static boolean addHonor(String id, String honor) {
         if (isVirtual(id)) {
             cfg.getNode(id, "value").setValue(honor);
-            allCreatedHonors = getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
+            valueMap.put(id, new HonorValueData(cfg.getNode(id)));
             return save();
         }
         return false;
     }
 
     public static Optional<HonorValueData> getHonorValueData(String id) {
-        return isVirtual(id) ? Optional.empty() : Optional.of(new HonorValueData(cfg.getNode(id)));
+        return Optional.ofNullable(valueMap.get(id));
     }
 
     public static boolean setHonor(String id, String honor) {
         cfg.getNode(id, "value").setValue(honor);
-        allCreatedHonors = getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
+        valueMap.put(id, new HonorValueData(cfg.getNode(id)));
         return save();
     }
 
@@ -65,6 +66,7 @@ public class HonorConfig {
     }
 
     public static boolean deleteHonor(String id) {
+        valueMap.remove(id);
         return cfg.removeChild(id) && save();
     }
 
@@ -79,7 +81,8 @@ public class HonorConfig {
 
     public static void reload() {
         cfg = load();
-        allCreatedHonors = getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
+        valueMap.clear();
+        getHonorsMap().forEach((o, o2) -> valueMap.put(o.toString(), new HonorValueData(o2)));
     }
 
     private static boolean save() {
@@ -93,10 +96,12 @@ public class HonorConfig {
     }
 
     public static Set<String> getAllCreatedHonors() {
-        if (allCreatedHonors == null) {
-            allCreatedHonors = getHonorsMap().keySet().stream().map(o -> (String) o).collect(Collectors.toSet());
+        if (valueMap == null || valueMap.isEmpty()) {
+            Map<Object, ? extends CommentedConfigurationNode> honorsMap = getHonorsMap();
+            valueMap = new HashMap<>(honorsMap.size() + 5);
+            honorsMap.forEach((o, o2) -> valueMap.put(o.toString(), new HonorValueData(o2)));
         }
-        return allCreatedHonors;
+        return valueMap.keySet();
     }
 
     public static boolean isVirtual(String id) {

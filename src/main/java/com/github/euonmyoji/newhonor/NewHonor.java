@@ -25,7 +25,6 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.plugin.meta.version.ComparableVersion;
 
@@ -177,15 +176,19 @@ public class NewHonor {
     @Listener
     public void onClientConnectionJoin(ClientConnectionEvent.Join event) {
         Player p = event.getTargetEntity();
-        Task.builder().execute(() -> {
-            try {
-                PlayerConfig pd = PlayerConfig.get(p);
-                pd.init();
-                doSomething(pd);
-            } catch (Throwable e) {
-                logger.error("error while init player", e);
-            }
-        }).async().name("newhonor - init Player" + p.getName()).submit(this);
+        if (honorTextCache.containsKey(p.getUniqueId())) {
+            ScoreBoardManager.initPlayer(p);
+        } else {
+            Task.builder().execute(() -> {
+                try {
+                    PlayerConfig pd = PlayerConfig.get(p);
+                    pd.init();
+                    doSomething(pd);
+                } catch (Throwable e) {
+                    logger.error("error while init player", e);
+                }
+            }).async().name("newhonor - init Player" + p.getName()).submit(this);
+        }
     }
 
     /**
