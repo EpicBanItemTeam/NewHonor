@@ -48,11 +48,13 @@ public class HaloEffectsOffer {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(Collectors.toList());
-            randomList.forEach(data -> {
-                if (Util.getTimeDuration(data.lastRunTime) > data.lastDelay) {
-                    data.execute(list);
-                }
-            });
+            if (!list.isEmpty()) {
+                randomList.forEach(data -> {
+                    if (Util.getTimeDuration(data.lastRunTime) > data.lastDelay) {
+                        data.execute(list);
+                    }
+                });
+            }
         }
 
         private HaloTaskData(EffectsConfig config) {
