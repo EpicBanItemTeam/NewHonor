@@ -200,7 +200,7 @@ class AdminCommand {
                 long startTime = System.currentTimeMillis();
                 NewHonor.plugin.reload();
                 long endTime = System.currentTimeMillis();
-                src.sendMessage(of("[NewHonor]reloaded successful in " + (endTime - startTime) + " ms"));
+                src.sendMessage(of("[NewHonor]reloaded successfully in " + (endTime - startTime) + " ms"));
                 refreshCache(src);
                 return CommandResult.success();
             })
@@ -233,7 +233,7 @@ class AdminCommand {
                     .filter(Objects::nonNull)
                     .forEach(NewHonor::doSomething);
             long endTime = System.currentTimeMillis();
-            src.sendMessage(of("[NewHonor]refreshed successful in " + (endTime - startTime) + " ms"));
+            src.sendMessage(of("[NewHonor]refreshed successfully in " + (endTime - startTime) + " ms"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);
     }
 

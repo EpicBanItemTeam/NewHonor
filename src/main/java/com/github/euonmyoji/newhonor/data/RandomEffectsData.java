@@ -1,5 +1,7 @@
 package com.github.euonmyoji.newhonor.data;
 
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.OfferType;
 import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
@@ -42,15 +44,20 @@ public class RandomEffectsData {
         lastRunTime = LocalDateTime.now();
         lastDelay = delayData.getDelay();
         if (Math.random() < chance) {
-            Task.builder().execute(() -> list.forEach(player -> {
-                OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner);
-                if (!Sponge.getEventManager().post(event)) {
-                    Util.offerEffects(player, potionEffects);
-                    if (particleEffectData != null) {
-                        particleEffectData.execute(player.getLocation());
+            Task.builder().execute(() -> {
+                Timing timing = Timings.of(NewHonor.plugin, "NewHonorOfferPlayerSelfEffects(Random)");
+                timing.startTimingIfSync();
+                list.forEach(player -> {
+                    OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner);
+                    if (!Sponge.getEventManager().post(event)) {
+                        Util.offerEffects(player, potionEffects);
+                        if (particleEffectData != null) {
+                            particleEffectData.execute(player.getLocation());
+                        }
                     }
-                }
-            })).submit(NewHonor.plugin);
+                });
+                timing.stopTiming();
+            }).submit(NewHonor.plugin);
         }
     }
 }

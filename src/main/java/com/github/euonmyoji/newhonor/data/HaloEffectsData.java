@@ -1,5 +1,7 @@
 package com.github.euonmyoji.newhonor.data;
 
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
 import com.flowpowered.math.vector.Vector3d;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.OfferType;
@@ -47,7 +49,12 @@ public class HaloEffectsData {
         lastRunTime = LocalDateTime.now();
         lastDelay = delayData.getDelay();
         if (Math.random() < chance) {
-            Task.builder().execute(() -> list.forEach(this::offer)).submit(NewHonor.plugin);
+            Task.builder().execute(() -> {
+                Timing timing = Timings.of(NewHonor.plugin, "NewHonorOfferPlayerHaloEffects");
+                timing.startTimingIfSync();
+                list.forEach(this::offer);
+                timing.stopTiming();
+            }).submit(NewHonor.plugin);
         }
     }
 
