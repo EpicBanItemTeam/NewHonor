@@ -98,7 +98,7 @@ public class HonorConfig {
     public static Set<String> getAllCreatedHonors() {
         if (valueMap == null || valueMap.isEmpty()) {
             Map<Object, ? extends CommentedConfigurationNode> honorsMap = getHonorsMap();
-            valueMap = new HashMap<>(honorsMap.size() + 5);
+            valueMap = new HashMap<>(honorsMap.size());
             honorsMap.forEach((o, o2) -> valueMap.put(o.toString(), new HonorValueData(o2)));
         }
         return valueMap.keySet();

@@ -5,9 +5,12 @@ import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.data.HaloEffectsData;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author yinyangshi
@@ -41,7 +44,10 @@ public class HaloEffectsOffer {
         private final String id;
 
         private void call() {
-            List<UUID> list = Util.getPlayerUsingEffects(id);
+            List<Player> list = Util.getStream(Util.getPlayerUsingEffects(id)).map(Sponge.getServer()::getPlayer)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
             randomList.forEach(data -> {
                 if (Util.getTimeDuration(data.lastRunTime) > data.lastDelay) {
                     data.execute(list);

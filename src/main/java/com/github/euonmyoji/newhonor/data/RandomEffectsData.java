@@ -8,12 +8,11 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.potion.PotionEffect;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KEY;
 
@@ -39,23 +38,19 @@ public class RandomEffectsData {
         particleEffectData = cfg.getNode(PARTICLES_KEY).isVirtual() ? null : new ParticleEffectData(cfg.getNode(PARTICLES_KEY), id);
     }
 
-    public void execute(List<UUID> list) {
+    public void execute(List<Player> list) {
         lastRunTime = LocalDateTime.now();
         lastDelay = delayData.getDelay();
         if (Math.random() < chance) {
-            Task.builder().execute(() -> Util.getStream(list)
-                    .map(Sponge.getServer()::getPlayer)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .forEach(player -> {
-                        OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner);
-                        if (!Sponge.getEventManager().post(event)) {
-                            Util.offerEffects(player, potionEffects);
-                            if (particleEffectData != null) {
-                                particleEffectData.execute(player.getLocation());
-                            }
-                        }
-                    })).submit(NewHonor.plugin);
+            Task.builder().execute(() -> list.forEach(player -> {
+                OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner);
+                if (!Sponge.getEventManager().post(event)) {
+                    Util.offerEffects(player, potionEffects);
+                    if (particleEffectData != null) {
+                        particleEffectData.execute(player.getLocation());
+                    }
+                }
+            })).submit(NewHonor.plugin);
         }
     }
 }

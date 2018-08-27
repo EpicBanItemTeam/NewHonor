@@ -12,10 +12,12 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.potion.PotionEffect;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KEY;
 
@@ -60,15 +62,20 @@ public class EffectsOffer {
         private int lastDelay = 0;
 
         private void call() {
-            List<UUID> list = Util.getPlayerUsingEffects(id);
-            if (Util.getTimeDuration(lastRunTime) > lastDelay) {
-                execute(list);
-            }
-            randomList.forEach(data -> {
-                if (Util.getTimeDuration(data.lastRunTime) > data.lastDelay) {
-                    data.execute(list);
+            List<Player> list = Util.getStream(Util.getPlayerUsingEffects(id)).map(Sponge.getServer()::getPlayer)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+            if (!list.isEmpty()) {
+                if (Util.getTimeDuration(lastRunTime) > lastDelay) {
+                    execute(list);
                 }
-            });
+                randomList.forEach(data -> {
+                    if (Util.getTimeDuration(data.lastRunTime) > data.lastDelay) {
+                        data.execute(list);
+                    }
+                });
+            }
         }
 
         private SelfTaskData(EffectsConfig config) throws ObjectMappingException {
@@ -87,22 +94,18 @@ public class EffectsOffer {
             particleEffectData = node.isVirtual() ? null : new ParticleEffectData(node, id);
         }
 
-        private void execute(List<UUID> list) {
+        private void execute(List<Player> list) {
             lastRunTime = LocalDateTime.now();
             lastDelay = delayData.getDelay();
-            Task.builder().execute(() -> Util.getStream(list)
-                    .map(Sponge.getServer()::getPlayer)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .forEach(player -> {
-                        OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner, particleEffectData);
-                        if (!Sponge.getEventManager().post(event)) {
-                            Util.offerEffects(player, potionEffects);
-                            if (particleEffectData != null) {
-                                particleEffectData.execute(player.getLocation());
-                            }
-                        }
-                    })).submit(NewHonor.plugin);
+            Task.builder().execute(() -> list.forEach(player -> {
+                OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner, particleEffectData);
+                if (!Sponge.getEventManager().post(event)) {
+                    Util.offerEffects(player, potionEffects);
+                    if (particleEffectData != null) {
+                        particleEffectData.execute(player.getLocation());
+                    }
+                }
+            })).submit(NewHonor.plugin);
         }
     }
 
