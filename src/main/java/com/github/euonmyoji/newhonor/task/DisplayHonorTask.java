@@ -1,5 +1,7 @@
 package com.github.euonmyoji.newhonor.task;
 
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
 import com.github.euonmyoji.newhonor.NewHonor;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.scoreboard.Team;
@@ -33,7 +35,8 @@ public class DisplayHonorTask implements Runnable {
     @Override
     public void run() {
         if (running) {
-            try {
+            try (Timing timing = Timings.of(NewHonor.plugin, "NewHonorDisplayTask")) {
+                timing.startTimingIfSync();
                 team.setPrefix(values.get(index));
                 Task.builder().execute(this)
                         .delayTicks(delays[index]).name("NewHonor - displayHonor Task " + id + "#" + index)
