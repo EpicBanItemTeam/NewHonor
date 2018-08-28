@@ -86,8 +86,7 @@ public class SqlManager {
                 address, port, database, user, password);
     }
 
-    public static class SqlPlayerConfig implements PlayerConfig {
-        private UUID uuid;
+    public static class SqlPlayerConfig extends BasePlayerConfig {
         private List<SQLException> es = new ArrayList<>();
         private boolean done;
 
@@ -279,22 +278,6 @@ public class SqlManager {
                 }
             }
             return Optional.empty();
-        }
-
-        @Override
-        public void checkUsingHonor() throws SQLException {
-            String usingID = getUsingHonorID();
-            if (usingID == null) {
-                return;
-            }
-            if (!isOwnHonor(usingID)) {
-                Optional<List<String>> list = NewHonorConfig.getDefaultOwnHonors();
-                if (list.isPresent()) {
-                    setUseHonor(list.get().get(0));
-                } else {
-                    setUseHonor("");
-                }
-            }
         }
 
         @Override

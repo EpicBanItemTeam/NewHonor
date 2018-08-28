@@ -20,8 +20,7 @@ import java.util.*;
 /**
  * @author yinyangshi
  */
-public class LocalPlayerConfig implements PlayerConfig {
-    private final UUID uuid;
+public class LocalPlayerConfig extends BasePlayerConfig {
     private final CommentedConfigurationNode cfg;
     private final TypeToken<String> type = TypeToken.of(String.class);
     private ConfigurationLoader<CommentedConfigurationNode> loader;
@@ -133,22 +132,6 @@ public class LocalPlayerConfig implements PlayerConfig {
         } catch (ObjectMappingException e) {
             NewHonor.logger.warn("Player data " + uuid + " is wrong!", e);
             return Optional.empty();
-        }
-    }
-
-    @Override
-    public void checkUsingHonor() {
-        String usingID = getUsingHonorID();
-        if (usingID == null) {
-            return;
-        }
-        if (!isOwnHonor(getUsingHonorID())) {
-            Optional<List<String>> list = NewHonorConfig.getDefaultOwnHonors();
-            if (list.isPresent()) {
-                setUseHonor(list.get().get(0));
-            } else {
-                setUseHonor("");
-            }
         }
     }
 

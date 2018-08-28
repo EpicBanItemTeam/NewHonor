@@ -183,6 +183,8 @@ public class NewHonor {
                 try {
                     PlayerConfig pd = PlayerConfig.get(p);
                     pd.init();
+                    pd.checkPermission();
+                    pd.checkUsingHonor();
                     doSomething(pd);
                 } catch (Throwable e) {
                     logger.error("error while init player", e);

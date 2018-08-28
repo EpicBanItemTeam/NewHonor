@@ -69,6 +69,7 @@ public class HonorCommand {
                 Task.builder().execute(() -> {
                     try {
                         PlayerConfig pd = PlayerConfig.get((User) src);
+                        pd.checkPermission();
                         if (pd.setUseHonor(args.<String>getOne(of(ID_KEY)).orElseThrow(NoSuchFieldError::new))) {
                             src.sendMessage(getText("newhonor.changehonor.succeed"));
                         } else {
@@ -108,9 +109,11 @@ public class HonorCommand {
                         : src instanceof User ? (User) src : null;
                 boolean execute = typedUser ? permissionPass : user != null;
                 if (execute) {
+                    //async
                     Task.builder().execute(() -> {
                         try {
                             PlayerConfig pd = PlayerConfig.get(user);
+                            pd.checkPermission();
                             Optional<List<String>> honors = pd.getOwnHonors();
                             if (honors.isPresent()) {
                                 if (honors.get().isEmpty()) {

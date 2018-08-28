@@ -38,32 +38,7 @@ public interface PlayerConfig {
      * @throws SQLException when found any error
      */
     static PlayerConfig get(UUID uuid) throws SQLException {
-        PlayerConfig pc = SqlManager.enable ? new SqlManager.SqlPlayerConfig(uuid) : new LocalPlayerConfig(uuid);
-        Sponge.getServer().getPlayer(pc.getUUID()).ifPresent(player ->
-                HonorConfig.getAllCreatedHonors().forEach(id -> {
-                    //已经在遍历每一个创建的头衔了！
-                    final String checkPrefix = "newhonor.honor.";
-                    try {
-                        List<String> ownedHonors = pc.getOwnHonors().orElseGet(ArrayList::new);
-                        //如果移除没权限的头衔
-                        if (NewHonorConfig.getCfg().getNode(NewHonorConfig.PERMISSION_MANAGE).getBoolean() && !player.hasPermission(checkPrefix + id)) {
-                            if (pc.takeHonor(id)) {
-                                Log.info(String.format("[Cause:permission not pass]Player %s lost honor: %s", player.getName(), id));
-                            }
-                        } else if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
-                            try {
-                                if (pc.giveHonor(id)) {
-                                    Log.info(String.format("[Cause:Permission pass]Player %s got an honor: %s", player.getName(), id));
-                                }
-                            } catch (Exception e) {
-                                NewHonor.logger.warn("error about data! (give honor)", e);
-                            }
-                        }
-                    } catch (SQLException e) {
-                        NewHonor.logger.warn("SQL E when check player honors!", e);
-                    }
-                }));
-        return pc;
+        return SqlManager.enable ? new SqlManager.SqlPlayerConfig(uuid) : new LocalPlayerConfig(uuid);
     }
 
     /**
@@ -169,7 +144,50 @@ public interface PlayerConfig {
      *
      * @throws SQLException when found any error
      */
-    void checkUsingHonor() throws SQLException;
+    default void checkUsingHonor() throws SQLException {
+        String usingID = getUsingHonorID();
+        if (usingID == null) {
+            return;
+        }
+        if (!isOwnHonor(getUsingHonorID())) {
+            Optional<List<String>> list = NewHonorConfig.getDefaultOwnHonors();
+            if (list.isPresent()) {
+                setUseHonor(list.get().get(0));
+            } else {
+                setUseHonor("");
+            }
+        }
+    }
+
+    /**
+     * 检查玩家权限并give/take头衔
+     */
+    default void checkPermission() {
+        Sponge.getServer().getPlayer(getUUID()).ifPresent(player ->
+                HonorConfig.getAllCreatedHonors().forEach(id -> {
+                    //已经在遍历每一个创建的头衔了！
+                    final String checkPrefix = "newhonor.honor.";
+                    try {
+                        List<String> ownedHonors = getOwnHonors().orElseGet(ArrayList::new);
+                        //如果移除没权限的头衔
+                        if (NewHonorConfig.getCfg().getNode(NewHonorConfig.PERMISSION_MANAGE).getBoolean() && !player.hasPermission(checkPrefix + id)) {
+                            if (takeHonor(id)) {
+                                Log.info(String.format("[Cause:permission not pass]Player %s lost honor: %s", player.getName(), id));
+                            }
+                        } else if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
+                            try {
+                                if (giveHonor(id)) {
+                                    Log.info(String.format("[Cause:Permission pass]Player %s got an honor: %s", player.getName(), id));
+                                }
+                            } catch (Exception e) {
+                                NewHonor.logger.warn("error about data! (give honor)", e);
+                            }
+                        }
+                    } catch (SQLException e) {
+                        NewHonor.logger.warn("SQL E when check player honors!", e);
+                    }
+                }));
+    }
 
     /**
      * 得到正在使用的头衔text
