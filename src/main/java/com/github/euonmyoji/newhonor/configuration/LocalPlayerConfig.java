@@ -119,7 +119,9 @@ public class LocalPlayerConfig extends BasePlayerConfig {
 
     @Override
     public boolean setUseHonor(String id) {
-        if (isOwnHonor(id) && !HonorConfig.isVirtual(id)) {
+        boolean isEmpty = "".equals(id);
+        boolean isRight = isOwnHonor(id) && !HonorConfig.isVirtual(id);
+        if (isRight || isEmpty) {
             cfg.getNode(USING_KEY).setValue(id);
             return save();
         }
