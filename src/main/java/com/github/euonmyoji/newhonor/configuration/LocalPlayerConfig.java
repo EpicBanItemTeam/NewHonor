@@ -16,7 +16,10 @@ import org.spongepowered.api.event.cause.EventContext;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author yinyangshi
@@ -74,7 +77,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
             try {
                 checkUsingHonor();
             } catch (SQLException e) {
-                NewHonor.logger.debug("why sql error", e);
+                NewHonor.logger.debug("why sql error?", e);
             }
             PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
             return !Sponge.getEventManager().post(event) && save();
@@ -119,11 +122,15 @@ public class LocalPlayerConfig extends BasePlayerConfig {
 
     @Override
     public boolean setUseHonor(String id) {
-        boolean isEmpty = "".equals(id);
-        boolean isRight = isOwnHonor(id) && !HonorConfig.isVirtual(id);
-        if (isRight || isEmpty) {
-            cfg.getNode(USING_KEY).setValue(id);
-            return save();
+        try {
+            boolean isEmpty = "".equals(id);
+            boolean isRight = isOwnHonor(id) && !HonorConfig.isVirtual(id);
+            if (isRight || isEmpty) {
+                cfg.getNode(USING_KEY).setValue(id);
+                return save();
+            }
+        } catch (SQLException e) {
+            NewHonor.logger.info("Why sql error?", e);
         }
         return false;
     }
@@ -151,11 +158,6 @@ public class LocalPlayerConfig extends BasePlayerConfig {
             NewHonor.logger.warn("IOE when saving player data!", e);
         }
         return false;
-    }
-
-    @Override
-    public boolean isOwnHonor(String id) {
-        return id == null || "".equals(id) || getOwnHonors().orElse(Collections.emptyList()).contains(id);
     }
 
     private CommentedConfigurationNode load() {
