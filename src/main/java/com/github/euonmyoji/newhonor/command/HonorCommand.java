@@ -114,10 +114,11 @@ public class HonorCommand {
                         try {
                             PlayerConfig pd = PlayerConfig.get(user);
                             pd.checkPermission();
+                            pd.checkUsingHonor();
                             Optional<List<String>> honors = pd.getOwnHonors();
                             if (honors.isPresent()) {
                                 if (honors.get().isEmpty()) {
-                                    src.sendMessage(langBuilder("newhonor.listhonors.empty").replace("%player%", user.getName()).build());
+                                    src.sendMessage(langBuilder("newhonor.listhonors.empty").replaceName(user).build());
                                     return;
                                 }
                                 PaginationList.Builder builder = PaginationList.builder()
@@ -126,20 +127,20 @@ public class HonorCommand {
                                 HonorConfig.getHonorValueData(usingID)
                                         .ifPresent(data -> builder.header(langBuilder("newhonor.listhonors.header")
                                                 .replace("%ownername%", user.getName())
-                                                .replace("%honor%", data.getStrValue())
+                                                .replaceHonor(data.getStrValue())
                                                 .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
                                                 .build()));
                                 List<Text> texts = honors.get().stream()
                                         .map(id -> HonorConfig.getHonorValueData(id).map(data -> Text.builder()
                                                 //显示头衔 药水效果组
                                                 .append(langBuilder("newhonor.listhonors.contexts")
-                                                        .replace("%honorid%", id)
-                                                        .replace("%honor%", data.getStrValue())
+                                                        .replaceHonorid(id)
+                                                        .replaceHonor(data.getStrValue())
                                                         .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
                                                         .build())
                                                 .onHover(showText(langBuilder("newhonor.listhonors.clickuse")
-                                                        .replace("%honor%", data.getStrValue())
-                                                        .replace("%honorid%", id)
+                                                        .replaceHonor(data.getStrValue())
+                                                        .replaceHonorid(id)
                                                         .build()))
                                                 .onClick(runCommand("/honor use " + id))
                                                 .build()))

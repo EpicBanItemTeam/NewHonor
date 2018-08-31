@@ -279,11 +279,6 @@ public class SqlManager {
             }
             return Optional.empty();
         }
-
-        @Override
-        public UUID getUUID() {
-            return uuid;
-        }
     }
 
     private static Connection getConnection() throws SQLException {

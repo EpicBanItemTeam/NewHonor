@@ -176,21 +176,28 @@ public class NewHonor {
     @Listener
     public void onClientConnectionJoin(ClientConnectionEvent.Join event) {
         Player p = event.getTargetEntity();
-        if (honorTextCache.containsKey(p.getUniqueId())) {
-            ScoreBoardManager.initPlayer(p);
-        } else {
-            Task.builder().execute(() -> {
-                try {
-                    PlayerConfig pd = PlayerConfig.get(p);
-                    pd.init();
-                    pd.checkPermission();
-                    pd.checkUsingHonor();
-                    doSomething(pd);
-                } catch (Throwable e) {
-                    logger.error("error while init player", e);
-                }
-            }).async().name("newhonor - init Player" + p.getName()).submit(this);
-        }
+        Task.builder().execute(() -> {
+            try {
+                PlayerConfig pd = PlayerConfig.get(p);
+                pd.init();
+                pd.checkPermission();
+                pd.checkUsingHonor();
+                doSomething(pd);
+            } catch (Throwable e) {
+                logger.error("error while init player", e);
+            }
+        }).async().name("newhonor - init Player" + p.getName()).submit(this);
+
+    }
+
+    @Listener
+    public void onQuit(ClientConnectionEvent.Disconnect event) {
+        Task.builder().async().execute(() -> {
+            synchronized (CACHE_LOCK) {
+                plugin.honorTextCache.remove(event.getTargetEntity().getUniqueId());
+                plugin.playerUsingEffectCache.remove(event.getTargetEntity().getUniqueId());
+            }
+        }).submit(this);
     }
 
     /**
@@ -298,7 +305,6 @@ public class NewHonor {
             } catch (Exception e) {
                 logger.error("error about data!", e);
             }
-
         };
         Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> ScoreBoardManager.initPlayer(player));
 

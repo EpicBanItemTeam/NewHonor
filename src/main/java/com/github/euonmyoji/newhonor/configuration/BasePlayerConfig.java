@@ -7,4 +7,9 @@ import java.util.UUID;
  */
 public abstract class BasePlayerConfig implements PlayerConfig {
     protected UUID uuid;
+
+    @Override
+    public UUID getUUID() {
+        return this.uuid;
+    }
 }

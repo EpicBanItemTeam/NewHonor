@@ -4,6 +4,7 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.util.Util;
 import com.google.common.base.Charsets;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
@@ -30,9 +31,28 @@ public class LanguageManager {
         return this;
     }
 
+    public LanguageManager replaceName(User user) {
+        value = value.replace("%player%", user.getName());
+        return this;
+    }
+
+    public LanguageManager replaceHonorid(String honorid) {
+        value = value.replace("%honorid%", honorid);
+        return this;
+    }
+
+    public LanguageManager replaceHonor(String honor) {
+        value = value.replace("%honor%", honor);
+        return this;
+    }
+
     public Text build() {
         return Util.toText(value);
     }
+
+    //-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
 
     public static LanguageManager langBuilder(String key) {
         return new LanguageManager(key);

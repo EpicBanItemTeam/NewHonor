@@ -43,3 +43,5 @@ newhonor.listhonors.nopermission=&e[&b头衔插件&e] &c你目前没有权限 &6
 
 newhonor.listcreatedhonors.title=&a&l所有创建的头衔
 newhonor.listcreatedhonors.contexts=&e头衔id: &6%honorid% &a，头衔: &r%honor%&r &a，&3药水效果组: &d%effectsID%
+
+newhonor.event.changehonorbylose=[&b头衔插件&e] 你因为不再拥有头衔&r%honor%&r，所以自动将头衔变成了&r%changedhonor%

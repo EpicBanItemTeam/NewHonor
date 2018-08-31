@@ -150,11 +150,6 @@ public class LocalPlayerConfig extends BasePlayerConfig {
         return getOwnHonors().orElse(Collections.emptyList()).contains(id);
     }
 
-    @Override
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
     private CommentedConfigurationNode load() {
         try {
             return loader.load();

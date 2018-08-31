@@ -43,3 +43,5 @@ newhonor.listhonors.nopermission=[NewHonor]You don't have permission to see othe
 
 newhonor.listcreatedhonors.title=all created honor
 newhonor.listcreatedhonors.contexts=honorid:%honorid%，text:&r%honor%&r，effectsID:%effectsID%
+
+newhonor.event.changehonorbylose=[&bNewHonor&e] You don't have &r%honor%&r now，so we changed you using honor to &r%changedhonor%.

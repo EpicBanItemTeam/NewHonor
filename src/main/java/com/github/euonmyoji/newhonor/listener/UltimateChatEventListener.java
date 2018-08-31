@@ -26,7 +26,6 @@ public class UltimateChatEventListener {
             } else {
                 event.addTag(tag, value.getStrValue());
             }
-
         }
     }
 }

@@ -9,6 +9,8 @@ import org.spongepowered.api.entity.living.player.User;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.github.euonmyoji.newhonor.configuration.HonorConfig.getHonorValueData;
+
 /**
  * @author yinyangshi
  */
@@ -149,13 +151,34 @@ public interface PlayerConfig {
         if (usingID == null) {
             return;
         }
-        if (!isOwnHonor(getUsingHonorID())) {
-            Optional<List<String>> list = NewHonorConfig.getDefaultOwnHonors();
-            if (list.isPresent()) {
-                setUseHonor(list.get().get(0));
-            } else {
-                setUseHonor("");
+        if (!isOwnHonor(usingID)) {
+            Optional<List<String>> list = getOwnHonors();
+            if (list.isPresent() && !list.get().isEmpty()) {
+                for (String nowHonor : list.get()) {
+                    HonorValueData nowHonorValue = HonorConfig.getHonorValueData(nowHonor).orElse(null);
+                    if (nowHonorValue != null) {
+                        setUseHonor(list.get().get(0));
+                        Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(LanguageManager
+                                .langBuilder("newhonor.event.changehonorbylose")
+                                .replaceName(player)
+                                .replaceHonorid(usingID)
+                                .replaceHonor(getHonorValueData(usingID).map(HonorValueData::getStrValue).orElse(""))
+                                .replace("%changedhonor%", nowHonorValue.getStrValue())
+                                .build()));
+                        return;
+                    }
+                }
             }
+
+            setUseHonor("");
+            Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(LanguageManager
+                    .langBuilder("newhonor.event.changehonorbylose")
+                    .replaceName(player)
+                    .replaceHonorid(usingID)
+                    .replaceHonor(getHonorValueData(usingID).map(HonorValueData::getStrValue).orElse(""))
+                    .replace("%changedhonor%", "null")
+                    .build()));
+
         }
     }
 
