@@ -15,6 +15,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -66,6 +67,11 @@ public class LocalPlayerConfig extends BasePlayerConfig {
                 if (honors.remove(id)) {
                     took = true;
                 }
+            }
+            try {
+                checkUsingHonor();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         if (took) {

@@ -173,6 +173,7 @@ public class SqlManager {
                         took = true;
                     }
                 }
+                checkUsingHonor();
             }
             if (took) {
                 PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
