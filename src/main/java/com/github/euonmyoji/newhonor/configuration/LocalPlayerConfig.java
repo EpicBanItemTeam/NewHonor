@@ -155,7 +155,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
 
     @Override
     public boolean isOwnHonor(String id) {
-        return getOwnHonors().orElse(Collections.emptyList()).contains(id);
+        return id == null || "".equals(id) || getOwnHonors().orElse(Collections.emptyList()).contains(id);
     }
 
     private CommentedConfigurationNode load() {

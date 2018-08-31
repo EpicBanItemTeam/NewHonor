@@ -192,12 +192,7 @@ public class NewHonor {
 
     @Listener
     public void onQuit(ClientConnectionEvent.Disconnect event) {
-        Task.builder().async().execute(() -> {
-            synchronized (CACHE_LOCK) {
-                plugin.honorTextCache.remove(event.getTargetEntity().getUniqueId());
-                plugin.playerUsingEffectCache.remove(event.getTargetEntity().getUniqueId());
-            }
-        }).submit(this);
+        Task.builder().async().execute(() -> clearPlayerCache(event.getTargetEntity().getUniqueId())).submit(this);
     }
 
     /**
@@ -215,6 +210,13 @@ public class NewHonor {
             HaloEffectsOffer.TASK_DATA.clear();
         }
         DisplayHonorTaskManager.clear();
+    }
+
+    public static void clearPlayerCache(UUID uuid) {
+        synchronized (CACHE_LOCK) {
+            plugin.honorTextCache.remove(uuid);
+            plugin.playerUsingEffectCache.remove(uuid);
+        }
     }
 
     /**

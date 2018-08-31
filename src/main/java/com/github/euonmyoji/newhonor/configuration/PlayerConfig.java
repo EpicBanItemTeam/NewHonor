@@ -148,9 +148,6 @@ public interface PlayerConfig {
      */
     default void checkUsingHonor() throws SQLException {
         String usingID = getUsingHonorID();
-        if (usingID == null || "".equals(usingID)) {
-            return;
-        }
         if (!isOwnHonor(usingID)) {
             Optional<List<String>> list = getOwnHonors();
             if (list.isPresent() && !list.get().isEmpty()) {
@@ -171,6 +168,7 @@ public interface PlayerConfig {
             }
 
             setUseHonor("");
+            NewHonor.clearPlayerCache(getUUID());
             Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(LanguageManager
                     .langBuilder("newhonor.event.changehonorbylose")
                     .replaceName(player)
@@ -230,7 +228,7 @@ public interface PlayerConfig {
      * @throws SQLException if any Sql E
      */
     default boolean isOwnHonor(String id) throws SQLException {
-        return getOwnHonors().orElse(Collections.emptyList()).contains(id);
+        return id == null || "".equals(id) || getOwnHonors().orElse(Collections.emptyList()).contains(id);
     }
 
 
