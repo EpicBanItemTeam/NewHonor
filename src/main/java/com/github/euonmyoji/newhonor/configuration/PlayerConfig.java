@@ -148,7 +148,7 @@ public interface PlayerConfig {
      */
     default void checkUsingHonor() throws SQLException {
         String usingID = getUsingHonorID();
-        if (usingID == null) {
+        if (usingID == null || "".equals(usingID)) {
             return;
         }
         if (!isOwnHonor(usingID)) {
