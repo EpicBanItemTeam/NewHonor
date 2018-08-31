@@ -173,7 +173,6 @@ public class SqlManager {
                         took = true;
                     }
                 }
-                checkUsingHonor();
             }
             if (took) {
                 PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
@@ -181,7 +180,12 @@ public class SqlManager {
                     try (Connection con = getConnection()) {
                         try (PreparedStatement state = con.prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'",
                                 HONORS_KEY, honors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""), uuid))) {
-                            return state.executeUpdate() < 2;
+
+                            boolean result = state.executeUpdate() == 1;
+                            if (result) {
+                                checkUsingHonor();
+                            }
+                            return result;
                         }
                     }
                 }
@@ -247,7 +251,8 @@ public class SqlManager {
         public boolean setUseHonor(String id) throws SQLException {
             try (Connection con = getConnection()) {
                 try (PreparedStatement state = con.prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", USING_KEY, id, uuid))) {
-                    if (isOwnHonor(id) && !HonorConfig.isVirtual(id)) {
+                    boolean isRight = isOwnHonor(id) && !HonorConfig.isVirtual(id);
+                    if ("".equals(id) || isRight) {
                         return state.executeUpdate() < 2;
                     }
                 }

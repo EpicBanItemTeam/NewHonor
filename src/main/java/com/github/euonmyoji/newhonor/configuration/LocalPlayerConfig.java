@@ -68,14 +68,14 @@ public class LocalPlayerConfig extends BasePlayerConfig {
                     took = true;
                 }
             }
-            try {
-                checkUsingHonor();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         if (took) {
             cfg.getNode(HONORS_KEY).setValue(honors);
+            try {
+                checkUsingHonor();
+            } catch (SQLException e) {
+                NewHonor.logger.debug("why sql error", e);
+            }
             PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
             return !Sponge.getEventManager().post(event) && save();
         }
