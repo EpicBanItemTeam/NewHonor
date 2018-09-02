@@ -9,6 +9,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.Identifiable;
 
 /**
  * @author yinyangshi
@@ -24,8 +25,8 @@ public class PlaceHolderManager {
     }
 
     @Placeholder(id = NewHonor.NEWHONOR_ID)
-    public Text getNewHonorText(@Source User user) {
-        HonorValueData value = NewHonor.plugin.honorTextCache.get(user.getUniqueId());
+    public Text getNewHonorText(@Source Identifiable i) {
+        HonorValueData value = NewHonor.plugin.honorTextCache.get(i.getUniqueId());
         return value == null ? Text.of("") : value.getValue();
     }
 
