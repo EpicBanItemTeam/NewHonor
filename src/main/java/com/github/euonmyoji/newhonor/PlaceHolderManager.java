@@ -6,10 +6,8 @@ import me.rojo8399.placeholderapi.Placeholder;
 import me.rojo8399.placeholderapi.PlaceholderService;
 import me.rojo8399.placeholderapi.Source;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.util.Identifiable;
 
 /**
  * @author yinyangshi
@@ -25,8 +23,8 @@ public class PlaceHolderManager {
     }
 
     @Placeholder(id = NewHonor.NEWHONOR_ID)
-    public Text getNewHonorText(@Source Identifiable i) {
-        HonorValueData value = NewHonor.plugin.honorTextCache.get(i.getUniqueId());
+    public Text getNewHonorText(@Source User user) {
+        HonorValueData value = NewHonor.plugin.honorTextCache.get(user.getUniqueId());
         return value == null ? Text.of("") : value.getValue();
     }
 
@@ -38,7 +36,7 @@ public class PlaceHolderManager {
                     builder.description("newhonor text").version("1.5").author("yinyangshi").plugin(NewHonor.plugin)
                             .buildAndRegister();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    NewHonor.logger.warn("offer PAPI failed", e);
                 }
             }
         });
