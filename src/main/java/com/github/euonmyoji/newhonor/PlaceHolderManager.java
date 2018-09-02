@@ -7,6 +7,7 @@ import me.rojo8399.placeholderapi.PlaceholderService;
 import me.rojo8399.placeholderapi.Source;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 
 /**
@@ -23,8 +24,8 @@ public class PlaceHolderManager {
     }
 
     @Placeholder(id = NewHonor.NEWHONOR_ID)
-    public Text getNewHonorText(@Source Player p) {
-        HonorValueData value = NewHonor.plugin.honorTextCache.get(p.getUniqueId());
+    public Text getNewHonorText(@Source User user) {
+        HonorValueData value = NewHonor.plugin.honorTextCache.get(user.getUniqueId());
         return value == null ? Text.of("") : value.getValue();
     }
 
