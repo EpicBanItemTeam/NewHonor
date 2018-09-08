@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 /**
  * @author yinyangshi
  */
-@Listening
 public class PlaceHolderManager {
     private static PlaceHolderManager instance;
 
