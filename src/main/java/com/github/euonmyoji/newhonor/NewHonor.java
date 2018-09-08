@@ -89,12 +89,12 @@ public class NewHonor {
             if (Files.notExists(NewHonorConfig.cfgDir)) {
                 Files.createDirectory(NewHonorConfig.cfgDir);
             }
-            final String playerData = "PlayerData";
-            if (Files.notExists(NewHonorConfig.cfgDir.resolve(playerData))) {
-                Files.createDirectory(NewHonorConfig.cfgDir.resolve(playerData));
+            final String playerDataDir = "PlayerData";
+            if (Files.notExists(NewHonorConfig.cfgDir.resolve(playerDataDir))) {
+                Files.createDirectory(NewHonorConfig.cfgDir.resolve(playerDataDir));
             }
             if (NewHonorConfig.isCheckUpdate()) {
-                checkUpdate();
+                Task.builder().async().name("NewHonor - check for update").execute(this::checkUpdate).submit(this);
             } else {
                 logger.info("§2check update was canceled");
             }
@@ -122,33 +122,31 @@ public class NewHonor {
     }
 
     private void checkUpdate() {
-        Task.builder().async().name("NewHonor - check for update").execute(() -> {
-            try {
-                final String u = "https://api.github.com/repos/euOnmyoji/NewHonor-plugin-for-sponge/releases";
-                HttpsURLConnection con = (HttpsURLConnection) new URL(u)
-                        .openConnection();
-                con.setRequestMethod("GET");
-                con.getResponseCode();
-                try (InputStreamReader reader = new InputStreamReader(con.getInputStream(), Charsets.UTF_8)) {
-                    JsonObject json = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
-                    String v = json.get("tag_name").getAsString()
-                            .replaceFirst("v", "")
-                            .replaceAll("version", "");
-                    String preKey = "pre";
-                    if (!v.contains(preKey)) {
-                        int c = new ComparableVersion(v).compareTo(new ComparableVersion(VERSION));
-                        if (c > 0) {
-                            logger.info("found a latest version:" + v + ".Your version now:" + VERSION);
-                        } else if (c < 0) {
-                            logger.info("the latest version in github.com:" + v + "[Your version:" + VERSION + "]");
-                        }
+        try {
+            final String u = "https://api.github.com/repos/euOnmyoji/NewHonor-plugin-for-sponge/releases";
+            HttpsURLConnection con = (HttpsURLConnection) new URL(u)
+                    .openConnection();
+            con.setRequestMethod("GET");
+            con.getResponseCode();
+            try (InputStreamReader reader = new InputStreamReader(con.getInputStream(), Charsets.UTF_8)) {
+                JsonObject json = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
+                String v = json.get("tag_name").getAsString()
+                        .replace("version", "")
+                        .replace("build", "");
+                String preKey = "pre";
+                if (!v.contains(preKey)) {
+                    int c = new ComparableVersion(v).compareTo(new ComparableVersion(VERSION));
+                    if (c > 0) {
+                        logger.info("found a latest version:" + v + ".Your version now:" + VERSION);
+                    } else if (c < 0) {
+                        logger.info("the latest version in github.com:" + v + "[Your version:" + VERSION + "]");
                     }
                 }
-            } catch (Throwable e) {
-                logger.info("check for updating failed");
-                logger.debug("check update error", e);
             }
-        }).submit(this);
+        } catch (Throwable e) {
+            logger.info("check for updating failed");
+            logger.debug("check update error", e);
+        }
     }
 
     @Inject

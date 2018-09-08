@@ -21,8 +21,8 @@ public class PlayerLoseHonorEvent implements Event, Cancellable {
     private boolean canceled;
 
     /**
-     * @param cause   原因
-     * @param uuid    被给玩家的uuid
+     * @param cause    原因
+     * @param uuid     被给玩家的uuid
      * @param honorIDs 被给头衔ID
      */
     public PlayerLoseHonorEvent(Cause cause, UUID uuid, String... honorIDs) {

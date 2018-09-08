@@ -16,7 +16,7 @@ import org.spongepowered.api.text.Text;
 public class PlaceHolderManager {
     private static PlaceHolderManager instance;
 
-    static void create() throws RuntimeException {
+    static void create() {
         if (instance == null) {
             instance = new PlaceHolderManager();
         }
@@ -28,7 +28,7 @@ public class PlaceHolderManager {
         return value == null ? Text.of("") : value.getValue();
     }
 
-    private PlaceHolderManager() throws RuntimeException {
+    private PlaceHolderManager() {
         PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
         service.loadAll(this, NewHonor.plugin).forEach(builder -> {
             if (NewHonor.NEWHONOR_ID.equals(builder.getId())) {
