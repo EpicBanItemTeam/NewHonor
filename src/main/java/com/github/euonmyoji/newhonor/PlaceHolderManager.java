@@ -29,16 +29,26 @@ public class PlaceHolderManager {
     public Object getNewHonorText(@Source User user, @Nullable @Token(fix = true) String token) {
         HonorValueData value = NewHonor.plugin.honorTextCache.get(user.getUniqueId());
         if (value != null) {
-            if (token == null || VALUE_T.equals(token)) {
+            if (token == null) {
                 return value.getValue();
             }
-            if (ID_T.equals(token)) {
-                return value.getId();
-            }
-            if (STR_T.equals(token)) {
-                return value.getStrValue();
+            switch (token) {
+                case ID_T: {
+                    return value.getId();
+                }
+                case STR_T: {
+                    return value.getStrValue();
+                }
+                case VALUE_T: {
+                    return value.getValue();
+                }
+                default: {
+                    //not to offer value though default
+                    break;
+                }
             }
         }
+
         return null;
     }
 
