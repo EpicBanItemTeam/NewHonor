@@ -1,6 +1,6 @@
 package com.github.euonmyoji.newhonor;
 
-import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.task.DisplayHonorTaskManager;
 import org.spongepowered.api.Sponge;

@@ -1,6 +1,7 @@
-package com.github.euonmyoji.newhonor.configuration;
+package com.github.euonmyoji.newhonor.api.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.configuration.*;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.util.Log;
 import org.spongepowered.api.Sponge;

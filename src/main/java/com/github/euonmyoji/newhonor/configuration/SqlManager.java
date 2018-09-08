@@ -16,13 +16,13 @@ import java.sql.*;
 import java.util.*;
 
 import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.cfg;
-import static com.github.euonmyoji.newhonor.configuration.PlayerConfig.*;
+import static com.github.euonmyoji.newhonor.api.configuration.PlayerConfig.*;
 
 /**
  * @author yinyangshi
  */
 public class SqlManager {
-    static boolean enable = false;
+    public static boolean enable = false;
     private static final String TABLE_NAME = "NewHonorPlayerData";
     private static String address;
     private static short port;

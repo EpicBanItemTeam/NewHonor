@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor;
 
+import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.api.event.NewHonorReloadEvent;
 import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.*;
@@ -52,7 +53,7 @@ public class NewHonor {
     static final String PAPI_ID = "placeholderapi";
     static final String UCHAT_ID = "ultimatechat";
 
-    public static final String VERSION = "2.1.3";
+    public static final String VERSION = "@version@";
     public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     @Inject
     @ConfigDir(sharedRoot = false)

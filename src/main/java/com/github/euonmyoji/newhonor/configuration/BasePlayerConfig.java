@@ -1,5 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
+import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
+
 import java.util.UUID;
 
 /**

@@ -1,9 +1,9 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.task.TaskManager;
 import com.github.euonmyoji.newhonor.util.Log;
