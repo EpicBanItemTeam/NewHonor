@@ -45,7 +45,7 @@ public class HonorConfig {
     public static boolean addHonor(String id, String honor) {
         if (isVirtual(id)) {
             cfg.getNode(id, "value").setValue(honor);
-            valueMap.put(id, new HonorValueData(cfg.getNode(id)));
+            valueMap.put(id, new HonorValueData(cfg.getNode(id), id));
             return save();
         }
         return false;
@@ -57,7 +57,7 @@ public class HonorConfig {
 
     public static boolean setHonor(String id, String honor) {
         cfg.getNode(id, "value").setValue(honor);
-        valueMap.put(id, new HonorValueData(cfg.getNode(id)));
+        valueMap.put(id, new HonorValueData(cfg.getNode(id), id));
         return save();
     }
 
@@ -82,7 +82,7 @@ public class HonorConfig {
     public static void reload() {
         cfg = load();
         valueMap.clear();
-        getHonorsMap().forEach((o, o2) -> valueMap.put(o.toString(), new HonorValueData(o2)));
+        getHonorsMap().forEach((o, o2) -> valueMap.put(o.toString(), new HonorValueData(o2, o.toString())));
     }
 
     private static boolean save() {
@@ -99,7 +99,7 @@ public class HonorConfig {
         if (valueMap == null || valueMap.isEmpty()) {
             Map<Object, ? extends CommentedConfigurationNode> honorsMap = getHonorsMap();
             valueMap = new HashMap<>(honorsMap.size());
-            honorsMap.forEach((o, o2) -> valueMap.put(o.toString(), new HonorValueData(o2)));
+            honorsMap.forEach((o, o2) -> valueMap.put(o.toString(), new HonorValueData(o2, o.toString())));
         }
         return valueMap.keySet();
     }

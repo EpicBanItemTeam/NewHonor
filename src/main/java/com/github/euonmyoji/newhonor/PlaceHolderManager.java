@@ -1,13 +1,11 @@
 package com.github.euonmyoji.newhonor;
 
 import com.github.euonmyoji.newhonor.data.HonorValueData;
-import me.rojo8399.placeholderapi.Listening;
-import me.rojo8399.placeholderapi.Placeholder;
-import me.rojo8399.placeholderapi.PlaceholderService;
-import me.rojo8399.placeholderapi.Source;
+import me.rojo8399.placeholderapi.*;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.text.Text;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yinyangshi
@@ -23,9 +21,23 @@ public class PlaceHolderManager {
     }
 
     @Placeholder(id = NewHonor.NEWHONOR_ID)
-    public Text getNewHonorText(@Source User user) {
+    public Object getNewHonorText(@Source User user, @Nullable @Token String token) {
+        final String valueKey = "value";
+        final String strValue = "strValue";
+        final String usingID = "usingID";
         HonorValueData value = NewHonor.plugin.honorTextCache.get(user.getUniqueId());
-        return value == null ? Text.of("") : value.getValue();
+        if (value != null) {
+            if (token == null || valueKey.equals(token)) {
+                return value.getValue();
+            }
+            if (usingID.equals(token)) {
+                return value.getId();
+            }
+            if (strValue.equals(token)) {
+                return value.getStrValue();
+            }
+        }
+        return null;
     }
 
     private PlaceHolderManager() {

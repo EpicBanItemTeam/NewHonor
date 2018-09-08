@@ -23,12 +23,14 @@ import java.util.stream.Collectors;
  * @author yinyangshi
  */
 public class HonorValueData {
+    private String id;
     private Text value;
     private String strValue;
     private List<Text> displayValue;
     private int[] delay;
 
-    public HonorValueData(CommentedConfigurationNode cfg) {
+    public HonorValueData(CommentedConfigurationNode cfg, String id) {
+        this.id = id;
         String rawValue = cfg.getNode("value").getString("[default]");
         Text temp = jsonToText(rawValue);
         Text.Builder valueBuilder = Text.builder().append(temp);
@@ -112,6 +114,10 @@ public class HonorValueData {
         } catch (TextParseException e) {
             return TextSerializers.FORMATTING_CODE.deserialize(str);
         }
+    }
+
+    public String getId() {
+        return this.id;
     }
 
     public Text getValue() {
