@@ -5,6 +5,7 @@ import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.LanguageManager;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.manager.PlayerConfigManager;
 import com.github.euonmyoji.newhonor.util.Log;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
@@ -12,8 +13,8 @@ import org.spongepowered.api.entity.living.player.User;
 import java.sql.SQLException;
 import java.util.*;
 
-import static com.github.euonmyoji.newhonor.api.configuration.BasePlayerConfig.d;
 import static com.github.euonmyoji.newhonor.configuration.HonorConfig.getHonorValueData;
+import static com.github.euonmyoji.newhonor.manager.PlayerConfigManager.d;
 
 /**
  * @author yinyangshi
@@ -45,7 +46,7 @@ public interface PlayerConfig {
      * @throws Exception when found any error
      */
     static PlayerConfig get(UUID uuid) throws Exception {
-        return BasePlayerConfig.map.get(getDefaultConfigType()).getConstructor(UUID.class).newInstance(uuid);
+        return PlayerConfigManager.map.get(getDefaultConfigType()).getConstructor(UUID.class).newInstance(uuid);
     }
 
     /**
@@ -57,7 +58,7 @@ public interface PlayerConfig {
      * @throws Exception if any error
      */
     static PlayerConfig getOf(String type, UUID uuid) throws Exception {
-        return BasePlayerConfig.map.get(type).getConstructor(UUID.class).newInstance(uuid);
+        return PlayerConfigManager.map.get(type).getConstructor(UUID.class).newInstance(uuid);
     }
 
     /**
@@ -65,7 +66,11 @@ public interface PlayerConfig {
      *
      * @param type the type of config
      */
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     static void setDefaultConfigType(String type) {
+        if (!isTypePresent(type)) {
+            throw new IllegalArgumentException("The type is not present!");
+        }
         d = type;
     }
 
@@ -85,7 +90,7 @@ public interface PlayerConfig {
      * @return true if present
      */
     static boolean isTypePresent(String type) {
-        return BasePlayerConfig.map.containsKey(type);
+        return PlayerConfigManager.map.containsKey(type);
     }
 
     /**
@@ -97,7 +102,7 @@ public interface PlayerConfig {
      */
     static void registerPlayerConfig(String id, Class<? extends PlayerConfig> c) throws NoSuchMethodException {
         c.getConstructor(UUID.class);
-        BasePlayerConfig.map.put(id, c);
+        PlayerConfigManager.map.put(id, c);
     }
 
     /**
@@ -107,7 +112,11 @@ public interface PlayerConfig {
      * @return true if unregistered successfully or false if it is not present
      */
     static boolean unregister(String id) {
-        return BasePlayerConfig.map.remove(id) != null;
+        if (getDefaultConfigType().equals(id)) {
+            PlayerConfigManager.map.keySet().stream().filter(s -> !s.equals(id)).findAny()
+                    .ifPresent(PlayerConfig::setDefaultConfigType);
+        }
+        return PlayerConfigManager.map.remove(id) != null;
     }
 
     /**

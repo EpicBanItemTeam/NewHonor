@@ -1,5 +1,6 @@
-package com.github.euonmyoji.newhonor;
+package com.github.euonmyoji.newhonor.manager;
 
+import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.task.DisplayHonorTaskManager;
@@ -17,12 +18,12 @@ import java.util.UUID;
 /**
  * @author yinyangshi
  */
-class ScoreBoardManager {
-    static boolean enable = false;
+public class ScoreBoardManager {
+    public static boolean enable = false;
     private static Scoreboard scoreboard = Scoreboard.builder().build();
     private static final Object LOCK = new Object();
 
-    static void init() {
+    public static void init() {
         if (enable) {
             initAllPlayers();
         }
@@ -31,7 +32,7 @@ class ScoreBoardManager {
     /**
      * 清掉scoreboard数据
      */
-    static void clear() {
+    public static void clear() {
         DisplayHonorTaskManager.clear();
         getScoreBoard().getTeams().forEach(team -> team.getMembers().forEach(team::removeMember));
     }
@@ -41,7 +42,7 @@ class ScoreBoardManager {
      *
      * @param p 玩家
      */
-    static void initPlayer(Player p) {
+    public static void initPlayer(Player p) {
         if (enable) {
             try {
                 execute(p);

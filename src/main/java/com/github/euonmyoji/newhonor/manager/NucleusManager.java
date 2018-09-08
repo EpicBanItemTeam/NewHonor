@@ -1,5 +1,6 @@
-package com.github.euonmyoji.newhonor;
+package com.github.euonmyoji.newhonor.manager;
 
+import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import io.github.nucleuspowered.nucleus.api.exceptions.PluginAlreadyRegisteredException;
@@ -11,10 +12,10 @@ import java.util.Optional;
 /**
  * @author yinyangshi
  */
-class NucleusManager {
+public class NucleusManager {
     private static boolean done;
 
-    static void doIt() {
+    public static void doIt() {
         try {
             if (!done) {
                 done = true;

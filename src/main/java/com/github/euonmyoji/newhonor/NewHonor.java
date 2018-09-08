@@ -7,6 +7,9 @@ import com.github.euonmyoji.newhonor.configuration.*;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
+import com.github.euonmyoji.newhonor.manager.NucleusManager;
+import com.github.euonmyoji.newhonor.manager.PlaceHolderManager;
+import com.github.euonmyoji.newhonor.manager.ScoreBoardManager;
 import com.github.euonmyoji.newhonor.task.DisplayHonorTaskManager;
 import com.github.euonmyoji.newhonor.task.EffectsOffer;
 import com.github.euonmyoji.newhonor.task.HaloEffectsOffer;
@@ -48,7 +51,7 @@ import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.*;
         dependencies = {@Dependency(id = NewHonor.UCHAT_ID, optional = true), @Dependency(id = NewHonor.PAPI_ID, optional = true),
                 @Dependency(id = NewHonor.NUCLEUS_ID, optional = true)})
 public final class NewHonor {
-    static final String NEWHONOR_ID = "newhonor";
+    public static final String NEWHONOR_ID = "newhonor";
     static final String NUCLEUS_ID = "nucleus";
     static final String PAPI_ID = "placeholderapi";
     static final String UCHAT_ID = "ultimatechat";

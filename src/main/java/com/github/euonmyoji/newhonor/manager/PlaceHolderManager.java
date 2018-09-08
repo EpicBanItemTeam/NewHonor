@@ -1,5 +1,6 @@
-package com.github.euonmyoji.newhonor;
+package com.github.euonmyoji.newhonor.manager;
 
+import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import me.rojo8399.placeholderapi.Placeholder;
 import me.rojo8399.placeholderapi.PlaceholderService;
@@ -19,7 +20,7 @@ public class PlaceHolderManager {
     private static final String STR_T = "strvalue";
     private static final String ID_T = "usingid";
 
-    static void create() {
+    public static void create() {
         if (instance == null) {
             instance = new PlaceHolderManager();
         }
