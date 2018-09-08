@@ -78,3 +78,15 @@ sourceSets {
         resources.srcDir 'com/github/euonmyoji/newhonor/api'
     }
 }
+
+//https://fmltutor.ustc-zzzz.net/3.5.2-%E5%90%91%E5%85%B6%E4%BB%96Mod%E6%8F%90%E4%BE%9BAPI.html
+task apiJar(type: Jar) {
+    classifier = 'api'
+    from sourceSets.main.output
+    from sourceSets.main.allSource
+    include 'com/github/euonmyoji/newhonor/api/**'
+}
+
+artifacts {
+    archives apiJar
+}
