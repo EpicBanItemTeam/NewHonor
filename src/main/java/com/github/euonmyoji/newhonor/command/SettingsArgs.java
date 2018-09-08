@@ -9,7 +9,7 @@ import org.spongepowered.api.entity.living.player.User;
 
 import static org.spongepowered.api.text.Text.of;
 
-class SettingsArgs {
+final class SettingsArgs {
 
     static CommandSpec usehonor = CommandSpec.builder()
             .arguments(GenericArguments.bool(of("boolean")))

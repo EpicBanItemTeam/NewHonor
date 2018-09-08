@@ -1,6 +1,7 @@
-package com.github.euonmyoji.newhonor.configuration;
+package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import com.github.euonmyoji.newhonor.util.Util;
 import com.google.common.base.Charsets;
 import org.spongepowered.api.Sponge;

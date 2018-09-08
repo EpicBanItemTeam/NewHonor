@@ -5,7 +5,7 @@ import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
-import com.github.euonmyoji.newhonor.task.TaskManager;
+import com.github.euonmyoji.newhonor.manager.TaskManager;
 import com.github.euonmyoji.newhonor.util.Log;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -23,12 +23,12 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.github.euonmyoji.newhonor.configuration.LanguageManager.getText;
-import static com.github.euonmyoji.newhonor.configuration.LanguageManager.langBuilder;
+import static com.github.euonmyoji.newhonor.manager.LanguageManager.getText;
+import static com.github.euonmyoji.newhonor.manager.LanguageManager.langBuilder;
 import static org.spongepowered.api.text.Text.of;
 import static org.spongepowered.api.text.serializer.TextSerializers.FORMATTING_CODE;
 
-class AdminCommand {
+final class AdminCommand {
     private static NewHonor plugin = NewHonor.plugin;
 
     static CommandSpec refresh = CommandSpec.builder()

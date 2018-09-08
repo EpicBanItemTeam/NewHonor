@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  * @author yinyangshi
  */
-public class UltimateChatEventListener {
+public final class UltimateChatEventListener {
 
     @Listener
     public void sendCME(SendChannelMessageEvent event) {

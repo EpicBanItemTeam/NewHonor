@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-class EffectsCommand {
+final class EffectsCommand {
     static CommandSpec delete = CommandSpec.builder()
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {

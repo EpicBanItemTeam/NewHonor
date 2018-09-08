@@ -2,6 +2,7 @@ package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.manager.MysqlManager;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -17,8 +18,8 @@ import java.util.*;
 /**
  * @author yinyangshi
  */
-public class NewHonorConfig {
-    static CommentedConfigurationNode cfg;
+public final class NewHonorConfig {
+    public static CommentedConfigurationNode cfg;
     private static final TypeToken<List<String>> LIST_STRING_TYPE = new TypeToken<List<String>>() {
     };
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
@@ -58,7 +59,7 @@ public class NewHonorConfig {
         reload();
     }
 
-    static Locale getUsingLang() {
+    public static Locale getUsingLang() {
         String[] args = cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()).split("_", 2);
         return new Locale(args[0], args[1]);
     }
@@ -95,7 +96,7 @@ public class NewHonorConfig {
         }
     }
 
-    static Optional<List<String>> getDefaultOwnHonors() {
+    public static Optional<List<String>> getDefaultOwnHonors() {
         try {
             return cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true) ?
                     Optional.ofNullable(cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).getValue(LIST_STRING_TYPE)) : Optional.empty();

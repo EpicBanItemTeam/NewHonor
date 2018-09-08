@@ -3,7 +3,6 @@ package com.github.euonmyoji.newhonor.manager;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
-import com.github.euonmyoji.newhonor.task.DisplayHonorTaskManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scoreboard.Scoreboard;
@@ -18,7 +17,7 @@ import java.util.UUID;
 /**
  * @author yinyangshi
  */
-public class ScoreBoardManager {
+public final class ScoreBoardManager {
     public static boolean enable = false;
     private static Scoreboard scoreboard = Scoreboard.builder().build();
     private static final Object LOCK = new Object();

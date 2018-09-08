@@ -1,6 +1,8 @@
-package com.github.euonmyoji.newhonor.task;
+package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
+import com.github.euonmyoji.newhonor.task.EffectsOffer;
+import com.github.euonmyoji.newhonor.task.HaloEffectsOffer;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.List;
 /**
  * @author yinyangshi
  */
-public class TaskManager {
+public final class TaskManager {
     /**
      * 更新插件任务缓存
      *

@@ -112,7 +112,7 @@ public class HonorConfig {
         return cfg.getChildrenMap();
     }
 
-    static Optional<Text> getGetMessage(String id, String playername) {
+    public static Optional<Text> getGetMessage(String id, String playername) {
         //noinspection ConstantConditions 之前有检查
         return Optional.ofNullable(cfg.getNode(id, "getMessage").getString(null))
                 .map(s -> "&r" + s.replace("{playername}", playername))

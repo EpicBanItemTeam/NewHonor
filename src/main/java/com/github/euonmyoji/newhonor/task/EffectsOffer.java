@@ -38,7 +38,7 @@ public class EffectsOffer {
         }).name("NewHonor - Effects Offer Task").intervalTicks(Util.INTERVAL_TICKS).submit(NewHonor.plugin);
     }
 
-    static void update(Iterable<String> effects) {
+    public static void update(Iterable<String> effects) {
         synchronized (TASK_DATA) {
             TASK_DATA.clear();
             effects.forEach(id -> {

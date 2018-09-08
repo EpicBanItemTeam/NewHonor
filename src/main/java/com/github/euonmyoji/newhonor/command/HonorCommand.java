@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.github.euonmyoji.newhonor.configuration.LanguageManager.*;
+import static com.github.euonmyoji.newhonor.manager.LanguageManager.*;
 import static org.spongepowered.api.text.Text.of;
 import static org.spongepowered.api.text.action.TextActions.runCommand;
 import static org.spongepowered.api.text.action.TextActions.showText;
@@ -29,7 +29,7 @@ import static org.spongepowered.api.text.action.TextActions.showText;
 /**
  * @author yinyangshi
  */
-public class HonorCommand {
+public final class HonorCommand {
     private static String ADMIN_PERMISSION = "newhonor.admin";
     private static final HashMap<UUID, Integer> USE_CD = new HashMap<>();
     private static String ID_KEY = "id";

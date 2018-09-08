@@ -1,6 +1,7 @@
-package com.github.euonmyoji.newhonor.task;
+package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.task.DisplayHonorTask;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
@@ -11,8 +12,8 @@ import java.util.List;
 /**
  * @author yinyangshi
  */
-public class DisplayHonorTaskManager {
-    static final HashMap<String, DisplayHonorTask> TASKS = new HashMap<>();
+public final class DisplayHonorTaskManager {
+    public static final HashMap<String, DisplayHonorTask> TASKS = new HashMap<>();
 
     public static void submit(String id, List<Text> values, Team team, int[] delay) {
         synchronized (TASKS) {

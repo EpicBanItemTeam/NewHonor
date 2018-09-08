@@ -9,7 +9,7 @@ import org.spongepowered.api.text.Text;
 
 import java.util.List;
 
-import static com.github.euonmyoji.newhonor.task.DisplayHonorTaskManager.TASKS;
+import static com.github.euonmyoji.newhonor.manager.DisplayHonorTaskManager.TASKS;
 
 /**
  * @author yinyangshi
@@ -22,7 +22,7 @@ public class DisplayHonorTask implements Runnable {
     private int index;
     private volatile boolean running = true;
 
-    DisplayHonorTask(String id, List<Text> values, Team team, int[] delay) {
+    public DisplayHonorTask(String id, List<Text> values, Team team, int[] delay) {
         if (values.size() > delay.length) {
             throw new IllegalArgumentException();
         }
@@ -54,7 +54,7 @@ public class DisplayHonorTask implements Runnable {
         }
     }
 
-    void cancel() {
+    public void cancel() {
         synchronized (TASKS) {
             running = false;
             TASKS.remove(id);

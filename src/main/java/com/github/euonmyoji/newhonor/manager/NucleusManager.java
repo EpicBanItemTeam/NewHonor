@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * @author yinyangshi
  */
-public class NucleusManager {
+public final class NucleusManager {
     private static boolean done;
 
     public static void doIt() {

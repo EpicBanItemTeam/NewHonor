@@ -2,8 +2,8 @@ package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.LocalPlayerConfig;
+import com.github.euonmyoji.newhonor.manager.MysqlManager;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
-import com.github.euonmyoji.newhonor.configuration.MysqlManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.scheduler.Task;
@@ -20,7 +20,7 @@ import static org.spongepowered.api.text.Text.of;
 /**
  * @author yinyangshi
  */
-class SqlCommand {
+final class SqlCommand {
 
     static CommandSpec updateToSql = CommandSpec.builder()
             .executor((src, args) -> {

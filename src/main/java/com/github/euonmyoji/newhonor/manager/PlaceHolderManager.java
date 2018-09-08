@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 /**
  * @author yinyangshi
  */
-public class PlaceHolderManager {
+public final class PlaceHolderManager {
     private static PlaceHolderManager instance;
     private static final String VALUE_T = "value";
     private static final String STR_T = "strvalue";

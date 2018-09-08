@@ -2,7 +2,6 @@ package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.LocalPlayerConfig;
-import com.github.euonmyoji.newhonor.configuration.MysqlManager;
 
 import java.util.HashMap;
 

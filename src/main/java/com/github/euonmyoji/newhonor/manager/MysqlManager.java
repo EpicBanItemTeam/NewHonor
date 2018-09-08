@@ -1,9 +1,11 @@
-package com.github.euonmyoji.newhonor.configuration;
+package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.BasePlayerConfig;
 import com.github.euonmyoji.newhonor.api.event.PlayerGetHonorEvent;
 import com.github.euonmyoji.newhonor.api.event.PlayerLoseHonorEvent;
+import com.github.euonmyoji.newhonor.configuration.HonorConfig;
+import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -16,14 +18,14 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 
-import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.cfg;
 import static com.github.euonmyoji.newhonor.api.configuration.PlayerConfig.*;
+import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.cfg;
 
 /**
  * @author yinyangshi
  */
-public class MysqlManager {
-    static boolean enable = false;
+public final class MysqlManager {
+    public static boolean enable = false;
     private static final String TABLE_NAME = "NewHonorPlayerData";
     private static String address;
     private static short port;
@@ -45,7 +47,7 @@ public class MysqlManager {
         node.getNode("update-encoding").setValue(update_encoding);
     }
 
-    static void reloadSQLInfo() {
+    public static void reloadSQLInfo() {
         CommentedConfigurationNode node = cfg.getNode("SQL-settings");
         enable = node.getNode("enable").getBoolean(false);
         address = node.getNode("address").getString("address");

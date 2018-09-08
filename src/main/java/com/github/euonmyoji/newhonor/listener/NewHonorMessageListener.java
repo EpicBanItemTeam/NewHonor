@@ -9,7 +9,7 @@ import org.spongepowered.api.text.channel.MessageChannel;
 /**
  * @author yinyangshi
  */
-public class NewHonorMessageListener {
+public final class NewHonorMessageListener {
 
     @Listener(order = Order.LAST)
     public void onChat(MessageChannelEvent.Chat event) {

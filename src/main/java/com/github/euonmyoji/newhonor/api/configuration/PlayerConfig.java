@@ -2,7 +2,7 @@ package com.github.euonmyoji.newhonor.api.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.configuration.LanguageManager;
+import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.manager.PlayerConfigManager;
