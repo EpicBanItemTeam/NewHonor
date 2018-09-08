@@ -231,7 +231,7 @@ class AdminCommand {
                         return null;
                     })
                     .filter(Objects::nonNull)
-                    .forEach(NewHonor::doSomething);
+                    .forEach(NewHonor::updateCache);
             long endTime = System.currentTimeMillis();
             src.sendMessage(of("[NewHonor]refreshed successfully in " + (endTime - startTime) + " ms"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);

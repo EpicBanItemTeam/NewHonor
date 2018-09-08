@@ -12,6 +12,7 @@ import java.util.UUID;
  *
  * @author yinyangshi
  */
+@SuppressWarnings("unused")
 @NonnullByDefault
 public class PlayerGetHonorEvent implements Event, Cancellable {
     private Cause cause;

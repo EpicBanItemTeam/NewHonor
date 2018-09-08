@@ -45,8 +45,8 @@ class ScoreBoardManager {
         if (enable) {
             try {
                 execute(p);
-            } catch (SQLException e) {
-                NewHonor.logger.warn("init player scoreboard sql e", e);
+            } catch (Exception e) {
+                NewHonor.logger.warn("init player scoreboard error", e);
             }
             setPlayerScoreBoard(p);
         }
@@ -56,9 +56,9 @@ class ScoreBoardManager {
      * 更新玩家拥有头衔到scoreboard上 并加入对应队伍
      *
      * @param p 玩家
-     * @throws SQLException 读取玩家配置发生SQLE
+     * @throws SQLException 读取玩家配置发生error
      */
-    private static void execute(Player p) throws SQLException {
+    private static void execute(Player p) throws Exception {
         UUID uuid = p.getUniqueId();
         PlayerConfig pd = PlayerConfig.get(p);
         String honorID = pd.getUsingHonorID();

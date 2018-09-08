@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.configuration.BasePlayerConfig;
 import com.github.euonmyoji.newhonor.api.event.PlayerGetHonorEvent;
 import com.github.euonmyoji.newhonor.api.event.PlayerLoseHonorEvent;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -21,8 +22,8 @@ import static com.github.euonmyoji.newhonor.api.configuration.PlayerConfig.*;
 /**
  * @author yinyangshi
  */
-public class SqlManager {
-    public static boolean enable = false;
+public class MysqlManager {
+    static boolean enable = false;
     private static final String TABLE_NAME = "NewHonorPlayerData";
     private static String address;
     private static short port;
@@ -86,13 +87,13 @@ public class SqlManager {
                 address, port, database, user, password);
     }
 
-    public static class SqlPlayerConfig extends BasePlayerConfig {
+    public static class MysqlPlayerConfig extends BasePlayerConfig {
         private List<SQLException> es = new ArrayList<>();
         private boolean done;
 
         private static final String D = ",";
 
-        public SqlPlayerConfig(UUID uuid) throws SQLException {
+        public MysqlPlayerConfig(UUID uuid) throws SQLException {
             this.uuid = uuid;
             Task.builder().execute(() -> {
                 try (Connection con = getConnection()) {
@@ -291,7 +292,7 @@ public class SqlManager {
         return getDataSource(getURL()).getConnection();
     }
 
-    private SqlManager() {
+    private MysqlManager() {
         throw new UnsupportedOperationException();
     }
 }

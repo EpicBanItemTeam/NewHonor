@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -52,7 +53,7 @@ public class NewHonorConfig {
         } catch (ObjectMappingException e) {
             NewHonor.logger.error("Exception while set default has honors!", e);
         }
-        SqlManager.init();
+        MysqlManager.init();
         save();
         reload();
     }
@@ -71,7 +72,14 @@ public class NewHonorConfig {
         String path = cfg.getNode(DATA_PATH_NODE).getString("default");
         cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
         NewHonor.logger.info("using data dir path:" + cfgDir);
-        SqlManager.reloadSQLInfo();
+        MysqlManager.reloadSQLInfo();
+        String mysql = "mysql";
+        String local = "local";
+        if (!MysqlManager.enable && mysql.equals(PlayerConfig.getDefaultConfigType())) {
+            PlayerConfig.setDefaultConfigType(local);
+        } else if (MysqlManager.enable && local.equals(PlayerConfig.getDefaultConfigType())) {
+            PlayerConfig.setDefaultConfigType(mysql);
+        }
     }
 
     public static CommentedConfigurationNode getCfg() {

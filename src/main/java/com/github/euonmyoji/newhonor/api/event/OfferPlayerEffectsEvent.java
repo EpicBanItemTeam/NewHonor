@@ -17,6 +17,7 @@ import java.util.Optional;
  *
  * @author yinyangshi
  */
+@SuppressWarnings("unused")
 public class OfferPlayerEffectsEvent implements Event, Cancellable {
     private String effectsID;
     private Player player;

@@ -77,7 +77,7 @@ public class HonorCommand {
                             pd.init();
                             src.sendMessage(getText("newhonor.changehonor.failed"));
                         }
-                        NewHonor.doSomething(pd);
+                        NewHonor.updateCache(pd);
                         if (!src.hasPermission(ADMIN_PERMISSION)) {
                             USE_CD.put(((Identifiable) src).getUniqueId(), 9);
                         }
@@ -162,8 +162,8 @@ public class HonorCommand {
                             } else {
                                 src.sendMessage(of("unknown error"));
                             }
-                        } catch (SQLException e) {
-                            src.sendMessage(getText("[NewHonor] sql error!"));
+                        } catch (Exception e) {
+                            src.sendMessage(getText("[NewHonor] get data error!"));
                             e.printStackTrace();
                         }
                     }).async().name("newhonor - List Player" + user.getName() + " Honors").submit(NewHonor.plugin);

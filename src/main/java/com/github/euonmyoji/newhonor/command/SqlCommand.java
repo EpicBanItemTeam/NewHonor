@@ -3,7 +3,7 @@ package com.github.euonmyoji.newhonor.command;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.LocalPlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
-import com.github.euonmyoji.newhonor.configuration.SqlManager;
+import com.github.euonmyoji.newhonor.configuration.MysqlManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.scheduler.Task;
@@ -33,7 +33,7 @@ class SqlCommand {
                                 .collect(Collectors.toList());
                         for (String s : list) {
                             UUID uuid = UUID.fromString(s);
-                            SqlManager.SqlPlayerConfig sqlCfg = new SqlManager.SqlPlayerConfig(uuid);
+                            MysqlManager.MysqlPlayerConfig sqlCfg = new MysqlManager.MysqlPlayerConfig(uuid);
                             LocalPlayerConfig localCfg = new LocalPlayerConfig(uuid);
                             localCfg.checkUsingHonor();
                             sqlCfg.setUseHonor(localCfg.getUsingHonorID());
@@ -66,7 +66,7 @@ class SqlCommand {
                                 .collect(Collectors.toList());
                         for (String s : list) {
                             UUID uuid = UUID.fromString(s);
-                            SqlManager.SqlPlayerConfig sqlCfg = new SqlManager.SqlPlayerConfig(uuid);
+                            MysqlManager.MysqlPlayerConfig sqlCfg = new MysqlManager.MysqlPlayerConfig(uuid);
                             LocalPlayerConfig localCfg = new LocalPlayerConfig(uuid);
                             sqlCfg.checkUsingHonor();
                             localCfg.setUseHonor(sqlCfg.getUsingHonorID());

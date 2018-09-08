@@ -47,7 +47,7 @@ import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.*;
 @Plugin(id = NewHonor.NEWHONOR_ID, name = "New Honor", version = NewHonor.VERSION, authors = "yinyangshi", description = "NewHonor plugin",
         dependencies = {@Dependency(id = NewHonor.UCHAT_ID, optional = true), @Dependency(id = NewHonor.PAPI_ID, optional = true),
                 @Dependency(id = NewHonor.NUCLEUS_ID, optional = true)})
-public class NewHonor {
+public final class NewHonor {
     static final String NEWHONOR_ID = "newhonor";
     static final String NUCLEUS_ID = "nucleus";
     static final String PAPI_ID = "placeholderapi";
@@ -116,37 +116,9 @@ public class NewHonor {
                     .setValue(NewHonorConfig.getCfg().getNode(PERMISSION_MANAGE).getBoolean(false));
             NewHonorConfig.save();
             LanguageManager.reload();
-            SqlManager.init();
+            MysqlManager.init();
         } catch (IOException e) {
             logger.warn("init plugin IOE!", e);
-        }
-    }
-
-    private void checkUpdate() {
-        try {
-            final String u = "https://api.github.com/repos/euOnmyoji/NewHonor-plugin-for-sponge/releases";
-            HttpsURLConnection con = (HttpsURLConnection) new URL(u)
-                    .openConnection();
-            con.setRequestMethod("GET");
-            con.getResponseCode();
-            try (InputStreamReader reader = new InputStreamReader(con.getInputStream(), Charsets.UTF_8)) {
-                JsonObject json = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
-                String v = json.get("tag_name").getAsString()
-                        .replace("version", "")
-                        .replace("build", "");
-                String preKey = "pre";
-                if (!v.contains(preKey)) {
-                    int c = new ComparableVersion(v).compareTo(new ComparableVersion(VERSION));
-                    if (c > 0) {
-                        logger.info("found a latest version:" + v + ".Your version now:" + VERSION);
-                    } else if (c < 0) {
-                        logger.info("the latest version in github.com:" + v + "[Your version:" + VERSION + "]");
-                    }
-                }
-            }
-        } catch (Throwable e) {
-            logger.info("check for updating failed");
-            logger.debug("check update error", e);
         }
     }
 
@@ -181,7 +153,7 @@ public class NewHonor {
                 pd.init();
                 pd.checkPermission();
                 pd.checkUsingHonor();
-                doSomething(pd);
+                updateCache(pd);
             } catch (Throwable e) {
                 logger.error("error while init player", e);
             }
@@ -218,9 +190,57 @@ public class NewHonor {
         }
     }
 
+    public void reload() {
+        Sponge.getEventManager().post(new NewHonorReloadEvent());
+        NewHonorConfig.reload();
+        LanguageManager.reload();
+        HonorConfig.reload();
+        try {
+            TaskManager.update();
+        } catch (IOException e) {
+            logger.warn("reload error!", e);
+        }
+        NewHonor.plugin.hook();
+    }
+
     /**
-     * 探测插件 添加变量
+     * 对玩家配置进行检查 然后更新缓存
+     *
+     * @param pd 玩家配置
      */
+    public static void updateCache(PlayerConfig pd) {
+        Runnable r = () -> {
+            try {
+                synchronized (CACHE_LOCK) {
+                    pd.checkUsingHonor();
+                    plugin.playerUsingEffectCache.remove(pd.getUUID());
+                    plugin.honorTextCache.remove(pd.getUUID());
+                    if (pd.isUseHonor()) {
+                        pd.getUsingHonorValue().ifPresent(data -> plugin.honorTextCache.put(pd.getUUID(), data));
+                        if (pd.isEnabledEffects()) {
+                            HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("error about data!", e);
+            }
+        };
+        Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> ScoreBoardManager.initPlayer(player));
+
+        //r为插件数据修改 异步(有mysql) r2为玩家自身数据修改 可能不存在需要运行的 需要同步
+        //为了保证更新时缓存为最新 r需要先运行
+        if (Sponge.getServer().isMainThread()) {
+            Task.builder().execute(() -> {
+                r.run();
+                r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
+            }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
+        } else {
+            r.run();
+            r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
+        }
+    }
+
     private void hook() {
         EventManager eventManager = Sponge.getEventManager();
         eventManager.unregisterListeners(NewHonorListener);
@@ -271,54 +291,31 @@ public class NewHonor {
         }
     }
 
-    public void reload() {
-        Sponge.getEventManager().post(new NewHonorReloadEvent());
-        NewHonorConfig.reload();
-        LanguageManager.reload();
-        HonorConfig.reload();
+    private void checkUpdate() {
         try {
-            TaskManager.update();
-        } catch (IOException e) {
-            logger.warn("reload error!", e);
-        }
-        NewHonor.plugin.hook();
-    }
-
-    /**
-     * 对玩家配置进行检查 然后更新缓存
-     *
-     * @param pd 玩家配置
-     */
-    public static void doSomething(PlayerConfig pd) {
-        Runnable r = () -> {
-            try {
-                synchronized (CACHE_LOCK) {
-                    pd.checkUsingHonor();
-                    plugin.playerUsingEffectCache.remove(pd.getUUID());
-                    plugin.honorTextCache.remove(pd.getUUID());
-                    if (pd.isUseHonor()) {
-                        pd.getUsingHonorValue().ifPresent(data -> plugin.honorTextCache.put(pd.getUUID(), data));
-                        if (pd.isEnabledEffects()) {
-                            HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
-                        }
+            final String u = "https://api.github.com/repos/euOnmyoji/NewHonor-plugin-for-sponge/releases";
+            HttpsURLConnection con = (HttpsURLConnection) new URL(u)
+                    .openConnection();
+            con.setRequestMethod("GET");
+            con.getResponseCode();
+            try (InputStreamReader reader = new InputStreamReader(con.getInputStream(), Charsets.UTF_8)) {
+                JsonObject json = new JsonParser().parse(reader).getAsJsonArray().get(0).getAsJsonObject();
+                String v = json.get("tag_name").getAsString()
+                        .replace("version", "")
+                        .replace("build", "");
+                String preKey = "pre";
+                if (!v.contains(preKey)) {
+                    int c = new ComparableVersion(v).compareTo(new ComparableVersion(VERSION));
+                    if (c > 0) {
+                        logger.info("found a latest version:" + v + ".Your version now:" + VERSION);
+                    } else if (c < 0) {
+                        logger.info("the latest version in github.com:" + v + "[Your version:" + VERSION + "]");
                     }
                 }
-            } catch (Exception e) {
-                logger.error("error about data!", e);
             }
-        };
-        Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> ScoreBoardManager.initPlayer(player));
-
-        //r为插件数据修改 异步(有mysql) r2为玩家自身数据修改 可能不存在需要运行的 需要同步
-        //为了保证更新时缓存为最新 r需要先运行
-        if (Sponge.getServer().isMainThread()) {
-            Task.builder().execute(() -> {
-                r.run();
-                r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
-            }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
-        } else {
-            r.run();
-            r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
+        } catch (Throwable e) {
+            logger.info("check for updating failed");
+            logger.debug("check update error", e);
         }
     }
 }

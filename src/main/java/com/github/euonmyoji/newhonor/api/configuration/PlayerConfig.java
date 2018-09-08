@@ -1,7 +1,9 @@
 package com.github.euonmyoji.newhonor.api.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.configuration.*;
+import com.github.euonmyoji.newhonor.configuration.HonorConfig;
+import com.github.euonmyoji.newhonor.configuration.LanguageManager;
+import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
 import com.github.euonmyoji.newhonor.util.Log;
 import org.spongepowered.api.Sponge;
@@ -10,11 +12,13 @@ import org.spongepowered.api.entity.living.player.User;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.github.euonmyoji.newhonor.api.configuration.BasePlayerConfig.d;
 import static com.github.euonmyoji.newhonor.configuration.HonorConfig.getHonorValueData;
 
 /**
  * @author yinyangshi
  */
+@SuppressWarnings("unused")
 public interface PlayerConfig {
     String USING_KEY = "usinghonor";
     String HONORS_KEY = "honors";
@@ -27,9 +31,9 @@ public interface PlayerConfig {
      *
      * @param user user对象
      * @return data
-     * @throws SQLException when found any error
+     * @throws Exception when found any error
      */
-    static PlayerConfig get(User user) throws SQLException {
+    static PlayerConfig get(User user) throws Exception {
         return get(user.getUniqueId());
     }
 
@@ -38,10 +42,72 @@ public interface PlayerConfig {
      *
      * @param uuid 玩家uuid
      * @return data
-     * @throws SQLException when found any error
+     * @throws Exception when found any error
      */
-    static PlayerConfig get(UUID uuid) throws SQLException {
-        return SqlManager.enable ? new SqlManager.SqlPlayerConfig(uuid) : new LocalPlayerConfig(uuid);
+    static PlayerConfig get(UUID uuid) throws Exception {
+        return BasePlayerConfig.map.get(getDefaultConfigType()).getConstructor(UUID.class).newInstance(uuid);
+    }
+
+    /**
+     * 通过type得到玩家数据
+     *
+     * @param type 那个玩家数据的type
+     * @param uuid the uuid of player
+     * @return data
+     * @throws Exception if any error
+     */
+    static PlayerConfig getOf(String type, UUID uuid) throws Exception {
+        return BasePlayerConfig.map.get(type).getConstructor(UUID.class).newInstance(uuid);
+    }
+
+    /**
+     * 设置玩家数据默认用什么
+     *
+     * @param type the type of config
+     */
+    static void setDefaultConfigType(String type) {
+        d = type;
+    }
+
+    /**
+     * 获取玩家数据默认类型
+     *
+     * @return string of type
+     */
+    static String getDefaultConfigType() {
+        return d;
+    }
+
+    /**
+     * 检查一个数据类型是否存在
+     *
+     * @param type the type of player config
+     * @return true if present
+     */
+    static boolean isTypePresent(String type) {
+        return BasePlayerConfig.map.containsKey(type);
+    }
+
+    /**
+     * registerPlayerConfigType
+     *
+     * @param id the id of type
+     * @param c  the class
+     * @throws NoSuchMethodException if there is no constructor(UUID uuid) or it's not public
+     */
+    static void registerPlayerConfig(String id, Class<? extends PlayerConfig> c) throws NoSuchMethodException {
+        c.getConstructor(UUID.class);
+        BasePlayerConfig.map.put(id, c);
+    }
+
+    /**
+     * 移除一个playerConfig type
+     *
+     * @param id the player config type
+     * @return true if unregistered successfully or false if it is not present
+     */
+    static boolean unregister(String id) {
+        return BasePlayerConfig.map.remove(id) != null;
     }
 
     /**

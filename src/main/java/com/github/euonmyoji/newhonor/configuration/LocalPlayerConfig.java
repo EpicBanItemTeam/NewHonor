@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.configuration.BasePlayerConfig;
 import com.github.euonmyoji.newhonor.api.event.PlayerGetHonorEvent;
 import com.github.euonmyoji.newhonor.api.event.PlayerLoseHonorEvent;
 import com.google.common.reflect.TypeToken;
@@ -177,7 +178,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
                     HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
             if (isEnabledAutoChange()) {
                 setUseHonor(id);
-                NewHonor.doSomething(this);
+                NewHonor.updateCache(this);
             }
             return true;
         }

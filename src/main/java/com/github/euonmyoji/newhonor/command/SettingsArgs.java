@@ -19,7 +19,7 @@ class SettingsArgs {
                         boolean use = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
                         PlayerConfig pd = PlayerConfig.get(((User) src));
                         pd.setWhetherUseHonor(use);
-                        NewHonor.doSomething(pd);
+                        NewHonor.updateCache(pd);
                         src.sendMessage(of("[NewHonor]change settings successful"));
                         return CommandResult.success();
                     } catch (Exception e) {
@@ -40,7 +40,7 @@ class SettingsArgs {
                         boolean enable = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
                         PlayerConfig pd = PlayerConfig.get(((User) src));
                         pd.setWhetherEnableEffects(enable);
-                        NewHonor.doSomething(pd);
+                        NewHonor.updateCache(pd);
                         src.sendMessage(of("[NewHonor]change settings successful"));
                         return CommandResult.success();
                     } catch (Exception e) {
@@ -62,7 +62,7 @@ class SettingsArgs {
                         boolean enable = args.<Boolean>getOne(of("boolean")).orElseThrow(NoSuchFieldError::new);
                         PlayerConfig pd = PlayerConfig.get(((User) src));
                         pd.enableAutoChange(enable);
-                        NewHonor.doSomething(pd);
+                        NewHonor.updateCache(pd);
                         src.sendMessage(of("[NewHonor]change settings successful"));
                         return CommandResult.success();
                     } catch (Exception e) {
