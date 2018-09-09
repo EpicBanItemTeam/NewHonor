@@ -14,7 +14,7 @@ https://bstats.org/plugin/sponge/New%20Honor
 some var:
 
 PAPI
-%newhonor%
+%newhonor%    %newhonor_strvalue%    %newhonor_value%    %newhonor_usingid%
 
 UChat
 {newhonor}
