@@ -2,9 +2,9 @@ package com.github.euonmyoji.newhonor.api.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.manager.PlayerConfigManager;
 import com.github.euonmyoji.newhonor.util.Log;
 import org.spongepowered.api.Sponge;
@@ -57,6 +57,7 @@ public interface PlayerConfig {
      * @return data
      * @throws Exception if any error
      */
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     static PlayerConfig getOf(String type, UUID uuid) throws Exception {
         return PlayerConfigManager.map.get(type).getConstructor(UUID.class).newInstance(uuid);
     }
@@ -66,7 +67,6 @@ public interface PlayerConfig {
      *
      * @param type the type of config
      */
-    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     static void setDefaultConfigType(String type) {
         if (!isTypePresent(type)) {
             throw new IllegalArgumentException("The type is not present!");
@@ -110,13 +110,54 @@ public interface PlayerConfig {
      *
      * @param id the player config type
      * @return true if unregistered successfully or false if it is not present
+     * @deprecated see <see>unregister</see>
      */
+    @Deprecated
     static boolean unregister(String id) {
         if (getDefaultConfigType().equals(id)) {
             PlayerConfigManager.map.keySet().stream().filter(s -> !s.equals(id)).findAny()
-                    .ifPresent(PlayerConfig::setDefaultConfigType);
+                    .ifPresent(s -> {
+                        setDefaultConfigType(s);
+                        NewHonor.logger.info("[NewHonor]A plugin unregister " + id + ", so now is using ", s + " type to save&load playerdata");
+                    });
         }
         return PlayerConfigManager.map.remove(id) != null;
+    }
+
+    /**
+     * 移除一个playerConfig class
+     *
+     * @param c the class
+     * @return true if unregistered successfully or false if it is not present
+     */
+    static boolean unregister(Class<? extends PlayerConfig> c) {
+        String[] id = new String[1];
+        boolean result = PlayerConfigManager.map.entrySet().removeIf(entry -> {
+            boolean r = entry.getValue().equals(c);
+            if (r) {
+                id[0] = entry.getKey();
+            }
+            return r;
+        });
+        if (result) {
+            if (id[0].equals(getDefaultConfigType())) {
+                PlayerConfigManager.map.keySet().stream().findAny()
+                        .ifPresent(newId -> {
+                            setDefaultConfigType(newId);
+                            NewHonor.logger.info("[NewHonor]A plugin unregister " + id[0] + ", so now is using ", newId + " type to save&load playerdata");
+                        });
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 获取已注册的玩家数据class所有typeID
+     *
+     * @return the ids of player configs
+     */
+    static Set<String> getRegisteredConfigTypes() {
+        return PlayerConfigManager.map.keySet();
     }
 
     /**

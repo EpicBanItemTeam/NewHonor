@@ -1,8 +1,7 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.configuration.LocalPlayerConfig;
-import com.github.euonmyoji.newhonor.manager.MysqlManager;
+import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -10,6 +9,7 @@ import org.spongepowered.api.scheduler.Task;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,8 +33,8 @@ final class SqlCommand {
                                 .collect(Collectors.toList());
                         for (String s : list) {
                             UUID uuid = UUID.fromString(s);
-                            MysqlManager.MysqlPlayerConfig sqlCfg = new MysqlManager.MysqlPlayerConfig(uuid);
-                            LocalPlayerConfig localCfg = new LocalPlayerConfig(uuid);
+                            PlayerConfig sqlCfg = PlayerConfig.getOf("mysql", uuid);
+                            PlayerConfig localCfg = PlayerConfig.getOf("local", uuid);
                             localCfg.checkUsingHonor();
                             sqlCfg.setUseHonor(localCfg.getUsingHonorID());
                             Optional<List<String>> optHonors = localCfg.getOwnHonors();
@@ -66,14 +66,19 @@ final class SqlCommand {
                                 .collect(Collectors.toList());
                         for (String s : list) {
                             UUID uuid = UUID.fromString(s);
-                            MysqlManager.MysqlPlayerConfig sqlCfg = new MysqlManager.MysqlPlayerConfig(uuid);
-                            LocalPlayerConfig localCfg = new LocalPlayerConfig(uuid);
+                            PlayerConfig sqlCfg = PlayerConfig.getOf("mysql", uuid);
+                            PlayerConfig localCfg = PlayerConfig.getOf("local", uuid);
                             sqlCfg.checkUsingHonor();
                             localCfg.setUseHonor(sqlCfg.getUsingHonorID());
-                            sqlCfg.getOwnHonors().ifPresent(strings -> strings.forEach(localCfg::giveHonor));
+                            sqlCfg.getOwnHonors().ifPresent(strings -> strings.forEach(s1 -> {
+                                try {
+                                    localCfg.giveHonor(s1);
+                                } catch (SQLException e) {
+                                    NewHonor.logger.warn("Why sql with local cfg?", e);
+                                }
+                            }));
                             localCfg.setWhetherEnableEffects(sqlCfg.isEnabledEffects());
                             localCfg.setWhetherUseHonor(sqlCfg.isUseHonor());
-                            localCfg.save();
                         }
                         src.sendMessage(of("[NewHonor] download finished successful"));
                     } catch (Exception e) {
