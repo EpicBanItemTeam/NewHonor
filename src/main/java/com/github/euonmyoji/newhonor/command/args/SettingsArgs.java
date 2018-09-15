@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.command;
+package com.github.euonmyoji.newhonor.command.args;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
@@ -9,9 +9,12 @@ import org.spongepowered.api.entity.living.player.User;
 
 import static org.spongepowered.api.text.Text.of;
 
-final class SettingsArgs {
+/**
+ * @author yinyangshi
+ */
+public final class SettingsArgs {
 
-    static CommandSpec usehonor = CommandSpec.builder()
+    public static CommandSpec usehonor = CommandSpec.builder()
             .arguments(GenericArguments.bool(of("boolean")))
             .executor((src, args) -> {
                 if (src instanceof User) {
@@ -32,7 +35,7 @@ final class SettingsArgs {
             })
             .build();
 
-    static CommandSpec enableEffects = CommandSpec.builder()
+    public static CommandSpec enableEffects = CommandSpec.builder()
             .arguments(GenericArguments.bool(of("boolean")))
             .executor((src, args) -> {
                 if (src instanceof User) {
@@ -54,7 +57,7 @@ final class SettingsArgs {
             })
             .build();
 
-    static CommandSpec autochange = CommandSpec.builder()
+    public static CommandSpec autochange = CommandSpec.builder()
             .arguments(GenericArguments.bool(of("boolean")))
             .executor((src, args) -> {
                 if (src instanceof User) {

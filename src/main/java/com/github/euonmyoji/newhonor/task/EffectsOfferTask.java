@@ -26,7 +26,7 @@ import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KE
 /**
  * @author yinyangshi
  */
-public class EffectsOffer {
+public class EffectsOfferTask {
     public static final HashMap<String, SelfTaskData> TASK_DATA = new HashMap<>();
     private static final String EFFECTS_KEY = "effects";
 
@@ -117,7 +117,7 @@ public class EffectsOffer {
         }
     }
 
-    private EffectsOffer() {
+    private EffectsOfferTask() {
         throw new UnsupportedOperationException();
     }
 }

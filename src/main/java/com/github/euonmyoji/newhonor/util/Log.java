@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.util;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
+import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import org.spongepowered.api.scheduler.Task;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.time.LocalTime;
  * @author yinyangshi
  */
 public class Log {
-    private static final Path PATH = NewHonorConfig.cfgDir.resolve("logs");
+    private static final Path PATH = PluginConfig.cfgDir.resolve("logs");
     private static final Object LOCK = new Object();
 
     static {

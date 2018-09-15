@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.data.HonorData;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -21,13 +21,13 @@ import java.util.Set;
 public class HonorConfig {
     private static CommentedConfigurationNode cfg;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
-    private static HashMap<String, HonorValueData> valueMap = new HashMap<>();
+    private static HashMap<String, HonorData> valueMap = new HashMap<>();
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
-                .setPath(NewHonorConfig.cfgDir.resolve("honor.conf")).build();
+                .setPath(PluginConfig.cfgDir.resolve("honor.conf")).build();
         cfg = load();
-        NewHonorConfig.getDefaultOwnHonors().ifPresent(strings -> strings.forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]"))));
+        PluginConfig.getDefaultOwnHonors().ifPresent(strings -> strings.forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]"))));
         cfg.removeChild("created-honors");
         save();
         reload();
@@ -45,19 +45,19 @@ public class HonorConfig {
     public static boolean addHonor(String id, String honor) {
         if (isVirtual(id)) {
             cfg.getNode(id, "value").setValue(honor);
-            valueMap.put(id, new HonorValueData(cfg.getNode(id), id));
+            valueMap.put(id, new HonorData(cfg.getNode(id), id));
             return save();
         }
         return false;
     }
 
-    public static Optional<HonorValueData> getHonorValueData(String id) {
+    public static Optional<HonorData> getHonorValueData(String id) {
         return Optional.ofNullable(valueMap.get(id));
     }
 
     public static boolean setHonor(String id, String honor) {
         cfg.getNode(id, "value").setValue(honor);
-        valueMap.put(id, new HonorValueData(cfg.getNode(id), id));
+        valueMap.put(id, new HonorData(cfg.getNode(id), id));
         return save();
     }
 
@@ -82,7 +82,7 @@ public class HonorConfig {
     public static void reload() {
         cfg = load();
         valueMap.clear();
-        getHonorsMap().forEach((o, o2) -> valueMap.put(o.toString(), new HonorValueData(o2, o.toString())));
+        getHonorsMap().forEach((o, o2) -> valueMap.put(o.toString(), new HonorData(o2, o.toString())));
     }
 
     private static boolean save() {
@@ -99,7 +99,7 @@ public class HonorConfig {
         if (valueMap == null || valueMap.isEmpty()) {
             Map<Object, ? extends CommentedConfigurationNode> honorsMap = getHonorsMap();
             valueMap = new HashMap<>(honorsMap.size());
-            honorsMap.forEach((o, o2) -> valueMap.put(o.toString(), new HonorValueData(o2, o.toString())));
+            honorsMap.forEach((o, o2) -> valueMap.put(o.toString(), new HonorData(o2, o.toString())));
         }
         return valueMap.keySet();
     }

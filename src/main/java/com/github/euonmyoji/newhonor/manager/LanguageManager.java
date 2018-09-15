@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
+import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import com.github.euonmyoji.newhonor.util.Util;
 import com.google.common.base.Charsets;
 import org.spongepowered.api.Sponge;
@@ -74,7 +74,7 @@ public class LanguageManager {
 
     private static void init() {
         try {
-            Path langFolder = NewHonorConfig.cfgDir.resolve("lang");
+            Path langFolder = PluginConfig.cfgDir.resolve("lang");
             if (Files.notExists(langFolder)) {
                 Files.createDirectory(langFolder);
             }
@@ -86,7 +86,7 @@ public class LanguageManager {
                 }
             } catch (FileNotFoundException ignore) {
                 NewHonor.logger.info("locale language file not found");
-                langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(Locale.US.toString() + ".lang");
+                langFile = PluginConfig.cfgDir.resolve("lang").resolve(Locale.US.toString() + ".lang");
                 Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/" + Locale.US.toString() + ".lang")
                         .orElseThrow(() -> new IOException("asset didn't found language file!"))
                         .copyToFile(langFile);
@@ -98,8 +98,8 @@ public class LanguageManager {
 
     public static void reload() {
         try {
-            locale = NewHonorConfig.getUsingLang();
-            langFile = NewHonorConfig.cfgDir.resolve("lang").resolve(locale.toString() + ".lang");
+            locale = PluginConfig.getUsingLang();
+            langFile = PluginConfig.cfgDir.resolve("lang").resolve(locale.toString() + ".lang");
             init();
             res = new PropertyResourceBundle(new InputStreamReader(Files.newInputStream(langFile), Charsets.UTF_8));
         } catch (IOException e) {

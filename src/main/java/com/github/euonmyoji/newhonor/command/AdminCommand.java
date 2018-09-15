@@ -4,7 +4,7 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.data.HonorData;
 import com.github.euonmyoji.newhonor.manager.TaskManager;
 import com.github.euonmyoji.newhonor.util.Log;
 import org.spongepowered.api.Sponge;
@@ -116,7 +116,7 @@ final class AdminCommand {
                     PaginationList.Builder builder = PaginationList.builder().title(getText("newhonor.listcreatedhonors.title")).padding(of("-"));
                     builder.contents(HonorConfig.getAllCreatedHonors().stream().map(id -> langBuilder("newhonor.listcreatedhonors.contexts")
                             .replace("%honorid%", id)
-                            .replace("%honor%", FORMATTING_CODE.serialize(HonorConfig.getHonorValueData(id).map(HonorValueData::getValue)
+                            .replace("%honor%", FORMATTING_CODE.serialize(HonorConfig.getHonorValueData(id).map(HonorData::getValue)
                                     .orElse(of("there is something wrong"))))
                             .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
                             .build())

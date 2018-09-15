@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * @author yinyangshi
  */
-public final class NewHonorConfig {
+public final class PluginConfig {
     public static CommentedConfigurationNode cfg;
     private static final TypeToken<List<String>> LIST_STRING_TYPE = new TypeToken<List<String>>() {
     };
@@ -114,7 +114,7 @@ public final class NewHonorConfig {
         }
     }
 
-    private NewHonorConfig() {
+    private PluginConfig() {
         throw new UnsupportedOperationException();
     }
 }

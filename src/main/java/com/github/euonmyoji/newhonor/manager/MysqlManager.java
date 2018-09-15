@@ -5,7 +5,7 @@ import com.github.euonmyoji.newhonor.api.configuration.BasePlayerConfig;
 import com.github.euonmyoji.newhonor.api.event.PlayerGetHonorEvent;
 import com.github.euonmyoji.newhonor.api.event.PlayerLoseHonorEvent;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
+import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -19,7 +19,7 @@ import java.sql.*;
 import java.util.*;
 
 import static com.github.euonmyoji.newhonor.api.configuration.PlayerConfig.*;
-import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.cfg;
+import static com.github.euonmyoji.newhonor.configuration.PluginConfig.cfg;
 
 /**
  * @author yinyangshi
@@ -146,7 +146,7 @@ public final class MysqlManager {
 
         @Override
         public void init() throws SQLException {
-            Optional<List<String>> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
+            Optional<List<String>> defaultHonors = PluginConfig.getDefaultOwnHonors();
             if (defaultHonors.isPresent()) {
                 giveHonor(defaultHonors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""));
                 if (getUsingHonorID() == null) {

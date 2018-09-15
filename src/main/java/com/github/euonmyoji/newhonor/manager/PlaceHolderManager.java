@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.data.HonorData;
 import me.rojo8399.placeholderapi.Placeholder;
 import me.rojo8399.placeholderapi.PlaceholderService;
 import me.rojo8399.placeholderapi.Source;
@@ -28,7 +28,7 @@ public final class PlaceHolderManager {
 
     @Placeholder(id = NewHonor.NEWHONOR_ID)
     public Object getNewHonorText(@Source User user, @Nullable @Token(fix = true) String token) {
-        HonorValueData value = NewHonor.plugin.honorTextCache.get(user.getUniqueId());
+        HonorData value = NewHonor.plugin.honorTextCache.get(user.getUniqueId());
         if (value != null) {
             if (token == null) {
                 return value.getValue();

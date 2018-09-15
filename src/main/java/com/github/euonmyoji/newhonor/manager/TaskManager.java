@@ -1,8 +1,8 @@
 package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
-import com.github.euonmyoji.newhonor.task.EffectsOffer;
-import com.github.euonmyoji.newhonor.task.HaloEffectsOffer;
+import com.github.euonmyoji.newhonor.task.EffectsOfferTask;
+import com.github.euonmyoji.newhonor.task.HaloEffectsOfferTask;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,8 +18,8 @@ public final class TaskManager {
      */
     public static void update() throws IOException {
         List<String> effects = EffectsConfig.getCreatedEffects();
-        EffectsOffer.update(effects);
-        HaloEffectsOffer.update(effects);
+        EffectsOfferTask.update(effects);
+        HaloEffectsOfferTask.update(effects);
     }
 
     private TaskManager() {

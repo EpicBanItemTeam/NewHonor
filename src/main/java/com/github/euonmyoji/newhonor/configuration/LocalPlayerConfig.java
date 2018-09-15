@@ -33,7 +33,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
     public LocalPlayerConfig(UUID uuid) {
         this.uuid = uuid;
         loader = HoconConfigurationLoader.builder()
-                .setPath((NewHonorConfig.cfgDir.resolve("PlayerData")).resolve(uuid.toString() + ".conf")).build();
+                .setPath((PluginConfig.cfgDir.resolve("PlayerData")).resolve(uuid.toString() + ".conf")).build();
         cfg = load();
 
         //为了兼容以前版本cfg 更新代码
@@ -47,7 +47,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
 
     @Override
     public void init() {
-        Optional<List<String>> defaultHonors = NewHonorConfig.getDefaultOwnHonors();
+        Optional<List<String>> defaultHonors = PluginConfig.getDefaultOwnHonors();
         if (defaultHonors.isPresent()) {
             defaultHonors.get().forEach(this::noSaveGive);
             if (save()) {

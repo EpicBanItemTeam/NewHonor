@@ -22,14 +22,14 @@ import java.util.stream.Collectors;
 /**
  * @author yinyangshi
  */
-public class HonorValueData {
+public class HonorData {
     private String id;
     private Text value;
     private String strValue;
     private List<Text> displayValue;
     private int[] delay;
 
-    public HonorValueData(CommentedConfigurationNode cfg, String id) {
+    public HonorData(CommentedConfigurationNode cfg, String id) {
         this.id = id;
         String rawValue = cfg.getNode("value").getString("[default]");
         Text temp = jsonToText(rawValue);
@@ -108,14 +108,6 @@ public class HonorValueData {
         }
     }
 
-    private static Text jsonToText(String str) {
-        try {
-            return TextSerializers.JSON.deserialize(str);
-        } catch (TextParseException e) {
-            return TextSerializers.FORMATTING_CODE.deserialize(str);
-        }
-    }
-
     public String getId() {
         return this.id;
     }
@@ -134,5 +126,13 @@ public class HonorValueData {
 
     public int[] getDelay() {
         return this.delay;
+    }
+
+    private static Text jsonToText(String str) {
+        try {
+            return TextSerializers.JSON.deserialize(str);
+        } catch (TextParseException e) {
+            return TextSerializers.FORMATTING_CODE.deserialize(str);
+        }
     }
 }

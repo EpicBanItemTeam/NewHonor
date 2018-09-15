@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * @author yinyangshi
  */
-public class HaloEffectsOffer {
+public class HaloEffectsOfferTask {
     public static final HashMap<String, HaloTaskData> TASK_DATA = new HashMap<>();
     private static final String HALO_KEY = "halo";
 
@@ -70,7 +70,7 @@ public class HaloEffectsOffer {
         }
     }
 
-    private HaloEffectsOffer() {
+    private HaloEffectsOfferTask() {
         throw new UnsupportedOperationException();
     }
 }

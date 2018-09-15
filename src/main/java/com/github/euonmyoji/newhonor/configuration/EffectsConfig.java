@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class EffectsConfig {
     public static final String CONNECT_KEY = ",";
     public CommentedConfigurationNode cfg;
-    private static final Path PATH = NewHonorConfig.cfgDir.resolve("EffectsData");
+    private static final Path PATH = PluginConfig.cfgDir.resolve("EffectsData");
     private final ConfigurationLoader<CommentedConfigurationNode> loader;
     private final int potionEffectsTime;
     private String id;

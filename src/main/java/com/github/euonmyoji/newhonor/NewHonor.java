@@ -3,13 +3,15 @@ package com.github.euonmyoji.newhonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.api.event.NewHonorReloadEvent;
 import com.github.euonmyoji.newhonor.command.HonorCommand;
-import com.github.euonmyoji.newhonor.configuration.*;
-import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
+import com.github.euonmyoji.newhonor.configuration.HonorConfig;
+import com.github.euonmyoji.newhonor.configuration.PluginConfig;
+import com.github.euonmyoji.newhonor.data.HonorData;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
 import com.github.euonmyoji.newhonor.manager.*;
-import com.github.euonmyoji.newhonor.task.EffectsOffer;
-import com.github.euonmyoji.newhonor.task.HaloEffectsOffer;
+import com.github.euonmyoji.newhonor.task.EffectsOfferTask;
+import com.github.euonmyoji.newhonor.task.HaloEffectsOfferTask;
 import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -38,7 +40,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.github.euonmyoji.newhonor.configuration.NewHonorConfig.*;
+import static com.github.euonmyoji.newhonor.configuration.PluginConfig.*;
 
 /**
  * @author yinyangshi
@@ -66,7 +68,7 @@ public final class NewHonor {
     }
 
     public static NewHonor plugin;
-    public final HashMap<UUID, HonorValueData> honorTextCache = new HashMap<>();
+    public final HashMap<UUID, HonorData> honorTextCache = new HashMap<>();
     public final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
     private static final Object CACHE_LOCK = new Object();
 
@@ -81,19 +83,19 @@ public final class NewHonor {
     public void onPreInit(GamePreInitializationEvent event) {
         plugin = this;
         try {
-            NewHonorConfig.defaultCfgDir = defaultCfgDir;
+            PluginConfig.defaultCfgDir = defaultCfgDir;
             if (Files.notExists(defaultCfgDir)) {
                 Files.createDirectory(defaultCfgDir);
             }
-            NewHonorConfig.init();
-            if (Files.notExists(NewHonorConfig.cfgDir)) {
-                Files.createDirectory(NewHonorConfig.cfgDir);
+            PluginConfig.init();
+            if (Files.notExists(PluginConfig.cfgDir)) {
+                Files.createDirectory(PluginConfig.cfgDir);
             }
             final String playerDataDir = "PlayerData";
-            if (Files.notExists(NewHonorConfig.cfgDir.resolve(playerDataDir))) {
-                Files.createDirectory(NewHonorConfig.cfgDir.resolve(playerDataDir));
+            if (Files.notExists(PluginConfig.cfgDir.resolve(playerDataDir))) {
+                Files.createDirectory(PluginConfig.cfgDir.resolve(playerDataDir));
             }
-            if (NewHonorConfig.isCheckUpdate()) {
+            if (PluginConfig.isCheckUpdate()) {
                 Task.builder().async().name("NewHonor - check for update").execute(this::checkUpdate).submit(this);
             } else {
                 logger.info("§2check update was canceled");
@@ -103,17 +105,17 @@ public final class NewHonor {
             EffectsConfig.init();
 
             //已经不在使用的N个配置文件node
-            NewHonorConfig.getCfg().removeChild(OLD_USE_PAPI_NODE_PATH);
-            NewHonorConfig.getCfg().removeChild(OLD_COMPATIBLE_UCHAT_NODE_PATH);
-            NewHonorConfig.getCfg().removeChild("nucleus-placeholder");
+            PluginConfig.getCfg().removeChild(OLD_USE_PAPI_NODE_PATH);
+            PluginConfig.getCfg().removeChild(OLD_COMPATIBLE_UCHAT_NODE_PATH);
+            PluginConfig.getCfg().removeChild("nucleus-placeholder");
 
-            NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH)
-                    .setValue(NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false));
-            NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER)
-                    .setValue(NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
-            NewHonorConfig.getCfg().getNode(PERMISSION_MANAGE)
-                    .setValue(NewHonorConfig.getCfg().getNode(PERMISSION_MANAGE).getBoolean(false));
-            NewHonorConfig.save();
+            PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH)
+                    .setValue(PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false));
+            PluginConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER)
+                    .setValue(PluginConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
+            PluginConfig.getCfg().getNode(PERMISSION_MANAGE)
+                    .setValue(PluginConfig.getCfg().getNode(PERMISSION_MANAGE).getBoolean(false));
+            PluginConfig.save();
             LanguageManager.reload();
             MysqlManager.init();
         } catch (IOException e) {
@@ -134,11 +136,11 @@ public final class NewHonor {
         } catch (IOException e) {
             logger.warn("Task init error", e);
         }
-        metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EffectsOffer.TASK_DATA.size() > 0 ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EffectsOfferTask.TASK_DATA.size() > 0 ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usepapi",
                 () -> enabledPlaceHolderAPI ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> HaloEffectsOffer.TASK_DATA.size() > 0 ?
+        metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> HaloEffectsOfferTask.TASK_DATA.size() > 0 ?
                 "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("usenucleus", () -> hookedNucleus ? "true" : "false"));
     }
@@ -173,11 +175,11 @@ public final class NewHonor {
             plugin.honorTextCache.clear();
             plugin.playerUsingEffectCache.clear();
         }
-        synchronized (EffectsOffer.TASK_DATA) {
-            EffectsOffer.TASK_DATA.clear();
+        synchronized (EffectsOfferTask.TASK_DATA) {
+            EffectsOfferTask.TASK_DATA.clear();
         }
-        synchronized (HaloEffectsOffer.TASK_DATA) {
-            HaloEffectsOffer.TASK_DATA.clear();
+        synchronized (HaloEffectsOfferTask.TASK_DATA) {
+            HaloEffectsOfferTask.TASK_DATA.clear();
         }
         DisplayHonorTaskManager.clear();
     }
@@ -191,7 +193,7 @@ public final class NewHonor {
 
     public void reload() {
         Sponge.getEventManager().post(new NewHonorReloadEvent());
-        NewHonorConfig.reload();
+        PluginConfig.reload();
         LanguageManager.reload();
         HonorConfig.reload();
         try {
@@ -273,7 +275,7 @@ public final class NewHonor {
         }
         //没用uchat  开了nucleus就必须force 或者不开直接用
         //displayHonor
-        boolean displayHonor = NewHonorConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false);
+        boolean displayHonor = PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false);
         if (displayHonor) {
             ScoreBoardManager.enable = true;
             ScoreBoardManager.init();
@@ -284,7 +286,7 @@ public final class NewHonor {
         }
 
         //default listener
-        boolean forcePass = !(hookedNucleus || displayHonor) || NewHonorConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean();
+        boolean forcePass = !(hookedNucleus || displayHonor) || PluginConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean();
         if (forcePass && !hookedUChat) {
             Sponge.getEventManager().registerListeners(this, NewHonorListener);
         }

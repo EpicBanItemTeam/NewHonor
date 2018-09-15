@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.data.HonorData;
 import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import io.github.nucleuspowered.nucleus.api.exceptions.PluginAlreadyRegisteredException;
 import org.spongepowered.api.Sponge;
@@ -23,7 +23,7 @@ public final class NucleusManager {
                         .orElseThrow(NoSuchFieldError::new), (tokenInput, src, variables) -> {
                     if (NewHonor.NEWHONOR_ID.equals(tokenInput) && src instanceof Identifiable) {
                         return Optional.ofNullable(NewHonor.plugin.honorTextCache.get((((Identifiable) src).getUniqueId())))
-                                .map(HonorValueData::getValue);
+                                .map(HonorData::getValue);
                     }
                     return Optional.empty();
                 });

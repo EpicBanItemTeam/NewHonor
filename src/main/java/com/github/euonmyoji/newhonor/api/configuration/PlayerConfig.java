@@ -2,8 +2,8 @@ package com.github.euonmyoji.newhonor.api.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
-import com.github.euonmyoji.newhonor.data.HonorValueData;
+import com.github.euonmyoji.newhonor.configuration.PluginConfig;
+import com.github.euonmyoji.newhonor.data.HonorData;
 import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.manager.PlayerConfigManager;
 import com.github.euonmyoji.newhonor.util.Log;
@@ -269,14 +269,14 @@ public interface PlayerConfig {
             Optional<List<String>> list = getOwnHonors();
             if (list.isPresent() && !list.get().isEmpty()) {
                 for (String nowHonor : list.get()) {
-                    HonorValueData nowHonorValue = HonorConfig.getHonorValueData(nowHonor).orElse(null);
+                    HonorData nowHonorValue = HonorConfig.getHonorValueData(nowHonor).orElse(null);
                     if (nowHonorValue != null) {
                         setUseHonor(list.get().get(0));
                         Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(LanguageManager
                                 .langBuilder("newhonor.event.changehonorbylose")
                                 .replaceName(player)
                                 .replaceHonorid(usingID)
-                                .replaceHonor(getHonorValueData(usingID).map(HonorValueData::getStrValue).orElse(""))
+                                .replaceHonor(getHonorValueData(usingID).map(HonorData::getStrValue).orElse(""))
                                 .replace("%changedhonor%", nowHonorValue.getStrValue())
                                 .build()));
                         return;
@@ -290,7 +290,7 @@ public interface PlayerConfig {
                     .langBuilder("newhonor.event.changehonorbylose")
                     .replaceName(player)
                     .replaceHonorid(usingID)
-                    .replaceHonor(getHonorValueData(usingID).map(HonorValueData::getStrValue).orElse(""))
+                    .replaceHonor(getHonorValueData(usingID).map(HonorData::getStrValue).orElse(""))
                     .replace("%changedhonor%", "null")
                     .build()));
 
@@ -308,7 +308,7 @@ public interface PlayerConfig {
                     try {
                         List<String> ownedHonors = getOwnHonors().orElseGet(ArrayList::new);
                         //如果移除没权限的头衔
-                        if (NewHonorConfig.getCfg().getNode(NewHonorConfig.PERMISSION_MANAGE).getBoolean() && !player.hasPermission(checkPrefix + id)) {
+                        if (PluginConfig.getCfg().getNode(PluginConfig.PERMISSION_MANAGE).getBoolean() && !player.hasPermission(checkPrefix + id)) {
                             if (takeHonor(id)) {
                                 Log.info(String.format("[Cause:permission not pass]Player %s lost honor: %s", player.getName(), id));
                             }
@@ -333,7 +333,7 @@ public interface PlayerConfig {
      * @return text
      * @throws SQLException when found any error
      */
-    default Optional<HonorValueData> getUsingHonorValue() throws SQLException {
+    default Optional<HonorData> getUsingHonorValue() throws SQLException {
         return Optional.ofNullable(getUsingHonorID()).flatMap(HonorConfig::getHonorValueData);
     }
 

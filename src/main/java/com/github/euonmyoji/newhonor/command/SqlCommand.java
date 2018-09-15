@@ -2,7 +2,7 @@ package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
-import com.github.euonmyoji.newhonor.configuration.NewHonorConfig;
+import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.scheduler.Task;
@@ -27,7 +27,7 @@ final class SqlCommand {
                 src.sendMessage(of("[NewHonor]start updating"));
                 Task.builder().async().execute(() -> {
                     try {
-                        List<String> list = Files.list(NewHonorConfig.cfgDir.resolve("PlayerData"))
+                        List<String> list = Files.list(PluginConfig.cfgDir.resolve("PlayerData"))
                                 .map(Path::getFileName).map(Path::toString)
                                 .map(s -> s.replace(".conf", ""))
                                 .collect(Collectors.toList());
@@ -60,7 +60,7 @@ final class SqlCommand {
                 src.sendMessage(of("[NewHonor]start downloading"));
                 Task.builder().async().execute(() -> {
                     try {
-                        List<String> list = Files.list(NewHonorConfig.cfgDir.resolve("PlayerData"))
+                        List<String> list = Files.list(PluginConfig.cfgDir.resolve("PlayerData"))
                                 .map(Path::getFileName).map(Path::toString)
                                 .map(s -> s.replace(".conf", ""))
                                 .collect(Collectors.toList());
