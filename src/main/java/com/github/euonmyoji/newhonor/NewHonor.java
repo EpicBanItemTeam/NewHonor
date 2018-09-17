@@ -267,8 +267,8 @@ public final class NewHonor {
         }
         //hook UChat
         if (Sponge.getPluginManager().getPlugin(UCHAT_ID).isPresent()) {
-            Sponge.getEventManager().registerListeners(this, UChatListener);
             if (!hookedUChat) {
+                Sponge.getEventManager().registerListeners(this, UChatListener);
                 logger.info("hooked UChat");
             }
             hookedUChat = true;
@@ -280,9 +280,6 @@ public final class NewHonor {
             ScoreBoardManager.enable = true;
             ScoreBoardManager.init();
             logger.info("displayHonor mode enabled");
-            if (hookedNucleus) {
-                logger.info("DisplayHonor enabled");
-            }
         }
 
         //default listener
