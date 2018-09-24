@@ -12,7 +12,7 @@ import static org.spongepowered.api.text.Text.of;
 /**
  * @author yinyangshi
  */
-public final class SettingsArgs {
+public final class SettingsArg {
 
     public static CommandSpec usehonor = CommandSpec.builder()
             .arguments(GenericArguments.bool(of("boolean")))
@@ -79,7 +79,7 @@ public final class SettingsArgs {
             })
             .build();
 
-    private SettingsArgs() {
+    private SettingsArg() {
         throw new UnsupportedOperationException();
     }
 }

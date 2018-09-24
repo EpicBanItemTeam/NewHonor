@@ -66,9 +66,10 @@ public final class ScoreBoardManager {
             return;
         }
         synchronized (LOCK) {
+            p.getScoreboard().getTeams().forEach(team -> team.removeMember(p.getTeamRepresentation()));
+
             Optional<Team> optionalTeam = getScoreBoard().getTeam(honorID);
             boolean isTeamPresent = optionalTeam.isPresent();
-            optionalTeam.ifPresent(team -> team.removeMember(p.getTeamRepresentation()));
             if (pd.isUseHonor()) {
                 if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
                     HonorData valueData = NewHonor.plugin.honorTextCache.get(uuid);

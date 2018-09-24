@@ -2,7 +2,8 @@ package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
-import com.github.euonmyoji.newhonor.command.args.SettingsArgs;
+import com.github.euonmyoji.newhonor.command.args.HonorIDArg;
+import com.github.euonmyoji.newhonor.command.args.SettingsArg;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -56,7 +57,7 @@ public final class HonorCommand {
             .build();
 
     private static CommandSpec use = CommandSpec.builder()
-            .arguments(GenericArguments.string(of(ID_KEY)))
+            .arguments(new HonorIDArg(of(ID_KEY)))
             .executor((src, args) -> {
                 if (!(src instanceof Identifiable)) {
                     src.sendMessage(getText("newhonor.changehonor.unknownsource"));
@@ -191,9 +192,9 @@ public final class HonorCommand {
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
-            .child(SettingsArgs.usehonor, "usehonor")
-            .child(SettingsArgs.enableEffects, "enableeffects")
-            .child(SettingsArgs.autochange, "autochange")
+            .child(SettingsArg.usehonor, "usehonor")
+            .child(SettingsArg.enableEffects, "enableeffects")
+            .child(SettingsArg.autochange, "autochange")
             .build();
 
     private static CommandSpec admin = CommandSpec.builder()

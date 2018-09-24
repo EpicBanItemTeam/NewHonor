@@ -2,6 +2,7 @@ package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.command.args.HonorIDArg;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.data.HonorData;
@@ -40,7 +41,7 @@ final class AdminCommand {
 
     static CommandSpec give = CommandSpec.builder()
             .arguments(GenericArguments.user(of("user")),
-                    GenericArguments.string(of("id")))
+                    new HonorIDArg(of("id")))
             .executor((src, args) -> {
                 Collection<User> users = args.getAll(of("user"));
                 Collection<String> ids = args.getAll(of("id"));
@@ -77,7 +78,7 @@ final class AdminCommand {
 
     static CommandSpec take = CommandSpec.builder()
             .arguments(GenericArguments.user(of("user")),
-                    GenericArguments.string(of("id")))
+                    new HonorIDArg(of("id")))
             .executor((src, args) -> {
                 Collection<User> users = args.getAll(of("user"));
                 Collection<String> ids = args.getAll(of("id"));
@@ -129,7 +130,7 @@ final class AdminCommand {
             .build();
 
     static CommandSpec set = CommandSpec.builder()
-            .arguments(GenericArguments.string(of("honorID")),
+            .arguments(new HonorIDArg(of("honorID"), true, HonorIDArg.WARNING_LEVEL),
                     GenericArguments.string(of("honor")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
@@ -146,7 +147,7 @@ final class AdminCommand {
             .build();
 
     static CommandSpec delete = CommandSpec.builder()
-            .arguments(GenericArguments.string(of("honorID")))
+            .arguments(new HonorIDArg(of("honorID")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 if (HonorConfig.deleteHonor(id)) {
@@ -161,7 +162,7 @@ final class AdminCommand {
             .build();
 
     static CommandSpec add = CommandSpec.builder()
-            .arguments(GenericArguments.string(of("honorID")),
+            .arguments(new HonorIDArg(of("honorID"), false, HonorIDArg.ERROR_LEVEL),
                     GenericArguments.string(of("honor")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
@@ -176,7 +177,7 @@ final class AdminCommand {
             .build();
 
     static CommandSpec effects = CommandSpec.builder()
-            .arguments(GenericArguments.string(of("honorID")),
+            .arguments(new HonorIDArg(of("honorID")),
                     GenericArguments.string(of("effectsID")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);

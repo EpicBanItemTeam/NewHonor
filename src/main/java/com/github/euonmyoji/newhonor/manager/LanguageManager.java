@@ -25,38 +25,17 @@ public class LanguageManager {
     private static Locale locale;
     private static Path langFile;
     private static ResourceBundle res;
-    private String value;
 
-    public LanguageManager replace(String old, String instead) {
-        value = value.replace(old, instead);
-        return this;
+    public static Builder langBuilder(String key) {
+        return new Builder(key);
     }
 
-    public LanguageManager replaceName(User user) {
-        value = value.replace("%player%", user.getName());
-        return this;
-    }
-
-    public LanguageManager replaceHonorid(String honorid) {
-        value = value.replace("%honorid%", honorid);
-        return this;
-    }
-
-    public LanguageManager replaceHonor(String honor) {
-        value = value.replace("%honor%", honor);
-        return this;
-    }
-
-    public Text build() {
-        return Util.toText(value);
-    }
-
-    //-------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------
-
-    public static LanguageManager langBuilder(String key) {
-        return new LanguageManager(key);
+    public static Builder langBuilder(String key, String def) {
+        Builder builder = new Builder(key);
+        if (builder.value.equals(builder.key)) {
+            builder.value = def;
+        }
+        return builder;
     }
 
     public static Text getText(String key) {
@@ -115,7 +94,41 @@ public class LanguageManager {
         }
     }
 
-    private LanguageManager(String key) {
-        this.value = getStringSafely(key);
+    private LanguageManager() {
+        throw new UnsupportedOperationException();
+    }
+
+    public static class Builder {
+        private final String key;
+        private String value;
+
+        public Builder replace(String old, String instead) {
+            value = value.replace(old, instead);
+            return this;
+        }
+
+        public Builder replaceName(User user) {
+            value = value.replace("%player%", user.getName());
+            return this;
+        }
+
+        public Builder replaceHonorid(String honorid) {
+            value = value.replace("%honorid%", honorid);
+            return this;
+        }
+
+        public Builder replaceHonor(String honor) {
+            value = value.replace("%honor%", honor);
+            return this;
+        }
+
+        public Text build() {
+            return Util.toText(value);
+        }
+
+        private Builder(String key) {
+            this.key = key;
+            this.value = getStringSafely(key);
+        }
     }
 }

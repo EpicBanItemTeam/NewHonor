@@ -45,3 +45,9 @@ newhonor.listcreatedhonors.title=all created honor
 newhonor.listcreatedhonors.contexts=honorid:%honorid%，text:&r%honor%&r，effectsID:%effectsID%
 
 newhonor.event.changehonorbylose=&e[&bNewHonor&e] You don't have &r%honor%&r&e now，so we changed you using honor to &r%changedhonor%.
+
+#errors
+newhonor.command.arg.error.honornotpresent=The honorid is not present
+
+#warns
+newhonor.command.arg.warn.honornotpresent=[Warn]The honorid should present but it's not present.
