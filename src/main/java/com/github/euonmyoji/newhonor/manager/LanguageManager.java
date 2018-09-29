@@ -7,7 +7,6 @@ import com.google.common.base.Charsets;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,7 +38,12 @@ public class LanguageManager {
     }
 
     public static Text getText(String key) {
-        return TextSerializers.FORMATTING_CODE.deserialize(getStringSafely(key));
+        return Util.toText(getStringSafely(key));
+    }
+
+    public static String getString(String key, String def) {
+        String s = getStringSafely(key);
+        return key.equals(s) ? def : s;
     }
 
     /**

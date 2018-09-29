@@ -2,6 +2,7 @@ package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.manager.MysqlManager;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
@@ -30,6 +31,7 @@ public final class PluginConfig {
     private static final String LANGUAGE = "lang";
     private static final String DEFAULT_HONORS = "honors";
     private static final String DEFAULT_HONORS_SETTINGS = "default-honors-settings";
+    private static final String INTERVAL_TICKS = "effects-check-interval-ticks";
 
     public static final String OLD_COMPATIBLE_UCHAT_NODE_PATH = "compatibleUChat";
     public static final String OLD_USE_PAPI_NODE_PATH = "usePAPI";
@@ -45,6 +47,11 @@ public final class PluginConfig {
         cfg.getNode(CHECK_UPDATE_NODE_PATH).setValue(cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false));
         cfg.getNode(LANGUAGE).setValue(cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
         cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").setValue(cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true));
+
+        CommentedConfigurationNode extraNode = cfg.getNode("extra");
+        extraNode.getNode(INTERVAL_TICKS).setValue(extraNode.getNode(INTERVAL_TICKS).getInt(8));
+        //todo: lazy ing
+        extraNode.getNode(INTERVAL_TICKS).setComment(extraNode.getComment().orElse(LanguageManager.getString("","")));
         try {
             if (cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).isVirtual()) {
                 cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).setValue(LIST_STRING_TYPE, new ArrayList<String>() {{
@@ -92,7 +99,7 @@ public final class PluginConfig {
         try {
             loader.save(cfg);
         } catch (IOException e) {
-            e.printStackTrace();
+            NewHonor.logger.warn("error when saving plugin config", e);
         }
     }
 
@@ -110,6 +117,7 @@ public final class PluginConfig {
         try {
             return loader.load();
         } catch (IOException e) {
+            NewHonor.logger.warn("load plugin config failed, creating new one", e);
             return loader.createEmptyNode(ConfigurationOptions.defaults());
         }
     }

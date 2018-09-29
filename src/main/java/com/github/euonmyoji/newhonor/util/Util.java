@@ -22,6 +22,8 @@ import java.util.stream.Stream;
  * @author yinyangshi
  */
 public class Util {
+    //todo: can be changed in config
+
     public static final int INTERVAL_TICKS = 8;
     private static final int DEFAULT_DURATION_TICK = 60;
     private static final int PARALLEL_GOAL = 16;
