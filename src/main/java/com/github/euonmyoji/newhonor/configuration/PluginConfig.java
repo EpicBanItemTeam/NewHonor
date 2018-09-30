@@ -48,7 +48,7 @@ public final class PluginConfig {
         cfg.getNode(CHECK_UPDATE_NODE_PATH).setValue(cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false));
         cfg.getNode(LANGUAGE).setValue(cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
         cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").setValue(cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true));
-
+        LanguageManager.reload();
         cfg.getNode(DISPLAY_HONOR_NODE).setComment(cfg.getNode(DISPLAY_HONOR_NODE).getComment()
                 .orElse(LanguageManager.getString("newhonor.configuration.displayhonor.comment", "Display honor in the tab & head." +
                         "\nIf you installed nucleus, you may change something in the nucleus configuration." +

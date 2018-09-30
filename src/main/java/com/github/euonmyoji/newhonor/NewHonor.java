@@ -105,7 +105,6 @@ public final class NewHonor {
             EffectsConfig.init();
 
             PluginConfig.save();
-            LanguageManager.reload();
             MysqlManager.init();
         } catch (IOException e) {
             logger.warn("init plugin IOE!", e);
