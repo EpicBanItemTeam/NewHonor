@@ -43,7 +43,8 @@ public class LanguageManager {
 
     public static String getString(String key, String def) {
         String s = getStringSafely(key);
-        return key.equals(s) ? def : s;
+        //noinspection StringEquality  就是看引用是不是一样的()
+        return key == s ? def : s;
     }
 
     /**
