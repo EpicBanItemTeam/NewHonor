@@ -51,3 +51,10 @@ newhonor.command.arg.error.honornotpresent=该头衔id不存在
 
 #warns
 newhonor.command.arg.warn.honornotpresent=[警告]本参数的honorid应存在，但是我们发现了这个honorid不存在。
+
+#config
+newhonor.configuration.extra.comment=你可以无视这个配置节点。
+newhonor.configuration.permissionmanage.comment=权限管理头衔，靠newhonor.honor.honorid来管理honorid头衔是否被玩家拥有，如果没有这个权限则无法使用该头衔。
+newhonor.configuration.extra.parallelgoal.comment=被操作的目标大小超过了这个goal后则并行(如果操作支持并行) 默认:16
+newhonor.configuration.datadirpath.comment=设置插件所使用的数据的文件夹路径(头衔数据 玩家数据 药水效果组数据) 默认:default
+newhonor.configuration.displayhonor.comment=显示头衔在tab和头顶上，可能需要额外配置一点兼容参数 如果你装了nucleus或者其他聊天插件(兼容配置参考wiki或询问他人)

@@ -65,11 +65,13 @@ public final class PluginConfig {
         extraNode.setComment(extraNode.getComment().orElse(LanguageManager.getString("newhonor.configuration.extra.comment"
                 , "the extra settings, you can ignore this node")));
 
-        extraNode.getNode(INTERVAL_TICKS).setComment(extraNode.getNode(INTERVAL_TICKS).getComment().orElse(LanguageManager.getString("newhonor.configuration.extra.intervalticks.comment"
+        extraNode.getNode(INTERVAL_TICKS).setComment(extraNode.getNode(INTERVAL_TICKS).getComment().orElse(LanguageManager.getString(
+                "newhonor.configuration.extra.intervalticks.comment"
                 , "多少tick检查一次效果组是否该刷新了 默认为8tick")));
 
-        extraNode.getNode(PARALLEL_GOAL).setComment(extraNode.getNode(PARALLEL_GOAL).getComment().orElse(LanguageManager.getString("newhonor.configuration.extra.parallelgoal.comment"
-                , "If the operation's size is bigger than this goal, it will be parallel; (if supported). default: 16")));
+        extraNode.getNode(PARALLEL_GOAL).setComment(extraNode.getNode(PARALLEL_GOAL).getComment().orElse(LanguageManager.getString(
+                "newhonor.configuration.extra.parallelgoal.comment"
+                , "If the operation's size is bigger than this goal, it will be parallel. (if supported). default: 16")));
         try {
             if (cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).isVirtual()) {
                 cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).setValue(LIST_STRING_TYPE, new ArrayList<String>() {{
@@ -97,7 +99,7 @@ public final class PluginConfig {
         cfg.getNode(PERMISSION_MANAGE).setComment(cfg.getNode(PERMISSION_MANAGE).getComment()
                 .orElse(LanguageManager.getString("newhonor.configuration.permissionmanage.comment", "If you enable this, the honor must be given by permission" +
                         "\n(The player who doesn't have the permission of honor, the player won't use it any longer." +
-                        "\neg: The honor's id is 'honorid' then you should give player permission:'newhonor.honor.honorid.")));
+                        "\neg: The honor's id is 'honorid' then you should give player permission:'newhonor.honor.honorid'.")));
 
 
         MysqlManager.init();
