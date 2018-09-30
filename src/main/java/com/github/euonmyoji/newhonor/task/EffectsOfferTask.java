@@ -6,6 +6,7 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.OfferType;
 import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
+import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import com.github.euonmyoji.newhonor.data.ParticleEffectData;
 import com.github.euonmyoji.newhonor.data.RandomDelayData;
 import com.github.euonmyoji.newhonor.data.RandomEffectsData;
@@ -35,7 +36,7 @@ public class EffectsOfferTask {
             synchronized (TASK_DATA) {
                 TASK_DATA.forEach((s, data) -> data.call());
             }
-        }).name("NewHonor - Effects Offer Task").intervalTicks(Util.INTERVAL_TICKS).submit(NewHonor.plugin);
+        }).name("NewHonor - Effects Offer Task").intervalTicks(PluginConfig.getIntervalTicks()).submit(NewHonor.plugin);
     }
 
     public static void update(Iterable<String> effects) {

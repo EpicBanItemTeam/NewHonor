@@ -105,12 +105,12 @@ public final class NewHonor {
             EffectsConfig.init();
 
             //已经不在使用的N个配置文件node
-            PluginConfig.getCfg().removeChild(OLD_USE_PAPI_NODE_PATH);
-            PluginConfig.getCfg().removeChild(OLD_COMPATIBLE_UCHAT_NODE_PATH);
+            PluginConfig.getCfg().removeChild(OLD_USE_PAPI_NODE);
+            PluginConfig.getCfg().removeChild(OLD_COMPATIBLE_UCHAT_NODE);
             PluginConfig.getCfg().removeChild("nucleus-placeholder");
 
-            PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH)
-                    .setValue(PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false));
+            PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE)
+                    .setValue(PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE).getBoolean(false));
             PluginConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER)
                     .setValue(PluginConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
             PluginConfig.getCfg().getNode(PERMISSION_MANAGE)
@@ -275,7 +275,7 @@ public final class NewHonor {
         }
         //没用uchat  开了nucleus就必须force 或者不开直接用
         //displayHonor
-        boolean displayHonor = PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE_PATH).getBoolean(false);
+        boolean displayHonor = PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE).getBoolean(false);
         if (displayHonor) {
             ScoreBoardManager.enable = true;
             ScoreBoardManager.init();

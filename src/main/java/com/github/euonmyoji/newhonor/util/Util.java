@@ -2,6 +2,7 @@ package com.github.euonmyoji.newhonor.util;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
+import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -22,11 +23,7 @@ import java.util.stream.Stream;
  * @author yinyangshi
  */
 public class Util {
-    //todo: can be changed in config
-
-    public static final int INTERVAL_TICKS = 8;
     private static final int DEFAULT_DURATION_TICK = 60;
-    private static final int PARALLEL_GOAL = 16;
 
     /**
      * 给玩家提供药水效果
@@ -38,7 +35,7 @@ public class Util {
     public static void offerEffects(Player player, List<PotionEffect> potionEffects) throws ConcurrentModificationException {
         PotionEffectData effects = player.getOrCreate(PotionEffectData.class).orElseThrow(NoSuchFieldError::new);
         potionEffects.forEach(effects::addElement);
-        player.tryOffer(effects);
+        player.offer(effects);
     }
 
     /**
@@ -87,7 +84,7 @@ public class Util {
     }
 
     public static <T> Stream<T> getStream(List<T> list) {
-        return list.size() > PARALLEL_GOAL ? list.parallelStream() : list.stream();
+        return list.size() > PluginConfig.parallelGoal ? list.parallelStream() : list.stream();
     }
 
     public static List<UUID> getPlayerUsingEffects(String id) {
