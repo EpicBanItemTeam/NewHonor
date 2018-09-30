@@ -36,8 +36,6 @@ public final class PluginConfig {
     private static final String INTERVAL_TICKS = "effects-check-interval-ticks";
     private static final String PARALLEL_GOAL = "parallel-goal";
 
-    public static final String OLD_COMPATIBLE_UCHAT_NODE = "compatibleUChat";
-    public static final String OLD_USE_PAPI_NODE = "usePAPI";
     public static final String DISPLAY_HONOR_NODE = "displayHonor";
     public static final String FORCE_ENABLE_DEFAULT_LISTENER = "force-enable-default-listener";
     public static final String PERMISSION_MANAGE = "permission-manage";
@@ -67,10 +65,10 @@ public final class PluginConfig {
         extraNode.setComment(extraNode.getComment().orElse(LanguageManager.getString("newhonor.configuration.extra.comment"
                 , "the extra settings, you can ignore this node")));
 
-        extraNode.getNode(INTERVAL_TICKS).setComment(extraNode.getComment().orElse(LanguageManager.getString("newhonor.configuration.extra.intervalticks.comment"
+        extraNode.getNode(INTERVAL_TICKS).setComment(extraNode.getNode(INTERVAL_TICKS).getComment().orElse(LanguageManager.getString("newhonor.configuration.extra.intervalticks.comment"
                 , "多少tick检查一次效果组是否该刷新了 默认为8tick")));
 
-        extraNode.getNode(PARALLEL_GOAL).setComment(extraNode.getComment().orElse(LanguageManager.getString("newhonor.configuration.extra.parallelgoal.comment"
+        extraNode.getNode(PARALLEL_GOAL).setComment(extraNode.getNode(PARALLEL_GOAL).getComment().orElse(LanguageManager.getString("newhonor.configuration.extra.parallelgoal.comment"
                 , "If the operation's size is bigger than this goal, it will be parallel; (if supported). default: 16")));
         try {
             if (cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).isVirtual()) {
@@ -81,6 +79,27 @@ public final class PluginConfig {
         } catch (ObjectMappingException e) {
             NewHonor.logger.error("Exception while set default has honors!", e);
         }
+
+        //the hook init(?)
+        //已经不在使用的N个配置文件node
+        cfg.removeChild("usePAPI");
+        cfg.removeChild("compatibleUChat");
+        cfg.removeChild("nucleus-placeholder");
+
+        cfg.getNode(DISPLAY_HONOR_NODE)
+                .setValue(cfg.getNode(DISPLAY_HONOR_NODE).getBoolean(false));
+        cfg.getNode(FORCE_ENABLE_DEFAULT_LISTENER)
+                .setValue(cfg.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
+        cfg.getNode(PERMISSION_MANAGE)
+                .setValue(cfg.getNode(PERMISSION_MANAGE).getBoolean(false));
+
+        //hook comments
+        cfg.getNode(PERMISSION_MANAGE).setComment(cfg.getNode(PERMISSION_MANAGE).getComment()
+                .orElse(LanguageManager.getString("newhonor.configuration.permissionmanage.comment", "If you enable this, the honor must be given by permission" +
+                        "\n(The player who doesn't have the permission of honor, the player won't use it any longer." +
+                        "\neg: The honor's id is 'honorid' then you should give player permission:'newhonor.honor.honorid.")));
+
+
         MysqlManager.init();
         save();
         reload();
