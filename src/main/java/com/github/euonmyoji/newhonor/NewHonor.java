@@ -40,7 +40,8 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.github.euonmyoji.newhonor.configuration.PluginConfig.*;
+import static com.github.euonmyoji.newhonor.configuration.PluginConfig.DISPLAY_HONOR;
+import static com.github.euonmyoji.newhonor.configuration.PluginConfig.FORCE_ENABLE_DEFAULT_LISTENER;
 
 /**
  * @author yinyangshi

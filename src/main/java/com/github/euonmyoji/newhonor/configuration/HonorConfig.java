@@ -15,10 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.github.euonmyoji.newhonor.configuration.PluginConfig.*;
-import static com.github.euonmyoji.newhonor.configuration.PluginConfig.FORCE_ENABLE_DEFAULT_LISTENER;
-import static com.github.euonmyoji.newhonor.configuration.PluginConfig.PERMISSION_MANAGE;
-
 /**
  * @author yinyangshi
  */

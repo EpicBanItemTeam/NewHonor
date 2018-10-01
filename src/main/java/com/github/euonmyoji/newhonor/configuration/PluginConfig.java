@@ -94,12 +94,12 @@ public final class PluginConfig {
         //已经不在使用的N个配置文件node
         cfg.removeChild("usePAPI");
         cfg.removeChild("compatibleUChat");
-        cfg.removeChild("nucleus-placeholder");
         cfg.removeChild(DISPLAY_HONOR);
         cfg.removeChild(PERMISSION_MANAGE);
         cfg.removeChild(DATA_DIR);
         cfg.removeChild(CHECK_UPDATE);
         cfg.removeChild(LANGUAGE);
+        cfg.removeChild(FORCE_ENABLE_DEFAULT_LISTENER);
 
         generalNode.getNode(DISPLAY_HONOR)
                 .setValue(generalNode.getNode(DISPLAY_HONOR).getBoolean(false));
