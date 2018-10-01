@@ -23,42 +23,46 @@ public final class PluginConfig {
     public static int parallelGoal = 16;
 
     public static CommentedConfigurationNode cfg;
+    public static CommentedConfigurationNode generalNode;
+
     private static final TypeToken<List<String>> LIST_STRING_TYPE = new TypeToken<List<String>>() {
     };
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     public static Path cfgDir;
     public static Path defaultCfgDir;
     private static final String DATA_DIR = "data-dir-path";
-    private static final String CHECK_UPDATE_NODE_PATH = "check-update";
+    private static final String CHECK_UPDATE = "check-update";
     private static final String LANGUAGE = "lang";
     private static final String DEFAULT_HONORS = "honors";
     private static final String DEFAULT_HONORS_SETTINGS = "default-honors-settings";
     private static final String INTERVAL_TICKS = "effects-check-interval-ticks";
     private static final String PARALLEL_GOAL = "parallel-goal";
 
-    public static final String DISPLAY_HONOR_NODE = "displayHonor";
+    public static final String DISPLAY_HONOR = "displayHonor";
     public static final String FORCE_ENABLE_DEFAULT_LISTENER = "force-enable-default-listener";
     public static final String PERMISSION_MANAGE = "permission-manage";
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
                 .setPath(defaultCfgDir.resolve("config.conf")).build();
-        cfg = load();
-        cfg.getNode(DATA_DIR).setValue(cfg.getNode(DATA_DIR).getString("default"));
-        cfg.getNode(CHECK_UPDATE_NODE_PATH).setValue(cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false));
-        cfg.getNode(LANGUAGE).setValue(cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
+        loadNode();
+
+        generalNode.getNode(DATA_DIR).setValue(generalNode.getNode(DATA_DIR).getString("default"));
+        generalNode.getNode(CHECK_UPDATE).setValue(generalNode.getNode(CHECK_UPDATE).getBoolean(false));
+        generalNode.getNode(LANGUAGE).setValue(generalNode.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
+
         cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").setValue(cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true));
 
-        String path = cfg.getNode(DATA_DIR).getString("default");
+        String path = generalNode.getNode(DATA_DIR).getString("default");
         cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
 
         LanguageManager.reload();
-        cfg.getNode(DISPLAY_HONOR_NODE).setComment(cfg.getNode(DISPLAY_HONOR_NODE).getComment()
+        generalNode.getNode(DISPLAY_HONOR).setComment(generalNode.getNode(DISPLAY_HONOR).getComment()
                 .orElse(LanguageManager.getString("newhonor.configuration.displayhonor.comment", "Display honor in the tab & head." +
                         "\nIf you installed nucleus, you may change something in the nucleus configuration." +
                         "\nThe display value can not longer than 16 chars!(including color code: &?)")));
 
-        cfg.getNode(DATA_DIR).setComment(cfg.getNode(DATA_DIR).getComment()
+        generalNode.getNode(DATA_DIR).setComment(generalNode.getNode(DATA_DIR).getComment()
                 .orElse(LanguageManager.getString("newhonor.configuration.datadirpath.comment",
                         "Change the data dir (player data&honor data&effects data)")));
 
@@ -91,16 +95,21 @@ public final class PluginConfig {
         cfg.removeChild("usePAPI");
         cfg.removeChild("compatibleUChat");
         cfg.removeChild("nucleus-placeholder");
+        cfg.removeChild(DISPLAY_HONOR);
+        cfg.removeChild(PERMISSION_MANAGE);
+        cfg.removeChild(DATA_DIR);
+        cfg.removeChild(CHECK_UPDATE);
+        cfg.removeChild(LANGUAGE);
 
-        cfg.getNode(DISPLAY_HONOR_NODE)
-                .setValue(cfg.getNode(DISPLAY_HONOR_NODE).getBoolean(false));
-        cfg.getNode(FORCE_ENABLE_DEFAULT_LISTENER)
-                .setValue(cfg.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
-        cfg.getNode(PERMISSION_MANAGE)
-                .setValue(cfg.getNode(PERMISSION_MANAGE).getBoolean(false));
+        generalNode.getNode(DISPLAY_HONOR)
+                .setValue(generalNode.getNode(DISPLAY_HONOR).getBoolean(false));
+        generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER)
+                .setValue(generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
+        generalNode.getNode(PERMISSION_MANAGE)
+                .setValue(generalNode.getNode(PERMISSION_MANAGE).getBoolean(false));
 
         //hook comments
-        cfg.getNode(PERMISSION_MANAGE).setComment(cfg.getNode(PERMISSION_MANAGE).getComment()
+        generalNode.getNode(PERMISSION_MANAGE).setComment(generalNode.getNode(PERMISSION_MANAGE).getComment()
                 .orElse(LanguageManager.getString("newhonor.configuration.permissionmanage.comment", "If you enable this, the honor must be given by permission" +
                         "\n(The player who doesn't have the permission of honor, the player won't use it any longer." +
                         "\neg: The honor's id is 'honorid' then you should give player permission:'newhonor.honor.honorid'.")));
@@ -112,20 +121,20 @@ public final class PluginConfig {
     }
 
     public static Locale getUsingLang() {
-        String[] args = cfg.getNode(LANGUAGE).getString(Locale.getDefault().toString()).split("_", 2);
+        String[] args = generalNode.getNode(LANGUAGE).getString(Locale.getDefault().toString()).split("_", 2);
         return new Locale(args[0], args[1]);
     }
 
     public static boolean isCheckUpdate() {
-        return cfg.getNode(CHECK_UPDATE_NODE_PATH).getBoolean(false);
+        return generalNode.getNode(CHECK_UPDATE).getBoolean(false);
     }
 
     public static void reload() {
-        cfg = load();
+        loadNode();
 
         parallelGoal = cfg.getNode("extra", PARALLEL_GOAL).getInt(16);
 
-        String path = cfg.getNode(DATA_DIR).getString("default");
+        String path = generalNode.getNode(DATA_DIR).getString("default");
         cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
         NewHonor.logger.info("using data dir path:" + cfgDir);
         MysqlManager.reloadSQLInfo();
@@ -137,11 +146,6 @@ public final class PluginConfig {
             PlayerConfig.setDefaultConfigType(mysql);
         }
     }
-
-    public static CommentedConfigurationNode getCfg() {
-        return cfg;
-    }
-
 
     public static void save() {
         try {
@@ -165,13 +169,14 @@ public final class PluginConfig {
         return cfg.getNode("extra", INTERVAL_TICKS).getInt(8);
     }
 
-    private static CommentedConfigurationNode load() {
+    private static void loadNode() {
         try {
-            return loader.load();
+            cfg = loader.load();
         } catch (IOException e) {
             NewHonor.logger.warn("load plugin config failed, creating new one", e);
-            return loader.createEmptyNode(ConfigurationOptions.defaults());
+            cfg = loader.createEmptyNode(ConfigurationOptions.defaults());
         }
+        generalNode = cfg.getNode("general");
     }
 
     private PluginConfig() {

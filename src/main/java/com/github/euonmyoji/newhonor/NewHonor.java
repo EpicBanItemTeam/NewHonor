@@ -263,7 +263,7 @@ public final class NewHonor {
         }
         //没用uchat  开了nucleus就必须force 或者不开直接用
         //displayHonor
-        boolean displayHonor = PluginConfig.getCfg().getNode(DISPLAY_HONOR_NODE).getBoolean(false);
+        boolean displayHonor = PluginConfig.generalNode.getNode(DISPLAY_HONOR).getBoolean(false);
         if (displayHonor) {
             ScoreBoardManager.enable = true;
             ScoreBoardManager.init();
@@ -271,7 +271,7 @@ public final class NewHonor {
         }
 
         //default listener
-        boolean forcePass = !(hookedNucleus || displayHonor) || PluginConfig.getCfg().getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean();
+        boolean forcePass = !(hookedNucleus || displayHonor) || PluginConfig.generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean();
         if (forcePass && !hookedUChat) {
             Sponge.getEventManager().registerListeners(this, NewHonorListener);
         }
