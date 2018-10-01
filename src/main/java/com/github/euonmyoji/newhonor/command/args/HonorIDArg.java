@@ -22,16 +22,14 @@ import java.util.stream.Collectors;
  */
 @NonnullByDefault
 public class HonorIDArg extends CommandElement {
-    public static final byte ERROR_LEVEL = 2;
-    public static final byte WARNING_LEVEL = 1;
     private final boolean shouldPresent;
-    private final byte level;
+    private final Level level;
 
     public HonorIDArg(@Nullable Text key) {
-        this(key, true, ERROR_LEVEL);
+        this(key, true, Level.ERROR);
     }
 
-    public HonorIDArg(@Nullable Text key, boolean shouldPresent, byte level) {
+    public HonorIDArg(@Nullable Text key, boolean shouldPresent, Level level) {
         super(key);
         this.shouldPresent = shouldPresent;
         this.level = level;
@@ -42,12 +40,12 @@ public class HonorIDArg extends CommandElement {
     protected Object parseValue(CommandSource src, CommandArgs args) throws ArgumentParseException {
         String arg = args.next();
         if (shouldPresent) {
-            if (level == ERROR_LEVEL && !HonorConfig.getAllCreatedHonors().contains(arg)) {
+            if (level == Level.ERROR && !HonorConfig.getAllCreatedHonors().contains(arg)) {
                 throw args.createError(LanguageManager.langBuilder("newhonor.command.arg.error.honornotpresent",
                         "The honorid is not present")
                         .replaceHonorid(arg).build());
             }
-            if (level == WARNING_LEVEL && !HonorConfig.getAllCreatedHonors().contains(arg)) {
+            if (level == Level.WARNING && !HonorConfig.getAllCreatedHonors().contains(arg)) {
                 src.sendMessage(Text.of(LanguageManager.langBuilder("newhonor.command.arg.warn.honornotpresent",
                         "[Warn]The honorid should present but it's not present.")
                         .replaceHonorid(arg).build()));
@@ -73,8 +71,11 @@ public class HonorIDArg extends CommandElement {
         return Collections.emptyList();
     }
 
+
     @Override
     public Text getUsage(CommandSource src) {
         return Text.of("<honorid>");
     }
+
 }
+

@@ -27,7 +27,7 @@ public final class SettingsArg {
                         return CommandResult.success();
                     } catch (Exception e) {
                         src.sendMessage(of("[NewHonor]error!"));
-                        e.printStackTrace();
+                        NewHonor.logger.warn("Change user " + src.getName() + "  settings but an error found", e);
                     }
                 }
                 src.sendMessage(of("[NewHonor]You are not a user"));
@@ -48,7 +48,7 @@ public final class SettingsArg {
                         return CommandResult.success();
                     } catch (Exception e) {
                         src.sendMessage(of("[NewHonor]error!"));
-                        e.printStackTrace();
+                        NewHonor.logger.warn("Change user " + src.getName() + "  settings but an error found", e);
                         return CommandResult.empty();
                     }
                 }
@@ -70,7 +70,7 @@ public final class SettingsArg {
                         return CommandResult.success();
                     } catch (Exception e) {
                         src.sendMessage(of("[NewHonor]error!"));
-                        e.printStackTrace();
+                        NewHonor.logger.warn("Change user " + src.getName() + "  settings but an error found", e);
                         return CommandResult.empty();
                     }
                 }

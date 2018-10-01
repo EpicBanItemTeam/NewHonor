@@ -3,6 +3,7 @@ package com.github.euonmyoji.newhonor.command;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.command.args.HonorIDArg;
+import com.github.euonmyoji.newhonor.command.args.Level;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.data.HonorData;
@@ -64,12 +65,12 @@ final class AdminCommand {
                                 }
                             } catch (SQLException e) {
                                 src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed(error!)"));
-                                e.printStackTrace();
+                                NewHonor.logger.warn("error while giving honor", e);
                             }
                         });
                     } catch (Throwable e) {
                         src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + " failed(error!)"));
-                        e.printStackTrace();
+                        NewHonor.logger.warn("error while giving honor", e);
                     }
                 })).async().name("newhonor - Give Users Honors").submit(NewHonor.plugin);
                 return CommandResult.success();
@@ -96,13 +97,13 @@ final class AdminCommand {
                                         Log.info(src.getName() + " took " + user.getName() + " honor " + id + " failed");
                                     }
                                 } catch (Exception e) {
-                                    src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + id + " failed(error!)"));
-                                    e.printStackTrace();
+                                    src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + id + " failed(error!)"));
+                                    NewHonor.logger.warn("error while taking honor", e);
                                 }
                             });
                         } catch (Throwable e) {
-                            src.sendMessage(of("[NewHonor]gave user " + user.getName() + " honor " + " failed(error!)"));
-                            e.printStackTrace();
+                            src.sendMessage(of("[NewHonor]took user " + user.getName() + " honor " + " failed(error!)"));
+                            NewHonor.logger.warn("error while taking honor", e);
                         }
                     });
                     refreshCache(src);
@@ -130,7 +131,7 @@ final class AdminCommand {
             .build();
 
     static CommandSpec set = CommandSpec.builder()
-            .arguments(new HonorIDArg(of("honorID"), true, HonorIDArg.WARNING_LEVEL),
+            .arguments(new HonorIDArg(of("honorID"), true, Level.WARNING),
                     GenericArguments.string(of("honor")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
@@ -162,7 +163,7 @@ final class AdminCommand {
             .build();
 
     static CommandSpec add = CommandSpec.builder()
-            .arguments(new HonorIDArg(of("honorID"), false, HonorIDArg.ERROR_LEVEL),
+            .arguments(new HonorIDArg(of("honorID"), false, Level.ERROR),
                     GenericArguments.string(of("honor")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);

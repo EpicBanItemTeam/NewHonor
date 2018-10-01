@@ -83,9 +83,9 @@ public final class HonorCommand {
                         if (!src.hasPermission(ADMIN_PERMISSION)) {
                             USE_CD.put(((Identifiable) src).getUniqueId(), 9);
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         src.sendMessage(getText("[NewHonor] error!"));
-                        e.printStackTrace();
+                        NewHonor.logger.warn("error while changing using honor", e);
                     }
                 }).async().name("newhonor - Player Change Using Honor").submit(NewHonor.plugin);
                 return CommandResult.success();
