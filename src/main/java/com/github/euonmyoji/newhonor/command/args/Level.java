@@ -5,6 +5,10 @@ package com.github.euonmyoji.newhonor.command.args;
  */
 public enum Level {
     /**
+     * 无视错误
+     */
+    IGNORE,
+    /**
      * 当头衔不为指定情况时发出警告
      */
     WARNING,

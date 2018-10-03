@@ -40,14 +40,13 @@ public class HonorIDArg extends CommandElement {
     protected Object parseValue(CommandSource src, CommandArgs args) throws ArgumentParseException {
         String arg = args.next();
         boolean present = HonorConfig.getAllCreatedHonors().contains(arg);
-        if (shouldPresent != present) {
+        if ((level != Level.IGNORE) && (shouldPresent != present)) {
             if (present) {
                 if (level == Level.ERROR) {
                     throw args.createError(LanguageManager.langBuilder("newhonor.command.arg.error.honorpresent",
                             "The honorid is present")
                             .replaceHonorid(arg).build());
-                }
-                if (level == Level.WARNING) {
+                } else if (level == Level.WARNING) {
                     src.sendMessage(Text.of(LanguageManager.langBuilder("newhonor.command.arg.warn.honorpresent",
                             "[Warn]The honorid shouldn't present but it's present.")
                             .replaceHonorid(arg).build()));
@@ -57,8 +56,7 @@ public class HonorIDArg extends CommandElement {
                     throw args.createError(LanguageManager.langBuilder("newhonor.command.arg.error.honornotpresent",
                             "The honorid is not present")
                             .replaceHonorid(arg).build());
-                }
-                if (level == Level.WARNING) {
+                } else if (level == Level.WARNING) {
                     src.sendMessage(Text.of(LanguageManager.langBuilder("newhonor.command.arg.warn.honornotpresent",
                             "[Warn]The honorid should present but it's not present.")
                             .replaceHonorid(arg).build()));
