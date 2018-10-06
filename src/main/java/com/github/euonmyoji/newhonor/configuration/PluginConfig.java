@@ -47,11 +47,11 @@ public final class PluginConfig {
                 .setPath(defaultCfgDir.resolve("config.conf")).build();
         loadNode();
 
-        generalNode.getNode(DATA_DIR).setValue(generalNode.getNode(DATA_DIR).getString("default"));
-        generalNode.getNode(CHECK_UPDATE).setValue(generalNode.getNode(CHECK_UPDATE).getBoolean(false));
-        generalNode.getNode(LANGUAGE).setValue(generalNode.getNode(LANGUAGE).getString(Locale.getDefault().toString()));
+        generalNode.getNode(DATA_DIR).getString("default");
+        generalNode.getNode(CHECK_UPDATE).getBoolean(false);
+        generalNode.getNode(LANGUAGE).getString(Locale.getDefault().toString());
 
-        cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").setValue(cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true));
+        cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true);
 
         String path = generalNode.getNode(DATA_DIR).getString("default");
         cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
@@ -59,8 +59,8 @@ public final class PluginConfig {
         LanguageManager.reload();
 
         CommentedConfigurationNode extraNode = cfg.getNode("extra");
-        extraNode.getNode(INTERVAL_TICKS).setValue(extraNode.getNode(INTERVAL_TICKS).getInt(8));
-        extraNode.getNode(PARALLEL_GOAL).setValue(extraNode.getNode(PARALLEL_GOAL).getInt(16));
+        extraNode.getNode(INTERVAL_TICKS).getInt(8);
+        extraNode.getNode(PARALLEL_GOAL).getInt(16);
 
         try {
             if (cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).isVirtual()) {
@@ -83,12 +83,9 @@ public final class PluginConfig {
         cfg.removeChild(LANGUAGE);
         cfg.removeChild(FORCE_ENABLE_DEFAULT_LISTENER);
 
-        generalNode.getNode(DISPLAY_HONOR)
-                .setValue(generalNode.getNode(DISPLAY_HONOR).getBoolean(false));
-        generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER)
-                .setValue(generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false));
-        generalNode.getNode(PERMISSION_MANAGE)
-                .setValue(generalNode.getNode(PERMISSION_MANAGE).getBoolean(false));
+        generalNode.getNode(DISPLAY_HONOR).getBoolean(false);
+        generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false);
+        generalNode.getNode(PERMISSION_MANAGE).getBoolean(false);
 
         //comments
         generalNode.getNode(PERMISSION_MANAGE).setComment(generalNode.getNode(PERMISSION_MANAGE).getComment()
@@ -176,7 +173,7 @@ public final class PluginConfig {
 
     private static void loadNode() {
         try {
-            cfg = loader.load();
+            cfg = loader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true));
         } catch (IOException e) {
             NewHonor.logger.warn("load plugin config failed, creating new one", e);
             cfg = loader.createEmptyNode(ConfigurationOptions.defaults());

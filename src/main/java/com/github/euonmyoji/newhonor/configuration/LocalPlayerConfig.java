@@ -151,7 +151,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
         }
     }
 
-    public boolean save() {
+    private boolean save() {
         try {
             loader.save(cfg);
             return true;
