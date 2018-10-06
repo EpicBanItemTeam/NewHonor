@@ -165,6 +165,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
         try {
             return loader.load();
         } catch (IOException e) {
+            NewHonor.logger.warn("get player data error, creating new ong", e);
             return loader.createEmptyNode(ConfigurationOptions.defaults());
         }
     }
