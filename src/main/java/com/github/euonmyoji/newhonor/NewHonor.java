@@ -16,6 +16,7 @@ import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
+import org.bstats.sponge.Metrics2;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
@@ -113,7 +114,7 @@ public final class NewHonor {
     }
 
     @Inject
-    private Metrics metrics;
+    private Metrics2 metrics;
 
     @Listener
     public void onStarted(GameStartedServerEvent event) {
@@ -125,13 +126,13 @@ public final class NewHonor {
         } catch (IOException e) {
             logger.warn("Task init error", e);
         }
-        metrics.addCustomChart(new Metrics.SimplePie("useeffects", () -> EffectsOfferTask.TASK_DATA.size() > 0 ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("usepapi",
+        metrics.addCustomChart(new Metrics2.SimplePie("useeffects", () -> EffectsOfferTask.TASK_DATA.size() > 0 ? "true" : "false"));
+        metrics.addCustomChart(new Metrics2.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
+        metrics.addCustomChart(new Metrics2.SimplePie("usepapi",
                 () -> enabledPlaceHolderAPI ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("usehaloeffects", () -> HaloEffectsOfferTask.TASK_DATA.size() > 0 ?
+        metrics.addCustomChart(new Metrics2.SimplePie("usehaloeffects", () -> HaloEffectsOfferTask.TASK_DATA.size() > 0 ?
                 "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("usenucleus", () -> hookedNucleus ? "true" : "false"));
+        metrics.addCustomChart(new Metrics2.SimplePie("usenucleus", () -> hookedNucleus ? "true" : "false"));
     }
 
     @Listener
