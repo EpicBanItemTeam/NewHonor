@@ -24,7 +24,7 @@ defaultTasks 'clean', 'build'
 
 jar {
     manifest {
-        attributes 'Main-Class': 'com.github.euonmyoji.newhonor.Main'
+        attributes 'Main-Class': 'com.github.euonmyoji.newhonor.common.Main'
     }
 }
 
@@ -83,12 +83,12 @@ sourceSets {
 }
 
 //https://fmltutor.ustc-zzzz.net/3.5.2-%E5%90%91%E5%85%B6%E4%BB%96Mod%E6%8F%90%E4%BE%9BAPI.html
-task apiJar(type: Jar) {
-    classifier = 'api'
-    from sourceSets.main.output
-    from sourceSets.main.allSource
-    include 'com/github/euonmyoji/newhonor/api/**'
-}
+//task apiJar(type: Jar) {
+//    classifier = 'api'
+//    from sourceSets.main.output
+//    from sourceSets.main.allSource
+//    include 'com/github/euonmyoji/newhonor/api/**'
+//}  这个... 咕咕咕了吧先:D
 
 shadowJar {
     classifier = ""
@@ -99,6 +99,5 @@ shadowJar {
 }
 
 artifacts {
-    archives apiJar
     archives shadowJar
 }
