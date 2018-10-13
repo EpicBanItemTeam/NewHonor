@@ -3,7 +3,7 @@ package com.github.euonmyoji.newhonor.sponge.command;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.sponge.command.args.HonorIDArg;
-import com.github.euonmyoji.newhonor.sponge.command.args.Level;
+import com.github.euonmyoji.newhonor.common.api.Level;
 import com.github.euonmyoji.newhonor.sponge.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.sponge.data.HonorData;

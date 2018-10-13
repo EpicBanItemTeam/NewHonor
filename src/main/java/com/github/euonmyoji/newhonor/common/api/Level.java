@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.sponge.command.args;
+package com.github.euonmyoji.newhonor.common.api;
 
 /**
  * @author yinyangshi

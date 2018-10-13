@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.sponge.api.event;
 
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
-import com.github.euonmyoji.newhonor.sponge.api.OfferType;
+import com.github.euonmyoji.newhonor.common.api.OfferType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;

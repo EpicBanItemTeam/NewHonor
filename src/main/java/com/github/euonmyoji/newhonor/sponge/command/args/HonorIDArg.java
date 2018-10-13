@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor.sponge.command.args;
 
+import com.github.euonmyoji.newhonor.common.api.Level;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.sponge.manager.LanguageManager;
