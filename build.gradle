@@ -61,6 +61,10 @@ repositories {
     }
     maven { url = 'https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/' }
     maven { url = 'https://jitpack.io' }
+
+    //bukkit
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 }
 
 tasks.withType(JavaCompile) {
@@ -68,12 +72,14 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    compile "org.spongepowered:spongeapi:${spongeapi}"
-    compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-5.0-6.0:1.8.6'
-    compile 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
-    compile 'io.github.nucleuspowered:nucleus-api:1.3.9-S7.0'
-
+    compileOnly "org.spongepowered:spongeapi:${spongeapi}"
+    compileOnly 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-5.0-6.0:1.8.6'
+    compileOnly 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
+    compileOnly 'io.github.nucleuspowered:nucleus-api:1.3.9-S7.0'
     compile 'org.bstats.bStats-Metrics:bstats-sponge:1.3'
+
+    //bukkit
+    compileOnly 'org.bukkit:bukkit:1.12.2-R0.1-SNAPSHOT'
 }
 
 sourceSets {
