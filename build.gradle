@@ -1,5 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.ajoberstar.grgit.Grgit
-
 
 buildscript {
     repositories {
@@ -68,7 +68,7 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    compile 'org.spongepowered:spongeapi:7.1.0'
+    compile "org.spongepowered:spongeapi:${spongeapi}"
     compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-5.0-6.0:1.8.6'
     compile 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
     compile 'io.github.nucleuspowered:nucleus-api:1.3.9-S7.0'
@@ -82,15 +82,8 @@ sourceSets {
     }
 }
 
-//https://fmltutor.ustc-zzzz.net/3.5.2-%E5%90%91%E5%85%B6%E4%BB%96Mod%E6%8F%90%E4%BE%9BAPI.html
-//task apiJar(type: Jar) {
-//    classifier = 'api'
-//    from sourceSets.main.output
-//    from sourceSets.main.allSource
-//    include 'com/github/euonmyoji/newhonor/api/**'
-//}  这个... 咕咕咕了吧先:D
-
-shadowJar {
+//以下有关shadow代码由百度搜索引擎提供技术支持(雾)
+shadowJar() {
     classifier = ""
     dependencies {
         //noinspection GroovyAssignabilityCheck # ??? qwq
@@ -98,6 +91,32 @@ shadowJar {
     }
 }
 
+task spongeJar(type: ShadowJar) {
+    manifest {
+        attributes 'Main-Class': 'com.github.euonmyoji.newhonor.common.Main'
+    }
+    configurations = [project.configurations.compile]
+    classifier = "SpongeAPI${spongeapi}"
+    from sourceSets.main.output
+    exclude 'com/github/euonmyoji/newhonor/bukkit/**'
+
+    dependencies {
+        //noinspection GroovyAssignabilityCheck # ??? qwq
+        include(dependency("org.bstats.bStats-Metrics:bstats-sponge:1.3"))
+    }
+}
+
+task bukkitJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.github.euonmyoji.newhonor.common.Main'
+    }
+    classifier = "Bukkit"
+    from sourceSets.main.output
+    exclude 'com/github/euonmyoji/newhonor/sponge/**'
+}
+
 artifacts {
     archives shadowJar
+    archives spongeJar
+    archives bukkitJar
 }
