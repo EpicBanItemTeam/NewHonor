@@ -51,7 +51,6 @@ public class LanguageManager {
      * @param commandName 命令名
      * @return the command describe
      */
-
     public static Text getCommandDescribe(String commandName) {
         return Util.toText(getStringSafely("newhonor.command.describe." + commandName));
     }
