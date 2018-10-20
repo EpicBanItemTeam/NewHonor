@@ -1,8 +1,9 @@
+#newhonor command
 newhonor.command.describe.admin=admin commands
 newhonor.command.describe.list=list all honors that you have
 newhonor.command.describe.settings=personal honor settings
 newhonor.command.describe.effects=effect group commands
-
+#admin command
 newhonor.command.describe.admin.effects=set an honor effect
 newhonor.command.describe.admin.add=add an honor
 newhonor.command.describe.admin.set=set an honor
@@ -12,42 +13,40 @@ newhonor.command.describe.admin.take=remove player(s) honor(s)
 newhonor.command.describe.admin.list=list created honors
 newhonor.command.describe.admin.reload=reload configs
 newhonor.command.describe.admin.refresh=refresh the plugin memory
-
+#settings command
 newhonor.command.describe.settings.usehonor=use honor
 newhonor.command.describe.settings.enableeffects=enable honor effect buff
 newhonor.command.describe.settings.autochange=auto-change the honor when getting one
-
+#effects command
 newhonor.command.describe.effects.set=set a EffectGroup PotionEffect
 newhonor.command.describe.effects.delete=delete a EffectGroup
 newhonor.command.describe.effects.remove=remove a PotionEffect from a EffectGroup
 newhonor.command.describe.effects.info=get the info of a EffectGroup
 newhonor.command.describe.effects.listAllPotionEffects=list all PotionEffects
 newhonor.command.describe.effects.listAllCreatedEffects=list all created EffectGroup
-
+#settings args command
 newhonor.command.hovermessage.list=click to list your honors
 newhonor.command.hovermessage.settings=click to change settings
 newhonor.hovermessage.settings.usehonor=left-click and type true/false to change settings
 newhonor.hovermessage.settings.enableeffects=left-click and type true/false to change settings
 newhonor.hovermessage.settings.autochange=left-click and type true/false to change settings
-
+#change honor
 newhonor.changehonor.succeed=[NewHonor]Change using honor successfully
 newhonor.changehonor.failed=[NewHonor]Failed to change using honor (set using honor to default)
 newhonor.changehonor.unknownsource=[NewHonor]You are not a user
-
+#list honors (player)
 newhonor.listhonors.title=%ownername%'s honors
 newhonor.listhonors.header=%ownername% is using %honor%&r，effects:%effectsID%
 newhonor.listhonors.contexts=honor:&r%honor%&r，effects:%effectsID%
 newhonor.listhonors.clickuse=click to use honor:&r%honor%&r
 newhonor.listhonors.empty=[NewHonor]%player% doesn't have any honor
 newhonor.listhonors.nopermission=[NewHonor]You don't have permission to see other users' honors
-
+#list honors (admin)
 newhonor.listcreatedhonors.title=all created honor
 newhonor.listcreatedhonors.contexts=honorid:%honorid%，text:&r%honor%&r，effectsID:%effectsID%
-
+#events
 newhonor.event.changehonorbylose=&e[&bNewHonor&e] You don't have &r%honor%&r&e now，so we changed you using honor to &r%changedhonor%.
-
 #errors
 newhonor.command.arg.error.honornotpresent=The honorid is not present
-
 #warns
 newhonor.command.arg.warn.honornotpresent=[Warn]The honorid should present but it's not present.

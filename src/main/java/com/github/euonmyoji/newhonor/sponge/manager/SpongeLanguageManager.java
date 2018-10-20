@@ -26,14 +26,6 @@ public class SpongeLanguageManager {
         return Util.toText(getString(key));
     }
 
-    /**
-     * @param commandName 命令名
-     * @return the command describe
-     */
-    public static Text getCommandDescribe(String commandName) {
-        return Util.toText(getString("newhonor.command.describe." + commandName));
-    }
-
     private static void init() {
         try {
             Path langFolder = PluginConfig.cfgDir.resolve("lang");
