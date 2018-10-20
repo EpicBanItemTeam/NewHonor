@@ -1,11 +1,11 @@
 package com.github.euonmyoji.newhonor.sponge.command;
 
+import com.github.euonmyoji.newhonor.common.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.sponge.command.args.HonorIDArg;
 import com.github.euonmyoji.newhonor.sponge.command.args.SettingsArg;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.sponge.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.sponge.util.Util;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -25,7 +25,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.github.euonmyoji.newhonor.sponge.manager.LanguageManager.*;
+import static com.github.euonmyoji.newhonor.common.manager.LanguageManager.langBuilder;
+import static com.github.euonmyoji.newhonor.sponge.manager.SpongeLanguageManager.getCommandDescribe;
+import static com.github.euonmyoji.newhonor.sponge.manager.SpongeLanguageManager.getText;
 import static org.spongepowered.api.text.Text.of;
 import static org.spongepowered.api.text.action.TextActions.runCommand;
 import static org.spongepowered.api.text.action.TextActions.showText;
@@ -122,30 +124,30 @@ public final class HonorCommand {
                             Optional<List<String>> honors = pd.getOwnHonors();
                             if (honors.isPresent()) {
                                 if (honors.get().isEmpty()) {
-                                    src.sendMessage(langBuilder("newhonor.listhonors.empty").replaceName(user).build());
+                                    src.sendMessage(Util.toText(langBuilder("newhonor.listhonors.empty").replaceName(user.getName()).build()));
                                     return;
                                 }
                                 PaginationList.Builder builder = PaginationList.builder()
-                                        .title(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build()).padding(of("-"));
+                                        .title(Util.toText(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build())).padding(of("-"));
                                 String usingID = pd.getUsingHonorID();
                                 HonorConfig.getHonorValueData(usingID)
-                                        .ifPresent(data -> builder.header(langBuilder("newhonor.listhonors.header")
+                                        .ifPresent(data -> builder.header(Util.toText(langBuilder("newhonor.listhonors.header")
                                                 .replace("%ownername%", user.getName())
                                                 .replaceHonor(data.getStrValue())
                                                 .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
-                                                .build()));
+                                                .build())));
                                 List<Text> texts = honors.get().stream()
                                         .map(id -> HonorConfig.getHonorValueData(id).map(data -> Text.builder()
                                                 //显示头衔 药水效果组
-                                                .append(langBuilder("newhonor.listhonors.contexts")
+                                                .append(Util.toText(langBuilder("newhonor.listhonors.contexts")
                                                         .replaceHonorid(id)
                                                         .replaceHonor(data.getStrValue())
                                                         .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
-                                                        .build())
-                                                .onHover(showText(langBuilder("newhonor.listhonors.clickuse")
+                                                        .build()))
+                                                .onHover(showText(Util.toText(langBuilder("newhonor.listhonors.clickuse")
                                                         .replaceHonor(data.getStrValue())
                                                         .replaceHonorid(id)
-                                                        .build()))
+                                                        .build())))
                                                 .onClick(runCommand("/honor use " + id))
                                                 .build()))
                                         .filter(Optional::isPresent)

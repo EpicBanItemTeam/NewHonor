@@ -1,50 +1,29 @@
 package com.github.euonmyoji.newhonor.sponge.manager;
 
+import com.github.euonmyoji.newhonor.common.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.configuration.PluginConfig;
 import com.github.euonmyoji.newhonor.sponge.util.Util;
-import com.google.common.base.Charsets;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
+
+import static com.github.euonmyoji.newhonor.common.manager.LanguageManager.getString;
 
 /**
  * @author yinyangshi
  */
-public class LanguageManager {
+public class SpongeLanguageManager {
     private static Locale locale;
     private static Path langFile;
-    private static ResourceBundle res;
-
-    public static Builder langBuilder(String key) {
-        return new Builder(key);
-    }
-
-    public static Builder langBuilder(String key, String def) {
-        Builder builder = new Builder(key);
-        if (builder.value.equals(builder.key)) {
-            builder.value = def;
-        }
-        return builder;
-    }
 
     public static Text getText(String key) {
-        return Util.toText(getStringSafely(key));
-    }
-
-    public static String getString(String key, String def) {
-        String s = getStringSafely(key);
-        //noinspection StringEquality  就是看引用是不是一样的()
-        return key == s ? def : s;
+        return Util.toText(getString(key));
     }
 
     /**
@@ -52,7 +31,7 @@ public class LanguageManager {
      * @return the command describe
      */
     public static Text getCommandDescribe(String commandName) {
-        return Util.toText(getStringSafely("newhonor.command.describe." + commandName));
+        return Util.toText(getString("newhonor.command.describe." + commandName));
     }
 
     private static void init() {
@@ -84,55 +63,13 @@ public class LanguageManager {
             locale = PluginConfig.getUsingLang();
             langFile = PluginConfig.cfgDir.resolve("lang").resolve(locale.toString() + ".lang");
             init();
-            res = new PropertyResourceBundle(new InputStreamReader(Files.newInputStream(langFile), Charsets.UTF_8));
+            LanguageManager.reload(langFile);
         } catch (IOException e) {
             NewHonor.logger.error("reload language file error!", e);
         }
     }
 
-    private static String getStringSafely(String key) {
-        try {
-            return res.getString(key);
-        } catch (Exception e) {
-            return key;
-        }
-    }
-
-    private LanguageManager() {
+    private SpongeLanguageManager() {
         throw new UnsupportedOperationException();
-    }
-
-    public static class Builder {
-        private final String key;
-        private String value;
-
-        public Builder replace(String old, String instead) {
-            value = value.replace(old, instead);
-            return this;
-        }
-
-        public Builder replaceName(User user) {
-            value = value.replace("%player%", user.getName());
-            return this;
-        }
-
-        public Builder replaceHonorid(String honorid) {
-            value = value.replace("%honorid%", honorid);
-            return this;
-        }
-
-        public Builder replaceHonor(String honor) {
-            value = value.replace("%honor%", honor);
-            return this;
-        }
-
-        public Text build() {
-            return Util.toText(value);
-        }
-
-        private Builder(String key) {
-            this.key = key;
-            this.value = getStringSafely(key);
-        }
     }
 }

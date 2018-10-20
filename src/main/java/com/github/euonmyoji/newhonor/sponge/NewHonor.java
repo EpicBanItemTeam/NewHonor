@@ -88,8 +88,7 @@ public final class NewHonor {
             PluginConfig.defaultCfgDir = defaultCfgDir;
             Files.createDirectories(defaultCfgDir);
             PluginConfig.init();
-            Files.createDirectories(PluginConfig.cfgDir);
-            Files.createDirectories(PluginConfig.cfgDir.resolve("PlayerData"));
+            Files.createDirectories(Files.createDirectories(PluginConfig.cfgDir).resolve("PlayerData"));
             if (PluginConfig.isCheckUpdate()) {
                 Task.builder().async().name("NewHonor - check for update").execute(this::checkUpdate).submit(this);
             } else {
@@ -177,7 +176,7 @@ public final class NewHonor {
     public void reload() {
         Sponge.getEventManager().post(new NewHonorReloadEvent());
         PluginConfig.reload();
-        LanguageManager.reload();
+        SpongeLanguageManager.reload();
         HonorConfig.reload();
         try {
             TaskManager.update();

@@ -36,7 +36,6 @@ public class Log {
                         out.println(getTime() + msg);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
                     NewHonor.logger.debug("记录头衔info异常", e);
                 }
             }

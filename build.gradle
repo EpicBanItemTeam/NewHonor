@@ -84,12 +84,6 @@ dependencies {
     compile fileTree(dir:'libs',include:['*.jar'])
 }
 
-sourceSets {
-    api {
-        resources.srcDir 'com/github/euonmyoji/newhonor/api'
-    }
-}
-
 //以下有关shadow代码由百度搜索引擎提供技术支持(雾)
 shadowJar() {
     classifier = ""
@@ -114,6 +108,15 @@ task spongeJar(type: ShadowJar) {
     }
 }
 
+task spongeApiJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.github.euonmyoji.newhonor.common.Main'
+    }
+    classifier = "sponge-API"
+    from sourceSets.main.output
+    include 'com/github/euonmyoji/newhonor/common/api/**' ,'com/github/euonmyoji/newhonor/sponge/api/**'
+}
+
 task bukkitJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.common.Main'
@@ -126,5 +129,6 @@ task bukkitJar(type: Jar) {
 artifacts {
     archives shadowJar
     archives spongeJar
+    archives spongeApiJar
     archives bukkitJar
 }

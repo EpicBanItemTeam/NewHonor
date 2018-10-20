@@ -3,7 +3,7 @@ package com.github.euonmyoji.newhonor.sponge.command.args;
 import com.github.euonmyoji.newhonor.common.api.Level;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.sponge.manager.LanguageManager;
+import com.github.euonmyoji.newhonor.sponge.util.Util;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.command.args.CommandArgs;
@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.github.euonmyoji.newhonor.common.manager.LanguageManager.langBuilder;
 
 /**
  * @author yinyangshi
@@ -44,21 +46,21 @@ public class HonorIDArg extends CommandElement {
         if ((level != Level.IGNORE) && (shouldPresent != present)) {
             if (present) {
                 if (level == Level.ERROR) {
-                    throw args.createError(LanguageManager.langBuilder("newhonor.command.arg.error.honorpresent",
+                    throw args.createError(Util.toText(langBuilder("newhonor.command.arg.error.honorpresent",
                             "The honorid is present")
-                            .replaceHonorid(arg).build());
+                            .replaceHonorid(arg).build()));
                 } else if (level == Level.WARNING) {
-                    src.sendMessage(Text.of(LanguageManager.langBuilder("newhonor.command.arg.warn.honorpresent",
+                    src.sendMessage(Text.of(langBuilder("newhonor.command.arg.warn.honorpresent",
                             "[Warn]The honorid shouldn't present but it's present.")
                             .replaceHonorid(arg).build()));
                 }
             } else {
                 if (level == Level.ERROR) {
-                    throw args.createError(LanguageManager.langBuilder("newhonor.command.arg.error.honornotpresent",
+                    throw args.createError(Util.toText(langBuilder("newhonor.command.arg.error.honornotpresent",
                             "The honorid is not present")
-                            .replaceHonorid(arg).build());
+                            .replaceHonorid(arg).build()));
                 } else if (level == Level.WARNING) {
-                    src.sendMessage(Text.of(LanguageManager.langBuilder("newhonor.command.arg.warn.honornotpresent",
+                    src.sendMessage(Text.of(langBuilder("newhonor.command.arg.warn.honornotpresent",
                             "[Warn]The honorid should present but it's not present.")
                             .replaceHonorid(arg).build()));
                 }

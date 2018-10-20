@@ -2,8 +2,8 @@ package com.github.euonmyoji.newhonor.sponge.task;
 
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.common.api.OfferType;
+import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.sponge.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.sponge.configuration.PluginConfig;

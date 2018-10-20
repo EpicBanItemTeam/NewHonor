@@ -1,14 +1,15 @@
 package com.github.euonmyoji.newhonor.sponge.command;
 
+import com.github.euonmyoji.newhonor.common.api.Level;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.sponge.command.args.HonorIDArg;
-import com.github.euonmyoji.newhonor.common.api.Level;
 import com.github.euonmyoji.newhonor.sponge.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.sponge.data.HonorData;
 import com.github.euonmyoji.newhonor.sponge.manager.TaskManager;
 import com.github.euonmyoji.newhonor.sponge.util.Log;
+import com.github.euonmyoji.newhonor.sponge.util.Util;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -25,8 +26,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.github.euonmyoji.newhonor.sponge.manager.LanguageManager.getText;
-import static com.github.euonmyoji.newhonor.sponge.manager.LanguageManager.langBuilder;
+import static com.github.euonmyoji.newhonor.common.manager.LanguageManager.langBuilder;
+import static com.github.euonmyoji.newhonor.sponge.manager.SpongeLanguageManager.getText;
 import static org.spongepowered.api.text.Text.of;
 import static org.spongepowered.api.text.serializer.TextSerializers.FORMATTING_CODE;
 
@@ -116,12 +117,12 @@ final class AdminCommand {
             .executor((src, args) -> {
                 Task.builder().async().execute(() -> {
                     PaginationList.Builder builder = PaginationList.builder().title(getText("newhonor.listcreatedhonors.title")).padding(of("-"));
-                    builder.contents(HonorConfig.getAllCreatedHonors().stream().map(id -> langBuilder("newhonor.listcreatedhonors.contexts")
+                    builder.contents(HonorConfig.getAllCreatedHonors().stream().map(id -> Util.toText(langBuilder("newhonor.listcreatedhonors.contexts")
                             .replace("%honorid%", id)
                             .replace("%honor%", FORMATTING_CODE.serialize(HonorConfig.getHonorValueData(id).map(HonorData::getValue)
                                     .orElse(of("there is something wrong"))))
                             .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
-                            .build())
+                            .build()))
                             .filter(text -> !text.toString().contains("there is something wrong"))
                             .collect(Collectors.toList()));
                     builder.build().sendTo(src);
@@ -137,7 +138,7 @@ final class AdminCommand {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
                 if (HonorConfig.setHonor(id, honor)) {
-                    Log.info(src.getName() + "set a honor" + id);
+                    Log.info(src.getName() + " set a honor:" + id);
                     src.sendMessage(of("[NewHonor]set a honor successful(start refresh)"));
                     refreshCache(src);
                     return CommandResult.success();
@@ -152,7 +153,7 @@ final class AdminCommand {
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 if (HonorConfig.deleteHonor(id)) {
-                    Log.info(src.getName() + "deleted a honor" + id);
+                    Log.info(src.getName() + " deleted a honor:" + id);
                     src.sendMessage(of("[NewHonor]deleted a honor successful(start refresh)"));
                     refreshCache(src);
                     return CommandResult.success();
@@ -169,7 +170,7 @@ final class AdminCommand {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
                 if (HonorConfig.addHonor(id, honor)) {
-                    Log.info(src.getName() + "add a honor :" + id);
+                    Log.info(src.getName() + " added a honor:" + id);
                     src.sendMessage(of("[NewHonor]add a honor successful"));
                     return CommandResult.success();
                 }

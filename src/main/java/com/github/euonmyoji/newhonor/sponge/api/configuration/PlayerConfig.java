@@ -4,15 +4,16 @@ import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.sponge.configuration.PluginConfig;
 import com.github.euonmyoji.newhonor.sponge.data.HonorData;
-import com.github.euonmyoji.newhonor.sponge.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.sponge.manager.PlayerConfigManager;
 import com.github.euonmyoji.newhonor.sponge.util.Log;
+import com.github.euonmyoji.newhonor.sponge.util.Util;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
 
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.github.euonmyoji.newhonor.common.manager.LanguageManager.langBuilder;
 import static com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig.getHonorValueData;
 import static com.github.euonmyoji.newhonor.sponge.manager.PlayerConfigManager.d;
 
@@ -272,13 +273,12 @@ public interface PlayerConfig {
                     HonorData nowHonorValue = HonorConfig.getHonorValueData(nowHonor).orElse(null);
                     if (nowHonorValue != null) {
                         setUseHonor(list.get().get(0));
-                        Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(LanguageManager
-                                .langBuilder("newhonor.event.changehonorbylose")
-                                .replaceName(player)
+                        Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(Util.toText(langBuilder("newhonor.event.changehonorbylose")
+                                .replaceName(player.getName())
                                 .replaceHonorid(usingID)
                                 .replaceHonor(getHonorValueData(usingID).map(HonorData::getStrValue).orElse(""))
                                 .replace("%changedhonor%", nowHonorValue.getStrValue())
-                                .build()));
+                                .build())));
                         return;
                     }
                 }
@@ -286,13 +286,12 @@ public interface PlayerConfig {
 
             setUseHonor("");
             NewHonor.clearPlayerCache(getUUID());
-            Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(LanguageManager
-                    .langBuilder("newhonor.event.changehonorbylose")
-                    .replaceName(player)
+            Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(Util.toText(langBuilder("newhonor.event.changehonorbylose")
+                    .replaceName(player.getName())
                     .replaceHonorid(usingID)
                     .replaceHonor(getHonorValueData(usingID).map(HonorData::getStrValue).orElse(""))
                     .replace("%changedhonor%", "null")
-                    .build()));
+                    .build())));
 
         }
     }

@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor.sponge;
 
+import com.github.euonmyoji.newhonor.sponge.data.HonorData;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.channel.MessageReceiver;
@@ -19,8 +20,11 @@ import java.util.Optional;
 public class NewHonorMessageChannel implements MessageChannel {
     @Override
     public Optional<Text> transformMessage(@Nullable Object sender, MessageReceiver recipient, Text text, ChatType type) {
-        if (sender instanceof Identifiable && NewHonor.plugin.honorTextCache.containsKey(((Identifiable) sender).getUniqueId())) {
-            return Optional.of(Text.of(NewHonor.plugin.honorTextCache.get(((Identifiable) sender).getUniqueId()).getValue(), text));
+        if (sender instanceof Identifiable) {
+            HonorData v = NewHonor.plugin.honorTextCache.get(((Identifiable) sender).getUniqueId());
+            if (v != null) {
+                return Optional.of(Text.of(v.getValue(), text));
+            }
         }
         return Optional.of(text);
     }

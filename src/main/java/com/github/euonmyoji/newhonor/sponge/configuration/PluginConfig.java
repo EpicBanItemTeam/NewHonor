@@ -1,9 +1,10 @@
 package com.github.euonmyoji.newhonor.sponge.configuration;
 
+import com.github.euonmyoji.newhonor.common.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.configuration.PlayerConfig;
-import com.github.euonmyoji.newhonor.sponge.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.sponge.manager.MysqlManager;
+import com.github.euonmyoji.newhonor.sponge.manager.SpongeLanguageManager;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -56,7 +57,7 @@ public final class PluginConfig {
         String path = generalNode.getNode(DATA_DIR).getString("default");
         cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
 
-        LanguageManager.reload();
+        SpongeLanguageManager.reload();
 
         CommentedConfigurationNode extraNode = cfg.getNode("extra");
         extraNode.getNode(INTERVAL_TICKS).getInt(8);
