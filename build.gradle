@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.ajoberstar.grgit.Grgit
 
 buildscript {
     repositories {
@@ -28,26 +27,10 @@ jar {
     }
 }
 
-def buildNumber = ""
-ext {
-    //代码来自插件ebi中的build.gradle → : https://github.com/euOnmyoji/EpicBanItem---Sponge
-    //noinspection GrDeprecatedAPIUsage  不会用新版
-    git = Grgit.open(file(".git"))
-    parents = git.head().parentIds
-    index = 0// Offset to match CI
-    for (; parents != null && !parents.isEmpty(); index++) {
-        parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
-    }
-    //noinspection GrReassignedInClosureLocalVar
-    buildNumber = "${index}"
-}
-
 blossom {
     //参考build.gradle https://github.com/ginyai/GiftCode/blob/master/build.gradle
-    replaceToken('@version@', version)
+    replaceToken('@spongeVersion@', spongeVersion)
 }
-
-version = "$version-b$buildNumber"
 
 repositories {
     mavenCentral()
@@ -81,9 +64,9 @@ dependencies {
     //bukkit
     compileOnly 'org.bukkit:bukkit:1.12.2-R0.1-SNAPSHOT'
 
-    compile fileTree(dir:'libs',include:['*.jar'])
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 }
-
+version = "bukkit${bukkitVersion}-sponge${spongeVersion}"
 //以下有关shadow代码由百度搜索引擎提供技术支持(雾)
 shadowJar() {
     classifier = ""
@@ -98,6 +81,7 @@ task spongeJar(type: ShadowJar) {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.common.Main'
     }
     configurations = [project.configurations.compile]
+    version = "${spongeVersion}"
     classifier = "SpongeAPI${spongeapi}"
     from sourceSets.main.output
     exclude 'com/github/euonmyoji/newhonor/bukkit/**'
@@ -112,15 +96,17 @@ task spongeApiJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.common.Main'
     }
+    version = "${spongeVersion}"
     classifier = "sponge-API"
     from sourceSets.main.output
-    include 'com/github/euonmyoji/newhonor/common/api/**' ,'com/github/euonmyoji/newhonor/sponge/api/**'
+    include 'com/github/euonmyoji/newhonor/common/api/**', 'com/github/euonmyoji/newhonor/sponge/api/**'
 }
 
 task bukkitJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.common.Main'
     }
+    version = "${bukkitVersion}"
     classifier = "Bukkit"
     from sourceSets.main.output
     exclude 'com/github/euonmyoji/newhonor/sponge/**'
