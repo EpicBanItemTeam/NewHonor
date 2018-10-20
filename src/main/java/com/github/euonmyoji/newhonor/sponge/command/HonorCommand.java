@@ -5,6 +5,8 @@ import com.github.euonmyoji.newhonor.sponge.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.sponge.command.args.HonorIDArg;
 import com.github.euonmyoji.newhonor.sponge.command.args.SettingsArg;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
+import com.github.euonmyoji.newhonor.sponge.manager.LanguageManager;
+import com.github.euonmyoji.newhonor.sponge.util.Util;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -171,7 +173,12 @@ public final class HonorCommand {
                     }).async().name("newhonor - List Player" + user.getName() + " Honors").submit(NewHonor.plugin);
                     return CommandResult.success();
                 } else {
-                    src.sendMessage(getText("newhonor.listhonors.nopermission"));
+                    if (user == null) {
+                        src.sendMessage(Util.toText(LanguageManager.getString("newhonor.listhonors.needuser"
+                                , "[NewHonor] you should type a user!")));
+                    } else {
+                        src.sendMessage(getText("newhonor.listhonors.nopermission"));
+                    }
                 }
                 return CommandResult.empty();
             })

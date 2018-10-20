@@ -86,17 +86,10 @@ public final class NewHonor {
         plugin = this;
         try {
             PluginConfig.defaultCfgDir = defaultCfgDir;
-            if (Files.notExists(defaultCfgDir)) {
-                Files.createDirectory(defaultCfgDir);
-            }
+            Files.createDirectories(defaultCfgDir);
             PluginConfig.init();
-            if (Files.notExists(PluginConfig.cfgDir)) {
-                Files.createDirectory(PluginConfig.cfgDir);
-            }
-            final String playerDataDir = "PlayerData";
-            if (Files.notExists(PluginConfig.cfgDir.resolve(playerDataDir))) {
-                Files.createDirectory(PluginConfig.cfgDir.resolve(playerDataDir));
-            }
+            Files.createDirectories(PluginConfig.cfgDir);
+            Files.createDirectories(PluginConfig.cfgDir.resolve("PlayerData"));
             if (PluginConfig.isCheckUpdate()) {
                 Task.builder().async().name("NewHonor - check for update").execute(this::checkUpdate).submit(this);
             } else {

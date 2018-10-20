@@ -20,12 +20,10 @@ public class Log {
     private static final Object LOCK = new Object();
 
     static {
-        if (Files.notExists(PATH)) {
-            try {
-                Files.createDirectory(PATH);
-            } catch (IOException e) {
-                NewHonor.logger.warn("create log dir error", e);
-            }
+        try {
+            Files.createDirectories(PATH);
+        } catch (IOException e) {
+            NewHonor.logger.warn("create log dir error", e);
         }
     }
 
