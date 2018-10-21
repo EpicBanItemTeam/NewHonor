@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import static com.github.euonmyoji.newhonor.common.manager.LanguageManager.langBuilder;
 import static com.github.euonmyoji.newhonor.sponge.manager.SpongeLanguageManager.getText;
 import static org.spongepowered.api.text.Text.of;
-import static org.spongepowered.api.text.serializer.TextSerializers.FORMATTING_CODE;
 
 final class AdminCommand {
     private static NewHonor plugin = NewHonor.plugin;
@@ -119,7 +118,7 @@ final class AdminCommand {
                     PaginationList.Builder builder = PaginationList.builder().title(getText("newhonor.listcreatedhonors.title")).padding(of("-"));
                     builder.contents(HonorConfig.getAllCreatedHonors().stream().map(id -> Util.toText(langBuilder("newhonor.listcreatedhonors.contexts")
                             .replace("%honorid%", id)
-                            .replace("%honor%", FORMATTING_CODE.serialize(HonorConfig.getHonorData(id).map(HonorData::getValue)
+                            .replace("%honor%", Util.toStr(HonorConfig.getHonorData(id).map(HonorData::getValue)
                                     .orElse(of("there is something wrong"))))
                             .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
                             .build()))

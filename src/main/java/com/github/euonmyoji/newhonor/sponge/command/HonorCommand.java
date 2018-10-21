@@ -328,11 +328,11 @@ public final class HonorCommand {
 
         ItemStack[] previous = new ItemStack[1];
         ItemStack[] next = new ItemStack[1];
-        HashMap<Text, String> map = new HashMap<>(list.size() - page * onePage + onePage);
+        HashMap<String, String> map = new HashMap<>(list.size() - page * onePage + onePage);
         Inventory.Builder builder = Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
                 .property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(Util.toText(langBuilder("newhonor.listhonors.invtitle")
                         .replaceName(player.getName())
-                        .replace("n", list.size() + "")
+                        .replace("%n%", list.size() + "")
                         .build())))
                 .listener(InteractInventoryEvent.class, event -> {
                     if (!(event instanceof InteractInventoryEvent.Open
@@ -342,7 +342,7 @@ public final class HonorCommand {
                     if (event instanceof ClickInventoryEvent.Primary) {
                         ClickInventoryEvent.Primary eve = ((ClickInventoryEvent.Primary) event);
                         eve.getTargetInventory().peek().ifPresent(item -> {
-                            String id = map.get(item.get(Keys.DISPLAY_NAME).orElseThrow(NoSuchFieldError::new));
+                            String id = map.get(Util.toStr(item.get(Keys.DISPLAY_NAME).orElseThrow(NoSuchFieldError::new)));
                             if (id != null) {
                                 Sponge.getCommandManager().process(player, "honor use " + id);
                                 player.closeInventory();
@@ -359,7 +359,7 @@ public final class HonorCommand {
         Inventory inv = builder.build(NewHonor.plugin);
         list.stream().skip((page - 1) * onePage).limit(onePage).forEach(data -> {
             ItemStack item = data.getItem();
-            map.put(item.get(Keys.DISPLAY_NAME).orElseThrow(NoSuchFieldError::new), data.getId());
+            map.put(Util.toStr(item.get(Keys.DISPLAY_NAME).orElseThrow(NoSuchFieldError::new)), data.getId());
             inv.offer(data.getItem());
         });
         if (page > 1) {

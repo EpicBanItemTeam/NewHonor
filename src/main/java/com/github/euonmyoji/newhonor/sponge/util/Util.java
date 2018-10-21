@@ -106,4 +106,7 @@ public class Util {
         return TextSerializers.FORMATTING_CODE.deserialize(str);
     }
 
+    public static String toStr(Text text) {
+        return TextSerializers.FORMATTING_CODE.serialize(text);
+    }
 }

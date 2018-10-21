@@ -41,7 +41,7 @@ public class HonorData {
         String rawValue = cfg.getNode("value").getString("[default]");
         Text temp = jsonToText(rawValue);
         Text.Builder valueBuilder = Text.builder().append(temp);
-        strValue = TextSerializers.FORMATTING_CODE.serialize(temp);
+        strValue = Util.toStr(temp);
 
         CommentedConfigurationNode hoverNode = cfg.getNode("hoverValue");
         if (!hoverNode.isVirtual()) {
@@ -119,7 +119,7 @@ public class HonorData {
             List<Text> lores = new ArrayList<>();
             value.getHoverAction().ifPresent(hoverAction -> {
                 if (hoverAction instanceof HoverAction.ShowText) {
-                    String str = TextSerializers.FORMATTING_CODE.serialize((Text) hoverAction.getResult());
+                    String str = Util.toStr((Text) hoverAction.getResult());
                     String nextLine = "\n";
                     for (String s : str.split(nextLine)) {
                         lores.add(Util.toText("&r" + s));
