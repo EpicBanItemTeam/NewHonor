@@ -41,6 +41,8 @@ newhonor.listhonors.contexts=&a头衔: &r%honor%&r &a，药水效果组: &6%effe
 newhonor.listhonors.clickuse=&e点击使用头衔 &r%honor%&r
 newhonor.listhonors.empty=&e[&b头衔插件&e] &e%player%目前没有任何头衔
 newhonor.listhonors.nopermission=&e[&b头衔插件&e] &c你目前没有权限 &6newhonor.admin &c来查看别人拥有的头衔
+newhonor.listhonors.previous=上一页
+newhonor.listhonors.next=下一页
 #list honors (admin)
 newhonor.listcreatedhonors.title=&a&l所有创建的头衔
 newhonor.listcreatedhonors.contexts=&e头衔id: &6%honorid% &a，头衔: &r%honor%&r &a，&3药水效果组: &d%effectsID%

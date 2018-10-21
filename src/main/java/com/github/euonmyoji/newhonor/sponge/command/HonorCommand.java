@@ -7,22 +7,24 @@ import com.github.euonmyoji.newhonor.sponge.command.args.HonorIDArg;
 import com.github.euonmyoji.newhonor.sponge.command.args.SettingsArg;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.sponge.data.HonorData;
+import com.github.euonmyoji.newhonor.sponge.manager.SpongeLanguageManager;
 import com.github.euonmyoji.newhonor.sponge.util.Util;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
-import org.spongepowered.api.item.inventory.Carrier;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
+import org.spongepowered.api.item.inventory.property.SlotIndex;
+import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -148,7 +150,7 @@ public final class HonorCommand {
                                                         .filter(Optional::isPresent)
                                                         .map(Optional::get)
                                                         .collect(Collectors.toList());
-                                                ((Player) src).openInventory(getHonorsInv(src, dataList, 1));
+                                                ((Player) src).openInventory(getHonorsInv(((Player) src), dataList, pd, 1));
                                             }).submit(NewHonor.plugin);
                                             break;
                                         }
@@ -311,12 +313,22 @@ public final class HonorCommand {
         throw new UnsupportedOperationException();
     }
 
-    private static Inventory getHonorsInv(CommandSource src, List<HonorData> list, int page) {
+    //00 01 02 03 04 05 06 07 08
+    //09 10 11 12 13 14 15 16 17
+    //18 19 20 21 22 23 24 25 26
+    //27 28 29 30 31 32 33 34 35
+    //36 37 38 39 40 41 42 43 44
+    //45 46 47 48 49 50 51 52 53
+
+    private static final ItemStack GLASS = ItemStack.builder().itemType(ItemTypes.GLASS_PANE).add(Keys.DISPLAY_NAME, Text.of("")).build();
+
+    private static Inventory getHonorsInv(Player player, List<HonorData> list, PlayerConfig pc, int page) {
+        ItemStack[] previous = new ItemStack[1];
+        ItemStack[] next = new ItemStack[1];
         HashMap<Integer, String> map = new HashMap<>(list.size());
         Inventory.Builder builder = Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
-                .forCarrier(((Carrier) src))
-                .property(InventoryDimension.PROPERTY_NAME, new InventoryDimension(9, ((list.size() - 1) % 54 / 9 + 1)))
-                .property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(Text.of(src.getName() + "的头衔")))
+                .forCarrier(player)
+                .property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(Text.of(player.getName() + "的头衔")))
                 .listener(InteractInventoryEvent.class, event -> {
                     if (!(event instanceof InteractInventoryEvent.Open
                             || event instanceof InteractInventoryEvent.Close)) {
@@ -327,18 +339,48 @@ public final class HonorCommand {
                         eve.getTargetInventory().peek().ifPresent(item -> {
                             String id = map.get(item.hashCode());
                             if (id != null) {
-                                Sponge.getCommandManager().process(src, "/honor use " + id);
+                                Sponge.getCommandManager().process(player, "/honor use " + id);
+                                player.closeInventory();
                                 return;
                             }
+                            if (page > 1 && item.equalTo(previous[0])) {
+                                player.openInventory(getHonorsInv(player, list, pc, page - 1));
+                            } else if (item.equalTo(next[0])) {
+                                player.openInventory(getHonorsInv(player, list, pc, page + 1));
+                            }
                             //todo:如果翻页
+
                         });
                     }
                 });
+        final int onePage = 5 * 9;
         Inventory inv = builder.build(NewHonor.plugin);
-        list.stream().limit(5 * 9).forEach(data -> {
+        list.stream().skip((page - 1) * onePage).limit(onePage).forEach(data -> {
             ItemStack item = data.getItem();
             map.put(item.hashCode(), data.getId());
             inv.offer(data.getItem());
         });
+        if (page > 1) {
+            previous[0] = ItemStack.builder()
+                    .itemType(ItemTypes.ARROW)
+                    .add(Keys.DISPLAY_NAME, SpongeLanguageManager.getText("newhonor.listhonors.previous", "previous page")).build();
+            inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(45))).set(previous[0]);
+        }
+        if (list.size() - onePage * page > onePage) {
+            next[0] = ItemStack.builder()
+                    .itemType(ItemTypes.ARROW)
+                    .add(Keys.DISPLAY_NAME, SpongeLanguageManager.getText("newhonor.listhonors.next", "next page")).build();
+            inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(53))).set(next[0]);
+        }
+
+        try {
+            pc.getUsingHonorValue().ifPresent(honorData -> inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(49))).set(
+                    honorData.getItem()));
+            inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(48))).set(GLASS);
+            inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(50))).set(GLASS);
+        } catch (SQLException e) {
+            NewHonor.logger.info("sql e", e);
+        }
+        return inv;
     }
 }

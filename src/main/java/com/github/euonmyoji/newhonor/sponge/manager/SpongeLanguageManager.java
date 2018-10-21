@@ -26,6 +26,10 @@ public class SpongeLanguageManager {
         return Util.toText(getString(key));
     }
 
+    public static Text getText(String key, String def) {
+        return Util.toText(getString(key, def));
+    }
+
     private static void init() {
         try {
             Path langFolder = PluginConfig.cfgDir.resolve("lang");
