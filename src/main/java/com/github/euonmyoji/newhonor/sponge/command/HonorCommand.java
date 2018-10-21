@@ -145,12 +145,13 @@ public final class HonorCommand {
                                 switch (pd.getListHonorStyle()) {
                                     case ITEM:
                                         if (src instanceof Player && isSelf) {
+                                            ItemStack using = pd.getUsingHonorValue().map(HonorData::getItem).orElse(ItemStack.empty());
                                             Task.builder().execute(() -> {
                                                 List<HonorData> dataList = honors.get().stream().map(HonorConfig::getHonorData)
                                                         .filter(Optional::isPresent)
                                                         .map(Optional::get)
                                                         .collect(Collectors.toList());
-                                                ((Player) src).openInventory(getHonorsInv(((Player) src), dataList, pd, 1));
+                                                ((Player) src).openInventory(getHonorsInv(((Player) src), dataList, using, 1));
                                             }).submit(NewHonor.plugin);
                                             break;
                                         }
@@ -322,13 +323,17 @@ public final class HonorCommand {
 
     private static final ItemStack GLASS = ItemStack.builder().itemType(ItemTypes.GLASS_PANE).add(Keys.DISPLAY_NAME, Text.of("")).build();
 
-    private static Inventory getHonorsInv(Player player, List<HonorData> list, PlayerConfig pc, int page) {
+    private static Inventory getHonorsInv(Player player, List<HonorData> list, ItemStack using, int page) {
+        final int onePage = 5 * 9;
+
         ItemStack[] previous = new ItemStack[1];
         ItemStack[] next = new ItemStack[1];
-        HashMap<Integer, String> map = new HashMap<>(list.size());
+        HashMap<Text, String> map = new HashMap<>(list.size() - page * onePage + onePage);
         Inventory.Builder builder = Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
-                .forCarrier(player)
-                .property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(Text.of(player.getName() + "的头衔")))
+                .property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(Util.toText(langBuilder("newhonor.listhonors.invtitle")
+                        .replaceName(player.getName())
+                        .replace("n", list.size() + "")
+                        .build())))
                 .listener(InteractInventoryEvent.class, event -> {
                     if (!(event instanceof InteractInventoryEvent.Open
                             || event instanceof InteractInventoryEvent.Close)) {
@@ -337,27 +342,24 @@ public final class HonorCommand {
                     if (event instanceof ClickInventoryEvent.Primary) {
                         ClickInventoryEvent.Primary eve = ((ClickInventoryEvent.Primary) event);
                         eve.getTargetInventory().peek().ifPresent(item -> {
-                            String id = map.get(item.hashCode());
+                            String id = map.get(item.get(Keys.DISPLAY_NAME).orElseThrow(NoSuchFieldError::new));
                             if (id != null) {
-                                Sponge.getCommandManager().process(player, "/honor use " + id);
+                                Sponge.getCommandManager().process(player, "honor use " + id);
                                 player.closeInventory();
                                 return;
                             }
-                            if (page > 1 && item.equalTo(previous[0])) {
-                                player.openInventory(getHonorsInv(player, list, pc, page - 1));
-                            } else if (item.equalTo(next[0])) {
-                                player.openInventory(getHonorsInv(player, list, pc, page + 1));
+                            if (page > 1 && previous[0] != null && item.equalTo(previous[0])) {
+                                player.openInventory(getHonorsInv(player, list, using, page - 1));
+                            } else if (next[0] != null && item.equalTo(next[0])) {
+                                player.openInventory(getHonorsInv(player, list, using, page + 1));
                             }
-                            //todo:如果翻页
-
                         });
                     }
                 });
-        final int onePage = 5 * 9;
         Inventory inv = builder.build(NewHonor.plugin);
         list.stream().skip((page - 1) * onePage).limit(onePage).forEach(data -> {
             ItemStack item = data.getItem();
-            map.put(item.hashCode(), data.getId());
+            map.put(item.get(Keys.DISPLAY_NAME).orElseThrow(NoSuchFieldError::new), data.getId());
             inv.offer(data.getItem());
         });
         if (page > 1) {
@@ -373,14 +375,9 @@ public final class HonorCommand {
             inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(53))).set(next[0]);
         }
 
-        try {
-            pc.getUsingHonorValue().ifPresent(honorData -> inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(49))).set(
-                    honorData.getItem()));
-            inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(48))).set(GLASS);
-            inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(50))).set(GLASS);
-        } catch (SQLException e) {
-            NewHonor.logger.info("sql e", e);
-        }
+        inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(49))).set(using);
+        inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(48))).set(GLASS);
+        inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(50))).set(GLASS);
         return inv;
     }
 }

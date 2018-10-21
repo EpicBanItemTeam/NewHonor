@@ -122,7 +122,7 @@ public class HonorData {
                     String str = TextSerializers.FORMATTING_CODE.serialize((Text) hoverAction.getResult());
                     String nextLine = "\n";
                     for (String s : str.split(nextLine)) {
-                        lores.add(Util.toText(s));
+                        lores.add(Util.toText("&r" + s));
                     }
                 }
             });
@@ -171,6 +171,6 @@ public class HonorData {
     }
 
     public ItemStack getItem() {
-        return item;
+        return item.copy();
     }
 }
