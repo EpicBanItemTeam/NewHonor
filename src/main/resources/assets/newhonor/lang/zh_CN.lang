@@ -35,7 +35,7 @@ newhonor.changehonor.succeed=&e[&b头衔插件&e] &a修改使用头衔成功
 newhonor.changehonor.failed=&e[&b头衔插件&e] &c修改使用头衔失败，已将头衔改成默认头衔。
 newhonor.changehonor.unknownsource=&e[&b头衔插件&e] &c未知发送者
 #list honors (player)
-newhonor.listhonors.invtitle=&e%player%&a拥有的头衔 &3头衔总数:%n%
+newhonor.listhonors.invtitle=&e%player%&a拥有的头衔 &c头衔总数:%n% 页码:%page%
 newhonor.listhonors.title=&e%ownername% &a拥有的头衔
 newhonor.listhonors.header=&e%ownername% &a正在使用的头衔 &r%honor%&r &a，药水效果组: &d%effectsID%
 newhonor.listhonors.contexts=&a头衔: &r%honor%&r &a，药水效果组: &6%effectsID%

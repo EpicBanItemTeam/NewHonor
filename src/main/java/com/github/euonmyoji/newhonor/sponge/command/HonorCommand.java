@@ -33,10 +33,7 @@ import org.spongepowered.api.util.Identifiable;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.github.euonmyoji.newhonor.common.manager.LanguageManager.langBuilder;
@@ -145,11 +142,10 @@ public final class HonorCommand {
                                 switch (pd.getListHonorStyle()) {
                                     case ITEM:
                                         if (src instanceof Player && isSelf) {
-                                            ItemStack using = pd.getUsingHonorValue().map(HonorData::getItem).orElse(ItemStack.empty());
+                                            HonorData using = pd.getUsingHonorValue();
                                             Task.builder().execute(() -> {
                                                 List<HonorData> dataList = honors.get().stream().map(HonorConfig::getHonorData)
-                                                        .filter(Optional::isPresent)
-                                                        .map(Optional::get)
+                                                        .filter(Objects::nonNull)
                                                         .collect(Collectors.toList());
                                                 ((Player) src).openInventory(getHonorsInv(((Player) src), dataList, using, 1));
                                             }).submit(NewHonor.plugin);
@@ -160,13 +156,13 @@ public final class HonorCommand {
                                         PaginationList.Builder builder = PaginationList.builder()
                                                 .title(Util.toText(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build())).padding(of("-"));
                                         String usingID = pd.getUsingHonorID();
-                                        HonorConfig.getHonorData(usingID)
+                                        Optional.ofNullable(HonorConfig.getHonorData(usingID))
                                                 .ifPresent(data -> builder.header(Util.toText(langBuilder("newhonor.listhonors.header")
                                                         .replace("%ownername%", user.getName())
                                                         .replaceHonor(data.getStrValue())
                                                         .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
                                                         .build())));
-                                        List<Text> texts = honors.get().stream().map(id -> HonorConfig.getHonorData(id).map(data -> Text.builder()
+                                        List<Text> texts = honors.get().stream().map(id -> Optional.ofNullable(HonorConfig.getHonorData(id)).map(data -> Text.builder()
                                                 //显示头衔 药水效果组
                                                 .append(Util.toText(langBuilder("newhonor.listhonors.contexts")
                                                         .replaceHonorid(id)
@@ -323,16 +319,17 @@ public final class HonorCommand {
 
     private static final ItemStack GLASS = ItemStack.builder().itemType(ItemTypes.GLASS_PANE).add(Keys.DISPLAY_NAME, Text.of("")).build();
 
-    private static Inventory getHonorsInv(Player player, List<HonorData> list, ItemStack using, int page) {
+    private static Inventory getHonorsInv(Player player, List<HonorData> list, HonorData using, int page) {
         final int onePage = 5 * 9;
 
         ItemStack[] previous = new ItemStack[1];
         ItemStack[] next = new ItemStack[1];
-        HashMap<String, String> map = new HashMap<>(list.size() - page * onePage + onePage);
+        HashMap<String, String> map = new HashMap<>(list.size() - (page - 1) * onePage);
         Inventory.Builder builder = Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
                 .property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(Util.toText(langBuilder("newhonor.listhonors.invtitle")
                         .replaceName(player.getName())
-                        .replace("%n%", list.size() + "")
+                        .replace("%n%", String.valueOf(list.size()))
+                        .replace("%page%", String.valueOf(page))
                         .build())))
                 .listener(InteractInventoryEvent.class, event -> {
                     if (!(event instanceof InteractInventoryEvent.Open
@@ -343,7 +340,7 @@ public final class HonorCommand {
                         ClickInventoryEvent.Primary eve = ((ClickInventoryEvent.Primary) event);
                         ItemStack item = eve.getCursorTransaction().getFinal().createStack();
                         if (item.getType() != ItemTypes.AIR) {
-                            String id = map.get(Util.toStr(item.get(Keys.DISPLAY_NAME).orElseThrow(NoSuchFieldError::new)));
+                            String id = map.get(Util.toStr(item.get(Keys.DISPLAY_NAME).orElse(Text.of(""))));
                             if (id != null) {
                                 Sponge.getCommandManager().process(player, "honor use " + id);
                                 player.closeInventory();
@@ -377,9 +374,11 @@ public final class HonorCommand {
             inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(53))).set(next[0]);
         }
 
-        inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(49))).set(using);
-        inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(48))).set(GLASS);
-        inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(50))).set(GLASS);
+        if (using != null) {
+            inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(49))).set(using.getItem());
+            inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(48))).set(GLASS);
+            inv.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotIndex.of(50))).set(GLASS);
+        }
         return inv;
     }
 }

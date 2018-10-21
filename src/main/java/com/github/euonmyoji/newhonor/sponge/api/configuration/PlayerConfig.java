@@ -280,13 +280,13 @@ public interface PlayerConfig {
             Optional<List<String>> list = getOwnHonors();
             if (list.isPresent() && !list.get().isEmpty()) {
                 for (String nowHonor : list.get()) {
-                    HonorData nowHonorValue = HonorConfig.getHonorData(nowHonor).orElse(null);
+                    HonorData nowHonorValue = HonorConfig.getHonorData(nowHonor);
                     if (nowHonorValue != null) {
                         setUseHonor(list.get().get(0));
                         Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(Util.toText(langBuilder("newhonor.event.changehonorbylose")
                                 .replaceName(player.getName())
                                 .replaceHonorid(usingID)
-                                .replaceHonor(getHonorData(usingID).map(HonorData::getStrValue).orElse(""))
+                                .replaceHonor(Optional.ofNullable(getHonorData(usingID)).map(HonorData::getStrValue).orElse(""))
                                 .replace("%changedhonor%", nowHonorValue.getStrValue())
                                 .build())));
                         return;
@@ -299,7 +299,7 @@ public interface PlayerConfig {
             Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(Util.toText(langBuilder("newhonor.event.changehonorbylose")
                     .replaceName(player.getName())
                     .replaceHonorid(usingID)
-                    .replaceHonor(getHonorData(usingID).map(HonorData::getStrValue).orElse(""))
+                    .replaceHonor(Optional.ofNullable(getHonorData(usingID)).map(HonorData::getStrValue).orElse(""))
                     .replace("%changedhonor%", "null")
                     .build())));
 
@@ -342,8 +342,8 @@ public interface PlayerConfig {
      * @return text
      * @throws SQLException when found any error
      */
-    default Optional<HonorData> getUsingHonorValue() throws SQLException {
-        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorConfig::getHonorData);
+    default HonorData getUsingHonorValue() throws SQLException {
+        return HonorConfig.getHonorData(getUsingHonorID());
     }
 
     /**

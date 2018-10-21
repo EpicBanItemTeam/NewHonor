@@ -199,7 +199,10 @@ public final class NewHonor {
                     plugin.playerUsingEffectCache.remove(pd.getUUID());
                     plugin.honorTextCache.remove(pd.getUUID());
                     if (pd.isUseHonor()) {
-                        pd.getUsingHonorValue().ifPresent(data -> plugin.honorTextCache.put(pd.getUUID(), data));
+                        HonorData data = pd.getUsingHonorValue();
+                        if (data != null) {
+                            plugin.honorTextCache.put(pd.getUUID(), data);
+                        }
                         if (pd.isEnabledEffects()) {
                             HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
                         }

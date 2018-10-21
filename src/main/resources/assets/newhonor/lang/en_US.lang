@@ -35,7 +35,7 @@ newhonor.changehonor.succeed=[NewHonor]Change using honor successfully
 newhonor.changehonor.failed=[NewHonor]Failed to change using honor (set using honor to default)
 newhonor.changehonor.unknownsource=[NewHonor]You are not a user
 #list honors (player)
-newhonor.listhonors.invtitle=&e%player%'s honors number:%n%
+newhonor.listhonors.invtitle=&e%player%'s honors number:%n% page:%page%
 newhonor.listhonors.title=%ownername%'s honors
 newhonor.listhonors.header=%ownername% is using %honor%&r，effects:%effectsID%
 newhonor.listhonors.contexts=honor:&r%honor%&r，effects:%effectsID%

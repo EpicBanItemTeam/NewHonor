@@ -52,8 +52,8 @@ public class HonorConfig {
         return false;
     }
 
-    public static Optional<HonorData> getHonorData(String id) {
-        return Optional.ofNullable(valueMap.get(id));
+    public static HonorData getHonorData(String id) {
+        return valueMap.get(id);
     }
 
     public static boolean setHonor(String id, String honor) {
@@ -114,10 +114,9 @@ public class HonorConfig {
     }
 
     public static Optional<Text> getGetMessage(String id, String playername) {
-        //noinspection ConstantConditions 之前有检查
         return Optional.ofNullable(cfg.getNode(id, "getMessage").getString(null))
                 .map(s -> "&r" + s.replace("{playername}", playername))
-                .map(s -> "&r" + s.replace("{newhonor}", HonorConfig.getHonorData(id).get().getStrValue() + "&r"))
+                .map(s -> "&r" + s.replace("{newhonor}", HonorConfig.getHonorData(id).getStrValue() + "&r"))
                 .map(TextSerializers.FORMATTING_CODE::deserialize);
     }
 
