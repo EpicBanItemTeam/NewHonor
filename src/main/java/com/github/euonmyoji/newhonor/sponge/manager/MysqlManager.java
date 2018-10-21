@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor.sponge.manager;
 
+import com.github.euonmyoji.newhonor.common.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.configuration.BasePlayerConfig;
 import com.github.euonmyoji.newhonor.sponge.api.event.PlayerGetHonorEvent;
@@ -64,9 +65,14 @@ public final class MysqlManager {
                                 USING_KEY + " varchar(64)," +
                                 HONORS_KEY + " TEXT," +
                                 USEHONOR_KEY + " BOOL DEFAULT 1," +
+                                LIST_HONOR_STYLE_KEY + " varchar(32) DEFAULT TEXT" +
                                 ENABLE_EFFECTS_KEY + " BOOL DEFAULT 1);");
                         try {
                             s.execute(String.format("ALTER TABLE %s ADD %s bool default 1;", TABLE_NAME, AUTO_CHANGE_KEY));
+                        } catch (Exception ignore) {
+                        }
+                        try {
+                            s.execute(String.format("ALTER TABLE %s ADD %s varchar(32) default TEXT;", LIST_HONOR_STYLE_KEY, AUTO_CHANGE_KEY));
                         } catch (Exception ignore) {
                         }
                     }
@@ -270,6 +276,17 @@ public final class MysqlManager {
                     ResultSet result = state.executeQuery();
                     result.next();
                     return result.getString(USING_KEY);
+                }
+            }
+        }
+
+        @Override
+        public ListHonorStyle getListHonorStyle() throws SQLException {
+            try (Connection con = getConnection()) {
+                try (PreparedStatement state = con.prepareStatement(String.format("select %s from %s where UUID = '%s'", LIST_HONOR_STYLE_KEY, TABLE_NAME, uuid))) {
+                    ResultSet result = state.executeQuery();
+                    result.next();
+                    return ListHonorStyle.valueOf(result.getString(LIST_HONOR_STYLE_KEY).toUpperCase());
                 }
             }
         }

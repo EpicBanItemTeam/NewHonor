@@ -5,15 +5,21 @@ import com.github.euonmyoji.newhonor.sponge.util.Util;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.ClickAction;
+import org.spongepowered.api.text.action.HoverAction;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextParseException;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -28,6 +34,7 @@ public class HonorData {
     private String strValue;
     private List<Text> displayValue;
     private int[] delay;
+    private ItemStack item;
 
     public HonorData(CommentedConfigurationNode cfg, String id) {
         this.id = id;
@@ -104,7 +111,34 @@ public class HonorData {
                 }
             }).collect(Collectors.toList());
         } catch (ObjectMappingException e) {
-            e.printStackTrace();
+            NewHonor.logger.warn("honor config error", e);
+        }
+
+        try {
+            ItemStack.Builder builder = ItemStack.builder().itemType(ItemTypes.NAME_TAG).add(Keys.DISPLAY_NAME, value);
+            List<Text> lores = new ArrayList<>();
+            value.getHoverAction().ifPresent(hoverAction -> {
+                if (hoverAction instanceof HoverAction.ShowText) {
+                    String str = TextSerializers.FORMATTING_CODE.serialize((Text) hoverAction.getResult());
+                    String nextLine = "\n";
+                    for (String s : str.split(nextLine)) {
+                        lores.add(Util.toText(s));
+                    }
+                }
+            });
+            value.getClickAction().ifPresent(clickAction -> {
+                if (clickAction instanceof ClickAction.RunCommand) {
+                    lores.add(Text.of("点击执行:", clickAction.getResult()));
+                } else if (clickAction instanceof ClickAction.SuggestCommand) {
+                    lores.add(Text.of("点击建议:", clickAction.getResult()));
+                }
+            });
+            if (!lores.isEmpty()) {
+                builder.add(Keys.ITEM_LORE, lores);
+            }
+            item = cfg.getNode("item-value").getValue(TypeToken.of(ItemStack.class), builder.build());
+        } catch (ObjectMappingException e) {
+            NewHonor.logger.warn("honor config error", e);
         }
     }
 
@@ -134,5 +168,9 @@ public class HonorData {
         } catch (TextParseException e) {
             return TextSerializers.FORMATTING_CODE.deserialize(str);
         }
+    }
+
+    public ItemStack getItem() {
+        return item;
     }
 }

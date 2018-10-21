@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor.sponge.api.configuration;
 
+import com.github.euonmyoji.newhonor.common.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.sponge.configuration.PluginConfig;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static com.github.euonmyoji.newhonor.common.manager.LanguageManager.langBuilder;
-import static com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig.getHonorValueData;
+import static com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig.getHonorData;
 import static com.github.euonmyoji.newhonor.sponge.manager.PlayerConfigManager.d;
 
 /**
@@ -27,6 +28,7 @@ public interface PlayerConfig {
     String USEHONOR_KEY = "usehonor";
     String ENABLE_EFFECTS_KEY = "enableeffects";
     String AUTO_CHANGE_KEY = "autochange";
+    String LIST_HONOR_STYLE_KEY = "listhonorsstyle";
 
     /**
      * 得到玩家爱数据
@@ -260,6 +262,14 @@ public interface PlayerConfig {
     boolean isEnabledAutoChange() throws SQLException;
 
     /**
+     * 玩家显示拥有头衔方式
+     *
+     * @return the style of it
+     * @throws SQLException when any sql e
+     */
+    ListHonorStyle getListHonorStyle() throws SQLException;
+
+    /**
      * 检查玩家拥有的头衔是否有不正确的地方
      *
      * @throws SQLException when found any error
@@ -270,13 +280,13 @@ public interface PlayerConfig {
             Optional<List<String>> list = getOwnHonors();
             if (list.isPresent() && !list.get().isEmpty()) {
                 for (String nowHonor : list.get()) {
-                    HonorData nowHonorValue = HonorConfig.getHonorValueData(nowHonor).orElse(null);
+                    HonorData nowHonorValue = HonorConfig.getHonorData(nowHonor).orElse(null);
                     if (nowHonorValue != null) {
                         setUseHonor(list.get().get(0));
                         Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(Util.toText(langBuilder("newhonor.event.changehonorbylose")
                                 .replaceName(player.getName())
                                 .replaceHonorid(usingID)
-                                .replaceHonor(getHonorValueData(usingID).map(HonorData::getStrValue).orElse(""))
+                                .replaceHonor(getHonorData(usingID).map(HonorData::getStrValue).orElse(""))
                                 .replace("%changedhonor%", nowHonorValue.getStrValue())
                                 .build())));
                         return;
@@ -289,7 +299,7 @@ public interface PlayerConfig {
             Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(Util.toText(langBuilder("newhonor.event.changehonorbylose")
                     .replaceName(player.getName())
                     .replaceHonorid(usingID)
-                    .replaceHonor(getHonorValueData(usingID).map(HonorData::getStrValue).orElse(""))
+                    .replaceHonor(getHonorData(usingID).map(HonorData::getStrValue).orElse(""))
                     .replace("%changedhonor%", "null")
                     .build())));
 
@@ -333,7 +343,7 @@ public interface PlayerConfig {
      * @throws SQLException when found any error
      */
     default Optional<HonorData> getUsingHonorValue() throws SQLException {
-        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorConfig::getHonorValueData);
+        return Optional.ofNullable(getUsingHonorID()).flatMap(HonorConfig::getHonorData);
     }
 
     /**

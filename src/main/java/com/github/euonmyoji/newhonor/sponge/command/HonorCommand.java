@@ -6,11 +6,23 @@ import com.github.euonmyoji.newhonor.sponge.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.sponge.command.args.HonorIDArg;
 import com.github.euonmyoji.newhonor.sponge.command.args.SettingsArg;
 import com.github.euonmyoji.newhonor.sponge.configuration.HonorConfig;
+import com.github.euonmyoji.newhonor.sponge.data.HonorData;
 import com.github.euonmyoji.newhonor.sponge.util.Util;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
+import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
+import org.spongepowered.api.item.inventory.Carrier;
+import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.InventoryArchetypes;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.property.InventoryDimension;
+import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -108,10 +120,10 @@ public final class HonorCommand {
                 listCD.put(src.getName(), LocalDateTime.now());
                 Optional<User> optionalUser = args.getOne(of("user"));
                 boolean typedUser = optionalUser.isPresent();
-                boolean isSelf = src.getName().equals(optionalUser.map(User::getName).orElse(src.getName()));
-                boolean permissionPass = isSelf || src.hasPermission(ADMIN_PERMISSION);
                 User user = typedUser ? optionalUser.get()
                         : src instanceof User ? (User) src : null;
+                boolean isSelf = src.getName().equals(user == null ? null : user.getName());
+                boolean permissionPass = isSelf || src.hasPermission(ADMIN_PERMISSION);
                 boolean execute = typedUser ? permissionPass : user != null;
                 if (execute) {
                     //async
@@ -126,17 +138,32 @@ public final class HonorCommand {
                                     src.sendMessage(Util.toText(langBuilder("newhonor.listhonors.empty").replaceName(user.getName()).build()));
                                     return;
                                 }
-                                PaginationList.Builder builder = PaginationList.builder()
-                                        .title(Util.toText(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build())).padding(of("-"));
-                                String usingID = pd.getUsingHonorID();
-                                HonorConfig.getHonorValueData(usingID)
-                                        .ifPresent(data -> builder.header(Util.toText(langBuilder("newhonor.listhonors.header")
-                                                .replace("%ownername%", user.getName())
-                                                .replaceHonor(data.getStrValue())
-                                                .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
-                                                .build())));
-                                List<Text> texts = honors.get().stream()
-                                        .map(id -> HonorConfig.getHonorValueData(id).map(data -> Text.builder()
+
+                                //noinspection SwitchStatementDensity  对不起我真的太垃圾了(
+                                switch (pd.getListHonorStyle()) {
+                                    case ITEM:
+                                        if (src instanceof Player && isSelf) {
+                                            Task.builder().execute(() -> {
+                                                List<HonorData> dataList = honors.get().stream().map(HonorConfig::getHonorData)
+                                                        .filter(Optional::isPresent)
+                                                        .map(Optional::get)
+                                                        .collect(Collectors.toList());
+                                                ((Player) src).openInventory(getHonorsInv(src, dataList, 1));
+                                            }).submit(NewHonor.plugin);
+                                            break;
+                                        }
+                                    default: {
+                                        //text list ------------------------------------------ TEXT TEXT
+                                        PaginationList.Builder builder = PaginationList.builder()
+                                                .title(Util.toText(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build())).padding(of("-"));
+                                        String usingID = pd.getUsingHonorID();
+                                        HonorConfig.getHonorData(usingID)
+                                                .ifPresent(data -> builder.header(Util.toText(langBuilder("newhonor.listhonors.header")
+                                                        .replace("%ownername%", user.getName())
+                                                        .replaceHonor(data.getStrValue())
+                                                        .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
+                                                        .build())));
+                                        List<Text> texts = honors.get().stream().map(id -> HonorConfig.getHonorData(id).map(data -> Text.builder()
                                                 //显示头衔 药水效果组
                                                 .append(Util.toText(langBuilder("newhonor.listhonors.contexts")
                                                         .replaceHonorid(id)
@@ -149,10 +176,16 @@ public final class HonorCommand {
                                                         .build())))
                                                 .onClick(runCommand("/honor use " + id))
                                                 .build()))
-                                        .filter(Optional::isPresent)
-                                        .map(Optional::get)
-                                        .collect(Collectors.toList());
-                                builder.contents(texts).build().sendTo(src);
+                                                .filter(Optional::isPresent)
+                                                .map(Optional::get)
+                                                .collect(Collectors.toList());
+                                        builder.contents(texts).build().sendTo(src);
+                                        //text list end --------------------------------------------- TEXT END
+                                        break;
+                                    }
+                                }
+
+
                                 Task.builder().async().name("NewHonor - check" + user.getName() + "has honors")
                                         .execute(() -> honors.get().forEach(s -> {
                                             if (HonorConfig.isVirtual(s)) {
@@ -276,5 +309,36 @@ public final class HonorCommand {
 
     private HonorCommand() {
         throw new UnsupportedOperationException();
+    }
+
+    private static Inventory getHonorsInv(CommandSource src, List<HonorData> list, int page) {
+        HashMap<Integer, String> map = new HashMap<>(list.size());
+        Inventory.Builder builder = Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
+                .forCarrier(((Carrier) src))
+                .property(InventoryDimension.PROPERTY_NAME, new InventoryDimension(9, ((list.size() - 1) % 54 / 9 + 1)))
+                .property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(Text.of(src.getName() + "的头衔")))
+                .listener(InteractInventoryEvent.class, event -> {
+                    if (!(event instanceof InteractInventoryEvent.Open
+                            || event instanceof InteractInventoryEvent.Close)) {
+                        event.setCancelled(true);
+                    }
+                    if (event instanceof ClickInventoryEvent.Primary) {
+                        ClickInventoryEvent.Primary eve = ((ClickInventoryEvent.Primary) event);
+                        eve.getTargetInventory().peek().ifPresent(item -> {
+                            String id = map.get(item.hashCode());
+                            if (id != null) {
+                                Sponge.getCommandManager().process(src, "/honor use " + id);
+                                return;
+                            }
+                            //todo:如果翻页
+                        });
+                    }
+                });
+        Inventory inv = builder.build(NewHonor.plugin);
+        list.stream().limit(5 * 9).forEach(data -> {
+            ItemStack item = data.getItem();
+            map.put(item.hashCode(), data.getId());
+            inv.offer(data.getItem());
+        });
     }
 }

@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor.sponge.configuration;
 
+import com.github.euonmyoji.newhonor.common.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.common.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.configuration.PlayerConfig;
@@ -51,6 +52,7 @@ public final class PluginConfig {
         generalNode.getNode(DATA_DIR).getString("default");
         generalNode.getNode(CHECK_UPDATE).getBoolean(false);
         generalNode.getNode(LANGUAGE).getString(Locale.getDefault().toString());
+        generalNode.getNode("default-list-style").getString("TEXT");
 
         cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true);
 
@@ -166,6 +168,10 @@ public final class PluginConfig {
             NewHonor.logger.error("default own honor is error!", e);
             return Optional.of(Collections.emptyList());
         }
+    }
+
+    public static ListHonorStyle listHonorType() {
+        return ListHonorStyle.valueOf(generalNode.getNode("default-list-style").getString("TEXT").toUpperCase());
     }
 
     public static int getIntervalTicks() {

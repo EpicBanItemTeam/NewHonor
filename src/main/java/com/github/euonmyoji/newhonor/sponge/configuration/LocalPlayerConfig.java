@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor.sponge.configuration;
 
+import com.github.euonmyoji.newhonor.common.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.configuration.BasePlayerConfig;
 import com.github.euonmyoji.newhonor.sponge.api.event.PlayerGetHonorEvent;
@@ -55,6 +56,11 @@ public class LocalPlayerConfig extends BasePlayerConfig {
                 setUseHonor(cfg.getNode(USING_KEY).getString(defaultHonors.get().get(0)));
             }
         }
+    }
+
+    @Override
+    public ListHonorStyle getListHonorStyle() {
+        return ListHonorStyle.valueOf(cfg.getNode(LIST_HONOR_STYLE_KEY).getString("TEXT"));
     }
 
     @Override
@@ -163,7 +169,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
 
     private CommentedConfigurationNode load() {
         try {
-            return loader.load();
+            return loader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true));
         } catch (IOException e) {
             NewHonor.logger.warn("get player data error, creating new ong", e);
             return loader.createEmptyNode(ConfigurationOptions.defaults());
