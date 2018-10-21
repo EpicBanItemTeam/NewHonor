@@ -341,7 +341,8 @@ public final class HonorCommand {
                     }
                     if (event instanceof ClickInventoryEvent.Primary) {
                         ClickInventoryEvent.Primary eve = ((ClickInventoryEvent.Primary) event);
-                        eve.getTargetInventory().peek().ifPresent(item -> {
+                        ItemStack item = eve.getCursorTransaction().getFinal().createStack();
+                        if (item.getType() != ItemTypes.AIR) {
                             String id = map.get(Util.toStr(item.get(Keys.DISPLAY_NAME).orElseThrow(NoSuchFieldError::new)));
                             if (id != null) {
                                 Sponge.getCommandManager().process(player, "honor use " + id);
@@ -353,7 +354,7 @@ public final class HonorCommand {
                             } else if (next[0] != null && item.equalTo(next[0])) {
                                 player.openInventory(getHonorsInv(player, list, using, page + 1));
                             }
-                        });
+                        }
                     }
                 });
         Inventory inv = builder.build(NewHonor.plugin);
@@ -362,6 +363,7 @@ public final class HonorCommand {
             map.put(Util.toStr(item.get(Keys.DISPLAY_NAME).orElseThrow(NoSuchFieldError::new)), data.getId());
             inv.offer(data.getItem());
         });
+        System.out.println(map);
         if (page > 1) {
             previous[0] = ItemStack.builder()
                     .itemType(ItemTypes.ARROW)
