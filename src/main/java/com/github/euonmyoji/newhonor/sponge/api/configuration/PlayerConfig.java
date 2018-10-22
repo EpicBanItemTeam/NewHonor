@@ -254,6 +254,14 @@ public interface PlayerConfig {
     void enableAutoChange(boolean auto) throws SQLException;
 
     /**
+     * 玩家列出自己拥有头衔方式
+     *
+     * @param style 方式
+     * @throws SQLException when found any SQL E
+     */
+    void setListHonorStyle(ListHonorStyle style) throws SQLException;
+
+    /**
      * 玩家获得新头衔后是否自动切换
      *
      * @return true if yes

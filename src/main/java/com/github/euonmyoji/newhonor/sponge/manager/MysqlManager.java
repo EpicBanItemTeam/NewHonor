@@ -65,14 +65,14 @@ public final class MysqlManager {
                                 USING_KEY + " varchar(64)," +
                                 HONORS_KEY + " TEXT," +
                                 USEHONOR_KEY + " BOOL DEFAULT 1," +
-                                LIST_HONOR_STYLE_KEY + " varchar(32) DEFAULT TEXT" +
+                                LIST_HONOR_STYLE_KEY + " varchar(32)" +
                                 ENABLE_EFFECTS_KEY + " BOOL DEFAULT 1);");
                         try {
                             s.execute(String.format("ALTER TABLE %s ADD %s bool default 1;", TABLE_NAME, AUTO_CHANGE_KEY));
                         } catch (Exception ignore) {
                         }
                         try {
-                            s.execute(String.format("ALTER TABLE %s ADD %s varchar(32) default TEXT;", LIST_HONOR_STYLE_KEY, AUTO_CHANGE_KEY));
+                            s.execute(String.format("ALTER TABLE %s ADD %s varchar(32);", LIST_HONOR_STYLE_KEY, AUTO_CHANGE_KEY));
                         } catch (Exception ignore) {
                         }
                     }
@@ -134,6 +134,15 @@ public final class MysqlManager {
         public void enableAutoChange(boolean auto) throws SQLException {
             try (Connection con = getConnection()) {
                 try (PreparedStatement state = con.prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", AUTO_CHANGE_KEY, auto ? 1 : 0, uuid))) {
+                    state.executeUpdate();
+                }
+            }
+        }
+
+        @Override
+        public void setListHonorStyle(ListHonorStyle style) throws SQLException {
+            try (Connection con = getConnection()) {
+                try (PreparedStatement state = con.prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", LIST_HONOR_STYLE_KEY, style.toString(), uuid))) {
                     state.executeUpdate();
                 }
             }
@@ -285,8 +294,9 @@ public final class MysqlManager {
             try (Connection con = getConnection()) {
                 try (PreparedStatement state = con.prepareStatement(String.format("select %s from %s where UUID = '%s'", LIST_HONOR_STYLE_KEY, TABLE_NAME, uuid))) {
                     ResultSet result = state.executeQuery();
-                    result.next();
-                    return ListHonorStyle.valueOf(result.getString(LIST_HONOR_STYLE_KEY).toUpperCase());
+                    String s;
+                    return result.next() && (s = result.getString(LIST_HONOR_STYLE_KEY)) != null ?
+                            ListHonorStyle.valueOf(s.toUpperCase()) : PluginConfig.defaultListHonorStyle();
                 }
             }
         }

@@ -106,6 +106,12 @@ public class LocalPlayerConfig extends BasePlayerConfig {
     }
 
     @Override
+    public void setListHonorStyle(ListHonorStyle style) {
+        cfg.getNode(LIST_HONOR_STYLE_KEY).setValue(style.toString());
+        save();
+    }
+
+    @Override
     public void setWhetherEnableEffects(boolean enable) {
         cfg.getNode(ENABLE_EFFECTS_KEY).setValue(enable);
         save();
@@ -169,7 +175,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
 
     private CommentedConfigurationNode load() {
         try {
-            return loader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true));
+            return loader.load();
         } catch (IOException e) {
             NewHonor.logger.warn("get player data error, creating new ong", e);
             return loader.createEmptyNode(ConfigurationOptions.defaults());

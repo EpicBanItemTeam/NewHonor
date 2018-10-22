@@ -170,7 +170,7 @@ public final class PluginConfig {
         }
     }
 
-    public static ListHonorStyle listHonorType() {
+    public static ListHonorStyle defaultListHonorStyle() {
         return ListHonorStyle.valueOf(generalNode.getNode("default-list-style").getString("TEXT").toUpperCase());
     }
 
