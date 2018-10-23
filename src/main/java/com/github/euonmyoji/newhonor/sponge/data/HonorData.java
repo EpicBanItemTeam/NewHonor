@@ -16,7 +16,6 @@ import org.spongepowered.api.text.action.HoverAction;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextParseException;
 import org.spongepowered.api.text.serializer.TextSerializers;
-import org.spongepowered.api.util.TypeTokens;
 
 import java.net.MalformedURLException;
 import java.net.URL;

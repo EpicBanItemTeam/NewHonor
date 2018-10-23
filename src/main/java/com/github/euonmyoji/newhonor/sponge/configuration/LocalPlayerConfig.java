@@ -95,8 +95,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
     @Override
     public boolean giveHonor(String id) {
         PlayerGetHonorEvent event = new PlayerGetHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, id);
-        Sponge.getEventManager().post(event);
-        return !event.isCancelled() && noSaveGive(id) && save();
+        return !Sponge.getEventManager().post(event) && noSaveGive(id) && save();
     }
 
     @Override

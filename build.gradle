@@ -35,8 +35,9 @@ ext {
     git = Grgit.open(file(".git"))
     parents = git.head().parentIds
     index = 0// Offset to match CI
-    for (; parents != null && !parents.isEmpty(); index++) {
+    while (parents != null && !parents.isEmpty()) {
         parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
+        index++
     }
     //noinspection GrReassignedInClosureLocalVar
     buildNumber = "${index}"
