@@ -60,7 +60,7 @@ public class LocalPlayerConfig extends BasePlayerConfig {
 
     @Override
     public ListHonorStyle getListHonorStyle() {
-        return ListHonorStyle.valueOf(cfg.getNode(LIST_HONOR_STYLE_KEY).getString("TEXT"));
+        return ListHonorStyle.valueOf(cfg.getNode(LIST_HONOR_STYLE_KEY).getString(PluginConfig.defaultListHonorStyle().toString()));
     }
 
     @Override
