@@ -2,6 +2,7 @@ package com.github.euonmyoji.newhonor.sponge.command;
 
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import com.github.euonmyoji.newhonor.common.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.common.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.configuration.PlayerConfig;
@@ -139,51 +140,43 @@ public final class HonorCommand {
                                     src.sendMessage(Util.toText(langBuilder("newhonor.listhonors.empty").replaceName(user.getName()).build()));
                                     return;
                                 }
-
-                                //noinspection SwitchStatementDensity  对不起我真的太垃圾了(
-                                switch (pd.getListHonorStyle()) {
-                                    case ITEM:
-                                        if (src instanceof Player && isSelf) {
-                                            HonorData using = pd.getUsingHonorValue();
-                                            Task.builder().execute(() -> {
-                                                List<HonorData> dataList = honors.get().stream().map(HonorConfig::getHonorData)
-                                                        .filter(Objects::nonNull)
-                                                        .collect(Collectors.toList());
-                                                ((Player) src).openInventory(getHonorsInv(((Player) src), dataList, using, 1));
-                                            }).submit(NewHonor.plugin);
-                                            break;
-                                        }
-                                    default: {
-                                        //text list ------------------------------------------ TEXT TEXT
-                                        PaginationList.Builder builder = PaginationList.builder()
-                                                .title(Util.toText(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build())).padding(of("-"));
-                                        String usingID = pd.getUsingHonorID();
-                                        Optional.ofNullable(HonorConfig.getHonorData(usingID))
-                                                .ifPresent(data -> builder.header(Util.toText(langBuilder("newhonor.listhonors.header")
-                                                        .replace("%ownername%", user.getName())
-                                                        .replaceHonor(data.getStrValue())
-                                                        .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
-                                                        .build())));
-                                        List<Text> texts = honors.get().stream().map(id -> Optional.ofNullable(HonorConfig.getHonorData(id)).map(data -> Text.builder()
-                                                //显示头衔 药水效果组
-                                                .append(Util.toText(langBuilder("newhonor.listhonors.contexts")
-                                                        .replaceHonorid(id)
-                                                        .replaceHonor(data.getStrValue())
-                                                        .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
-                                                        .build()))
-                                                .onHover(showText(Util.toText(langBuilder("newhonor.listhonors.clickuse")
-                                                        .replaceHonor(data.getStrValue())
-                                                        .replaceHonorid(id)
-                                                        .build())))
-                                                .onClick(runCommand("/honor use " + id))
-                                                .build()))
-                                                .filter(Optional::isPresent)
-                                                .map(Optional::get)
+                                if (src instanceof Player && PlayerConfig.get(user).getListHonorStyle() == ListHonorStyle.ITEM) {
+                                    HonorData using = pd.getUsingHonorValue();
+                                    Task.builder().execute(() -> {
+                                        List<HonorData> dataList = honors.get().stream().map(HonorConfig::getHonorData)
+                                                .filter(Objects::nonNull)
                                                 .collect(Collectors.toList());
-                                        builder.contents(texts).build().sendTo(src);
-                                        //text list end --------------------------------------------- TEXT END
-                                        break;
-                                    }
+                                        ((Player) src).openInventory(getHonorsInv(((Player) src), dataList, using, 1));
+                                    }).submit(NewHonor.plugin);
+                                } else {
+                                    //text list ------------------------------------------ TEXT TEXT
+                                    PaginationList.Builder builder = PaginationList.builder()
+                                            .title(Util.toText(langBuilder("newhonor.listhonors.title").replace("%ownername%", user.getName()).build())).padding(of("-"));
+                                    String usingID = pd.getUsingHonorID();
+                                    Optional.ofNullable(HonorConfig.getHonorData(usingID))
+                                            .ifPresent(data -> builder.header(Util.toText(langBuilder("newhonor.listhonors.header")
+                                                    .replace("%ownername%", user.getName())
+                                                    .replaceHonor(data.getStrValue())
+                                                    .replace("%effectsID%", HonorConfig.getEffectsID(usingID).orElse("null"))
+                                                    .build())));
+                                    List<Text> texts = honors.get().stream().map(id -> Optional.ofNullable(HonorConfig.getHonorData(id)).map(data -> Text.builder()
+                                            //显示头衔 药水效果组
+                                            .append(Util.toText(langBuilder("newhonor.listhonors.contexts")
+                                                    .replaceHonorid(id)
+                                                    .replaceHonor(data.getStrValue())
+                                                    .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
+                                                    .build()))
+                                            .onHover(showText(Util.toText(langBuilder("newhonor.listhonors.clickuse")
+                                                    .replaceHonor(data.getStrValue())
+                                                    .replaceHonorid(id)
+                                                    .build())))
+                                            .onClick(isSelf ? runCommand("/honor use " + id) : null)
+                                            .build()))
+                                            .filter(Optional::isPresent)
+                                            .map(Optional::get)
+                                            .collect(Collectors.toList());
+                                    builder.contents(texts).build().sendTo(src);
+                                    //text list end --------------------------------------------- TEXT END
                                 }
 
 
@@ -350,7 +343,7 @@ public final class HonorCommand {
                                 String id = map.get(Util.toStr(item.get(Keys.DISPLAY_NAME).orElse(Text.of(""))));
                                 if (id != null) {
                                     Sponge.getCommandManager().process(player, "honor use " + id);
-                                    player.closeInventory();
+                                    Task.builder().execute(player::closeInventory).submit(NewHonor.plugin);
                                     return;
                                 }
                                 if (page > 1 && previous[0] != null && item.equalTo(previous[0])) {

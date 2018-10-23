@@ -61,3 +61,4 @@ newhonor.configuration.permissionmanage.comment=权限管理头衔，靠newhonor
 newhonor.configuration.extra.parallelgoal.comment=被操作的目标大小超过了这个goal后则并行(如果操作支持并行) 默认:16
 newhonor.configuration.datadirpath.comment=设置插件所使用的数据的文件夹路径(头衔数据 玩家数据 药水效果组数据) 默认:default
 newhonor.configuration.displayhonor.comment=显示头衔在tab和头顶上，可能需要额外配置一点兼容参数 如果你装了nucleus或者其他聊天插件(兼容配置参考wiki或询问他人)
+newhonor.configuration.defaultliststyle.comment=玩家默认选择自己头衔界面样式(ITEM 或 TEXT)

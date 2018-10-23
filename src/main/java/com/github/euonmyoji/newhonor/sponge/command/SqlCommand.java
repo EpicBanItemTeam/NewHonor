@@ -44,6 +44,7 @@ final class SqlCommand {
                             }
                             sqlCfg.setWhetherEnableEffects(localCfg.isEnabledEffects());
                             sqlCfg.setWhetherUseHonor(localCfg.isUseHonor());
+                            sqlCfg.setListHonorStyle(localCfg.getListHonorStyle());
                         }
                         src.sendMessage(of("[NewHonor] update finished successful"));
                     } catch (Exception e) {
@@ -79,6 +80,7 @@ final class SqlCommand {
                             }));
                             localCfg.setWhetherEnableEffects(sqlCfg.isEnabledEffects());
                             localCfg.setWhetherUseHonor(sqlCfg.isUseHonor());
+                            localCfg.setListHonorStyle(sqlCfg.getListHonorStyle());
                         }
                         src.sendMessage(of("[NewHonor] download finished successful"));
                     } catch (Exception e) {

@@ -1,7 +1,6 @@
 package com.github.euonmyoji.newhonor.sponge.configuration;
 
 import com.github.euonmyoji.newhonor.common.enums.ListHonorStyle;
-import com.github.euonmyoji.newhonor.common.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.sponge.NewHonor;
 import com.github.euonmyoji.newhonor.sponge.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.sponge.manager.MysqlManager;
@@ -17,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+
+import static com.github.euonmyoji.newhonor.common.manager.LanguageManager.getString;
 
 /**
  * @author yinyangshi
@@ -92,31 +93,34 @@ public final class PluginConfig {
 
         //comments
         generalNode.getNode(PERMISSION_MANAGE).setComment(generalNode.getNode(PERMISSION_MANAGE).getComment()
-                .orElse(LanguageManager.getString("newhonor.configuration.permissionmanage.comment", "If you enable this, the honor must be given by permission" +
+                .orElse(getString("newhonor.configuration.permissionmanage.comment", "If you enable this, the honor must be given by permission" +
                         "\n(The player who doesn't have the permission of honor, the player won't use it any longer." +
                         "\neg: The honor's id is 'honorid' then you should give player permission:'newhonor.honor.honorid'.")));
         generalNode.getNode(DISPLAY_HONOR).setComment(generalNode.getNode(DISPLAY_HONOR).getComment()
-                .orElse(LanguageManager.getString("newhonor.configuration.displayhonor.comment", "Display honor in the tab & head." +
+                .orElse(getString("newhonor.configuration.displayhonor.comment", "Display honor in the tab & head." +
                         "\nIf you installed nucleus, you may change something in the nucleus configuration." +
                         "\nThe display value can not longer than 16 chars!(including color code: &?)")));
         generalNode.getNode(DATA_DIR).setComment(generalNode.getNode(DATA_DIR).getComment()
-                .orElse(LanguageManager.getString("newhonor.configuration.datadirpath.comment",
+                .orElse(getString("newhonor.configuration.datadirpath.comment",
                         "Change the data dir (player data&honor data&effects data)")));
         generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).setComment(generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getComment()
-                .orElse(LanguageManager.getString("newhonor.configuration.forceenabledefaultlistener.comment",
+                .orElse(getString("newhonor.configuration.forceenabledefaultlistener.comment",
                         "force enable the default listener when installed nucleus or enabled displayHonor to show honor in the chat")));
         generalNode.getNode(LANGUAGE).setComment(generalNode.getNode(LANGUAGE).getComment()
-                .orElse(LanguageManager.getString("newhonor.configuration.lang.comment",
+                .orElse(getString("newhonor.configuration.lang.comment",
                         "set the plugin language (if supported)")));
         generalNode.getNode(CHECK_UPDATE).setComment(generalNode.getNode(CHECK_UPDATE).getComment()
-                .orElse(LanguageManager.getString("newhonor.configuration.checkupdate.comment",
+                .orElse(getString("newhonor.configuration.checkupdate.comment",
                         "check plugin update when starting the server (async)")));
-        extraNode.setComment(extraNode.getComment().orElse(LanguageManager.getString("newhonor.configuration.extra.comment"
+        generalNode.getNode("default-list-style").setComment(generalNode.getNode("default-list-style").getComment()
+                .orElse(getString("newhonor.configuration.defaultliststyle.comment",
+                        "The default list honors style(TEXT OR ITEM)")));
+        extraNode.setComment(extraNode.getComment().orElse(getString("newhonor.configuration.extra.comment"
                 , "the extra settings, you can ignore this node")));
-        extraNode.getNode(INTERVAL_TICKS).setComment(extraNode.getNode(INTERVAL_TICKS).getComment().orElse(LanguageManager.getString(
+        extraNode.getNode(INTERVAL_TICKS).setComment(extraNode.getNode(INTERVAL_TICKS).getComment().orElse(getString(
                 "newhonor.configuration.extra.intervalticks.comment"
                 , "多少tick检查一次效果组是否该刷新了 默认为8tick")));
-        extraNode.getNode(PARALLEL_GOAL).setComment(extraNode.getNode(PARALLEL_GOAL).getComment().orElse(LanguageManager.getString(
+        extraNode.getNode(PARALLEL_GOAL).setComment(extraNode.getNode(PARALLEL_GOAL).getComment().orElse(getString(
                 "newhonor.configuration.extra.parallelgoal.comment"
                 , "If the operation's size is bigger than this goal, it will be parallel. (if supported). default: 16")));
 
