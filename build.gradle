@@ -124,7 +124,7 @@ task bukkitJar(type: Jar) {
     version = "${bukkitVersion}-b${buildNumber}"
     classifier = "Bukkit"
     from sourceSets.main.output
-    exclude 'com/github/euonmyoji/newhonor/sponge/**'
+    exclude 'com/github/euonmyoji/newhonor/sponge/**', 'mcmod.info'
 }
 
 artifacts {
