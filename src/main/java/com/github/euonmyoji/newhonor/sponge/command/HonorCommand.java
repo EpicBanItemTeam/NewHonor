@@ -140,7 +140,7 @@ public final class HonorCommand {
                                     src.sendMessage(Util.toText(langBuilder("newhonor.listhonors.empty").replaceName(user.getName()).build()));
                                     return;
                                 }
-                                if (src instanceof Player && PlayerConfig.get(user).getListHonorStyle() == ListHonorStyle.ITEM) {
+                                if (src instanceof Player && PlayerConfig.get(((User) src)).getListHonorStyle() == ListHonorStyle.ITEM) {
                                     HonorData using = pd.getUsingHonorValue();
                                     Task.builder().execute(() -> {
                                         List<HonorData> dataList = honors.get().stream().map(HonorConfig::getHonorData)
