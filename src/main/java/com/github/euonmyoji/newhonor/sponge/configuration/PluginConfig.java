@@ -182,6 +182,11 @@ public final class PluginConfig {
         return cfg.getNode("extra", INTERVAL_TICKS).getInt(8);
     }
 
+
+    public static boolean permissionManageHonors() {
+        return generalNode.getNode(PERMISSION_MANAGE).getBoolean(false);
+    }
+
     private static void loadNode() {
         try {
             cfg = loader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true));

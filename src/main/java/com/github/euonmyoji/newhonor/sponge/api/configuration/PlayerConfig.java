@@ -325,7 +325,7 @@ public interface PlayerConfig {
                     try {
                         List<String> ownedHonors = getOwnHonors().orElseGet(ArrayList::new);
                         //如果移除没权限的头衔
-                        if (PluginConfig.cfg.getNode(PluginConfig.PERMISSION_MANAGE).getBoolean() && !player.hasPermission(checkPrefix + id)) {
+                        if (PluginConfig.permissionManageHonors() && !player.hasPermission(checkPrefix + id)) {
                             if (takeHonor(id)) {
                                 Log.info(String.format("[Cause:permission not pass]Player %s lost honor: %s", player.getName(), id));
                             }
