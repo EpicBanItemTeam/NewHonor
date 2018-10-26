@@ -13,4 +13,12 @@ tasks.withType(JavaCompile) {
 dependencies {
 }
 
-buildDir = '../build'
+buildDir = '../build/common'
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}

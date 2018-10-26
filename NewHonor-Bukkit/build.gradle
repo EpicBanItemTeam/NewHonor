@@ -85,5 +85,14 @@ artifacts {
     archives shadowJar
 }
 
-buildDir = '../build'
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
 jar.setEnabled(true)
+
+buildDir = '../build/bukkit'

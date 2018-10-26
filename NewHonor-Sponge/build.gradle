@@ -97,10 +97,19 @@ task spongeApiJar(type: Jar) {
     include 'com/github/euonmyoji/newhonor/api/**', 'com/github/euonmyoji/newhonor/api/**'
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
 artifacts {
     archives shadowJar
     archives spongeApiJar
 }
 
-buildDir = '../build'
 jar.setEnabled(true)
+
+buildDir = '../build/sponge'
