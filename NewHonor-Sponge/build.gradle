@@ -74,7 +74,7 @@ dependencies {
 
     compile project(":NewHonor-Common")
 }
-version = "${spongeVersion}"
+version = "${spongeVersion}-b${buildNumber}"
 //以下有关shadow代码由百度搜索引擎提供技术支持(雾)
 shadowJar() {
     manifest {
@@ -103,3 +103,4 @@ artifacts {
 }
 
 buildDir = '../build'
+jar.setEnabled(true)

@@ -86,3 +86,4 @@ artifacts {
 }
 
 buildDir = '../build'
+jar.setEnabled(true)
