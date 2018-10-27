@@ -1,27 +1,17 @@
 package com.github.euonmyoji.newhonor.api.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.configuration.PluginConfig;
-import com.github.euonmyoji.newhonor.data.HonorData;
 import com.github.euonmyoji.newhonor.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.manager.PlayerConfigManager;
-import com.github.euonmyoji.newhonor.util.Log;
-import com.github.euonmyoji.newhonor.util.Util;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.User;
 
 import java.sql.SQLException;
 import java.util.*;
 
-import static com.github.euonmyoji.newhonor.configuration.HonorConfig.getHonorData;
-import static com.github.euonmyoji.newhonor.manager.LanguageManager.langBuilder;
 import static com.github.euonmyoji.newhonor.manager.PlayerConfigManager.d;
 
 /**
  * @author yinyangshi
  */
-@SuppressWarnings("unused")
 public interface PlayerConfig {
     String USING_KEY = "usinghonor";
     String HONORS_KEY = "honors";
@@ -29,17 +19,6 @@ public interface PlayerConfig {
     String ENABLE_EFFECTS_KEY = "enableeffects";
     String AUTO_CHANGE_KEY = "autochange";
     String LIST_HONOR_STYLE_KEY = "listhonorsstyle";
-
-    /**
-     * 得到玩家爱数据
-     *
-     * @param user user对象
-     * @return data
-     * @throws Exception when found any error
-     */
-    static PlayerConfig get(User user) throws Exception {
-        return get(user.getUniqueId());
-    }
 
     /**
      * 得到玩家数据
@@ -121,7 +100,7 @@ public interface PlayerConfig {
             PlayerConfigManager.map.keySet().stream().filter(s -> !s.equals(id)).findAny()
                     .ifPresent(s -> {
                         setDefaultConfigType(s);
-                        NewHonor.logger.info("[NewHonor]A plugin unregister " + id + ", so now is using " + s + " type to save&load playerdata");
+                        NewHonor.instance.getLogger().info("[NewHonor]A plugin unregister " + id + ", so now is using " + s + " type to save&load playerdata");
                     });
         }
         return PlayerConfigManager.map.remove(id) != null;
@@ -147,7 +126,7 @@ public interface PlayerConfig {
                 PlayerConfigManager.map.keySet().stream().findAny()
                         .ifPresent(newId -> {
                             setDefaultConfigType(newId);
-                            NewHonor.logger.info("[NewHonor]A plugin unregister " + id[0] + ", so now is using " + newId + " type to save&load playerdata");
+                            NewHonor.instance.getLogger().info("[NewHonor]A plugin unregister " + id[0] + ", so now is using " + newId + " type to save&load playerdata");
                         });
             }
         }
@@ -288,28 +267,17 @@ public interface PlayerConfig {
             Optional<List<String>> list = getOwnHonors();
             if (list.isPresent() && !list.get().isEmpty()) {
                 for (String nowHonor : list.get()) {
-                    HonorData nowHonorValue = HonorConfig.getHonorData(nowHonor);
-                    if (nowHonorValue != null) {
-                        setUseHonor(list.get().get(0));
-                        Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(Util.toText(langBuilder("newhonor.event.changehonorbylose")
-                                .replaceName(player.getName())
-                                .replaceHonorid(usingID)
-                                .replaceHonor(Optional.ofNullable(getHonorData(usingID)).map(HonorData::getStrValue).orElse(""))
-                                .replace("%changedhonor%", nowHonorValue.getStrValue())
-                                .build())));
-                        return;
-                    }
+//                    HonorData nowHonorValue = HonorConfig.getHonorData(nowHonor); todo: the class to get value
+//                    if (nowHonorValue != null) {
+//                        setUseHonor(list.get().get(0));
+//                        return;todo: send message to player
+//                    } //todo: change honor if you don't have it
                 }
             }
 
             setUseHonor("");
-            NewHonor.clearPlayerCache(getUUID());
-            Sponge.getServer().getPlayer(getUUID()).ifPresent(player -> player.sendMessage(Util.toText(langBuilder("newhonor.event.changehonorbylose")
-                    .replaceName(player.getName())
-                    .replaceHonorid(usingID)
-                    .replaceHonor(Optional.ofNullable(getHonorData(usingID)).map(HonorData::getStrValue).orElse(""))
-                    .replace("%changedhonor%", "null")
-                    .build())));
+//            NewHonor.clearPlayerCache(getUUID()); todo: clear player cache
+            //todo: send message
 
         }
     }
@@ -318,41 +286,18 @@ public interface PlayerConfig {
      * 检查玩家权限并give/take头衔
      */
     default void checkPermission() {
-        Sponge.getServer().getPlayer(getUUID()).ifPresent(player ->
-                HonorConfig.getAllCreatedHonors().forEach(id -> {
-                    //已经在遍历每一个创建的头衔了！
-                    final String checkPrefix = "newhonor.honor.";
-                    try {
-                        List<String> ownedHonors = getOwnHonors().orElseGet(ArrayList::new);
-                        //如果移除没权限的头衔
-                        if (PluginConfig.permissionManageHonors() && !player.hasPermission(checkPrefix + id)) {
-                            if (takeHonor(id)) {
-                                Log.info(String.format("[Cause:permission not pass]Player %s lost honor: %s", player.getName(), id));
-                            }
-                        } else if (player.hasPermission(checkPrefix + id) && !ownedHonors.contains(id)) {
-                            try {
-                                if (giveHonor(id)) {
-                                    Log.info(String.format("[Cause:Permission pass]Player %s got an honor: %s", player.getName(), id));
-                                }
-                            } catch (Exception e) {
-                                NewHonor.logger.warn("error about data! (give honor)", e);
-                            }
-                        }
-                    } catch (SQLException e) {
-                        NewHonor.logger.warn("SQL E when check player honors!", e);
-                    }
-                }));
+        //todo: check permission
     }
 
-    /**
-     * 得到正在使用的头衔text
-     *
-     * @return text
-     * @throws SQLException when found any error
-     */
-    default HonorData getUsingHonorValue() throws SQLException {
-        return HonorConfig.getHonorData(getUsingHonorID());
-    }
+//    /**
+//     * 得到正在使用的头衔text
+//     *
+//     * @return text
+//     * @throws SQLException when found any error
+//     */
+//    default HonorData getUsingHonorValue() throws SQLException {
+//        return HonorConfig.getHonorData(getUsingHonorID());
+//    } todo: bukkit
 
     /**
      * 玩家是否拥有一个头衔
