@@ -92,7 +92,7 @@ task spongeApiJar(type: Jar) {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.Main'
     }
     version = "${spongeVersion}"
-    classifier = "sponge-API"
+    classifier = "API"
     from sourceSets.main.output
     include 'com/github/euonmyoji/newhonor/api/**', 'com/github/euonmyoji/newhonor/api/**'
 }

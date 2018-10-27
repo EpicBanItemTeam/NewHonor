@@ -82,6 +82,7 @@ public interface PlayerConfig {
      * @param c  the class
      * @throws NoSuchMethodException if there is no constructor(UUID uuid) or it's not public
      */
+    @SuppressWarnings("unused")
     static void registerPlayerConfig(String id, Class<? extends PlayerConfig> c) throws NoSuchMethodException {
         c.getConstructor(UUID.class);
         PlayerConfigManager.map.put(id, c);
@@ -112,6 +113,7 @@ public interface PlayerConfig {
      * @param c the class
      * @return true if unregistered successfully or false if it is not present
      */
+    @SuppressWarnings("unused")
     static boolean unregister(Class<? extends PlayerConfig> c) {
         String[] id = new String[1];
         boolean result = PlayerConfigManager.map.entrySet().removeIf(entry -> {
@@ -138,6 +140,7 @@ public interface PlayerConfig {
      *
      * @return the ids of player configs
      */
+    @SuppressWarnings("unused")
     static Set<String> getRegisteredConfigTypes() {
         return PlayerConfigManager.map.keySet();
     }
