@@ -33,7 +33,4 @@ repositories {
 }
 
 dependencies {
-    compile project("NewHonor-Sponge")
-    compile project("NewHonor-Bukkit")
-    compile project("NewHonor-Common")
 }

@@ -12,7 +12,6 @@ buildscript {
 
 plugins {
     id 'ninja.miserable.blossom' version '1.0.1'
-    id 'org.spongepowered.plugin' version '0.8.1'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
@@ -78,6 +77,7 @@ version = "${spongeVersion}-b${buildNumber}"
 //以下有关shadow代码由百度搜索引擎提供技术支持(雾)
 shadowJar() {
     from sourceSets.main.output
+
     classifier = ""
     dependencies {
         include((Spec<FileTreeElement>) dependency("org.bstats.bStats-Metrics:bstats-sponge:1.3"))
