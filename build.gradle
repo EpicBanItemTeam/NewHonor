@@ -1,13 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.ajoberstar:grgit:1.7.0'
-    }
-}
-
 apply plugin: 'java'
 
 sourceCompatibility = '1.8'
@@ -18,5 +8,32 @@ defaultTasks 'clean', 'build'
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
-
+group = 'com.github.euonmyoji.newhonor'
 jar.setEnabled(false)
+
+
+repositories {
+    mavenCentral()
+
+    //sponge
+    maven {
+        name = 'sponge'
+        url = 'https://repo.spongepowered.org/maven'
+    }
+    maven {
+        name = "nucleus"
+        url = "http://repo.drnaylor.co.uk/artifactory/list/minecraft"
+    }
+    maven { url = 'https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/' }
+    maven { url = 'https://jitpack.io' }
+
+    //bukkit
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+}
+
+dependencies {
+    compile project("NewHonor-Sponge")
+    compile project("NewHonor-Bukkit")
+    compile project("NewHonor-Common")
+}

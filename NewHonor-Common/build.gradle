@@ -12,13 +12,6 @@ tasks.withType(JavaCompile) {
 
 dependencies {
 }
-
+group = 'com.github.euonmyoji.newhonor'
 buildDir = '../build/common'
-
-sourceSets {
-    main {
-        resources {
-            srcDirs = ['src/main/resources']
-        }
-    }
-}
+jar.setEnabled(true)

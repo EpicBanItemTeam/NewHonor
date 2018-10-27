@@ -26,7 +26,7 @@ jar {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.Main'
     }
 }
-
+group = 'com.github.euonmyoji.newhonor'
 def buildNumber = ""
 ext {
     //代码来自插件ebi中的build.gradle → : https://github.com/euOnmyoji/EpicBanItem---Sponge
@@ -77,13 +77,10 @@ dependencies {
 version = "${spongeVersion}-b${buildNumber}"
 //以下有关shadow代码由百度搜索引擎提供技术支持(雾)
 shadowJar() {
-    manifest {
-        attributes 'Main-Class': 'com.github.euonmyoji.newhonor.Main'
-    }
+    from sourceSets.main.output
     classifier = ""
     dependencies {
-        //noinspection GroovyAssignabilityCheck # ??? qwq
-        include(dependency("org.bstats.bStats-Metrics:bstats-sponge:1.3"))
+        include((Spec<FileTreeElement>) dependency("org.bstats.bStats-Metrics:bstats-sponge:1.3"))
     }
 }
 
@@ -97,12 +94,8 @@ task spongeApiJar(type: Jar) {
     include 'com/github/euonmyoji/newhonor/api/**', 'com/github/euonmyoji/newhonor/api/**'
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDirs = ['src/main/resources']
-        }
-    }
+processResources {
+
 }
 
 artifacts {
