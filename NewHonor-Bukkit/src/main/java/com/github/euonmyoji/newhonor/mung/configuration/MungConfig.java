@@ -15,7 +15,7 @@ import java.nio.file.Path;
  * @author MungSoup
  */
 public class MungConfig {
-    public CommentedConfigurationNode config;
+    private CommentedConfigurationNode config;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
     public MungConfig(Plugin plugin, String fileName, String fileType) throws IOException {
@@ -37,11 +37,11 @@ public class MungConfig {
     public void saveDefault() {
     }
 
-    public void setDefault(String node, String defaultValue) {
+    protected void setDefault(String node, String defaultValue) {
         config.getNode(node).getString(defaultValue);
     }
 
-    public String getString(String node, String... defaultValue) {
+    protected String getString(String node, String... defaultValue) {
         CommentedConfigurationNode configurationNode = config.getNode(node);
         if (configurationNode.getString() == null) {
             try {
@@ -62,7 +62,7 @@ public class MungConfig {
         }
     }
 
-    public void save() {
+    private void save() {
         try {
             loader.save(config);
         } catch (IOException e) {

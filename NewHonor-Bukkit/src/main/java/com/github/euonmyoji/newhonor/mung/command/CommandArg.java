@@ -11,8 +11,8 @@ import org.bukkit.plugin.Plugin;
 /**
  * @author MungSoup
  */
-public class CommandArg {
-    public static Table<Plugin, Class, IValue> commandTable = HashBasedTable.create();
+class CommandArg {
+    static Table<Plugin, Class, IValue> commandTable = HashBasedTable.create();
 
     static {
         new CommandArg(NewHonor.instance, int.class, ((sender, arg) -> {
@@ -43,7 +43,7 @@ public class CommandArg {
         }));
     }
 
-    public CommandArg(Plugin plugin, Class clazz, IValue value) {
+    private CommandArg(Plugin plugin, Class clazz, IValue value) {
         commandTable.put(plugin, clazz, value);
     }
 

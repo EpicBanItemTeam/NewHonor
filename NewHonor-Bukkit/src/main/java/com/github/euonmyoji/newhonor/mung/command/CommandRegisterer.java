@@ -15,6 +15,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MungSoup
@@ -30,13 +31,13 @@ public class CommandRegisterer {
         this.noCommandMsg = noCommandMsg;
     }
 
-    private static boolean isNoPermission(CommandSender sender, String permission) {
+    private boolean isNoPermission(CommandSender sender, String permission) {
         boolean hasPermissionInPEX = sender instanceof ConsoleCommandSender || (NewHonor.isPEXEnable && PermissionsEx.getUser((Player) sender).has(permission));
         boolean hasPermissionInBukkit = sender.hasPermission(permission);
         return !hasPermissionInBukkit && !hasPermissionInPEX;
     }
 
-    private static boolean help(Class[] commandClasses, String label, CommandSender sender, String[] helpCommands) {
+    private boolean help(Class[] commandClasses, String label, CommandSender sender, String[] helpCommands) {
         String line = sender instanceof ConsoleCommandSender ? "§a========================================" : "§a§l－－－－－－－－－－－－－－－－－－－－";
         sender.sendMessage(line);
         sender.sendMessage("");
@@ -50,20 +51,14 @@ public class CommandRegisterer {
                     sender.sendMessage(LanguageManager.getString("newhonor.listhonors.nopermission"));
                     continue;
                 }
-                boolean isHelpCommand = false;
-                if (helpCommands != null) {
-                    for (String helpCommand : helpCommands) {
-                        if (commandArgs.command().startsWith(helpCommand + " ")) {
-                            isHelpCommand = true;
-                            break;
-                        }
-                    }
-                }
-                if (isHelpCommand) {
+                if (isHelpCommand(helpCommands, commandArgs.command())) {
                     continue;
                 }
                 String argString = "".equals(commandArgs.args()) ? " " : " " + commandArgs.args() + " ";
-                String text = String.format("§a%s%s§f§l-> §7%s", commandArgs.command(), argString, commandArgs.description());
+                String language = LanguageManager.getString(commandArgs.description().replaceFirst("\\$\\{", "")
+                        .replaceAll("[}]$", "")).replaceAll("&", "§");
+                String description = commandArgs.description().matches("\\$\\{.*}") ? language : commandArgs.description();
+                String text = String.format("§a%s%s§f§l-> §7%s", commandArgs.command(), argString, description);
                 String click = String.format("/%s %s%s%s", label, commandArgs.command(), argString, commandArgs.click());
                 TextComponent tellraw = new TextComponent(text);
                 tellraw.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, click));
@@ -85,15 +80,11 @@ public class CommandRegisterer {
     }
 
     public void register(Class... commandClasses) {
-        register(commandClasses, null, null);
+        register(null, null, commandClasses);
     }
 
-    public void register(Class[] commandClasses, String[] helpCommands, List<Class[]> helpCommandClassList) {
+    public void register(String[] helpCommands, Map<String, Class[]> helpCommandClassMap, Class... commandClasses) {
         plugin.getServer().getPluginCommand(command).setExecutor((sender, cmd, label, args) -> {
-            //if (!registerArgs.console && !(sender instanceof Player)) {
-            //    sender.sendMessage(registerArgs.consoleExecuteMsg);
-            //    return false;
-            //}
             if (args.length == 0) {
                 return help(commandClasses, label, sender, helpCommands);
             }
@@ -111,13 +102,8 @@ public class CommandRegisterer {
                     if (subCommandLength != args.length - length) {
                         continue;
                     }
-                    boolean isHelpCommand = false;
-                    if (helpCommands != null) {
-                        for (String helpCommand : helpCommands) {
-                            if (commandArgs.command().equalsIgnoreCase(helpCommand)) {
-                                isHelpCommand = true;
-                            }
-                        }
+                    if (isHelpCommand(helpCommands, commandArgs.command())) {
+                        continue;
                     }
                     for (int i = 0; i < subCommandArgs.length; i++) {
                         String subCommand = subCommandArgs[i];
@@ -136,7 +122,7 @@ public class CommandRegisterer {
                     if (method.getParameterTypes().length - 1 != length) {
                         throw new IllegalArgumentException("命令执行方法里的参数与命令参数不匹配!");
                     }
-                    if (!commandArgs.console() && sender instanceof CommandSender) {
+                    if (!commandArgs.console() && sender instanceof ConsoleCommandSender) {
                         sender.sendMessage(commandArgs.consoleExecuteMsg());
                         return false;
                     }
@@ -145,32 +131,12 @@ public class CommandRegisterer {
                         sender.sendMessage(commandArgs.noPermissionMsg());
                         return false;
                     }
-                    /* 解析方法参数 */
-                    List<Object> objectList = Lists.newArrayList();
-                    objectList.add(commandArgs.console() && sender instanceof CommandSender ? sender : (Player) sender);
-                    int i = 0;
-                    for (Class<?> parameterType : method.getParameterTypes()) {
-                        if (i == 0) {
-                            i += count;
-                            continue;
-                        }
-                        CommandArg.IValue value;
-                        if (!CommandArg.commandTable.contains(plugin, parameterType)) {
-                            if (!CommandArg.commandTable.contains(NewHonor.instance, parameterType)) {
-                                throw new NullPointerException("获取不到" + parameterType.getSimpleName() + "的参数值");
-                            }
-                            value = CommandArg.commandTable.get(NewHonor.instance, parameterType);
-                        } else {
-                            value = CommandArg.commandTable.get(plugin, parameterType);
-                        }
-                        if (value.getValue(sender, args[i]) == null) {
-                            return false;
-                        }
-                        objectList.add(value.getValue(sender, args[i]));
-                        i += 1;
+                    if (isHelpMainCommand(helpCommands, commandArgs.command())) {
+                        return help(helpCommandClassMap.get(commandArgs.command()), label, sender, null);
                     }
+                    /* 解析方法参数 */
                     try {
-                        method.invoke(clazz.newInstance(), objectList.toArray());
+                        method.invoke(clazz.newInstance(), checkArg(sender, commandArgs, args, count, method));
                         return true;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -180,5 +146,54 @@ public class CommandRegisterer {
             sender.sendMessage(noCommandMsg);
             return false;
         });
+    }
+
+    private boolean isHelpMainCommand(String[] helpCommands, String command) {
+        if (helpCommands != null) {
+            for (String helpCommand : helpCommands) {
+                if (command.equalsIgnoreCase(helpCommand)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isHelpCommand(String[] helpCommands, String command) {
+        if (helpCommands != null) {
+            for (String helpCommand : helpCommands) {
+                if (command.startsWith(helpCommand + " ")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<Object> checkArg(CommandSender sender, SubCommand commandArgs, String[] args, int count, Method method) {
+        List<Object> objectList = Lists.newArrayList();
+        objectList.add(commandArgs.console() && sender instanceof ConsoleCommandSender ? sender : (Player) sender);
+        int i = 0;
+        for (Class<?> parameterType : method.getParameterTypes()) {
+            if (i == 0) {
+                i += count;
+                continue;
+            }
+            CommandArg.IValue value;
+            if (!CommandArg.commandTable.contains(plugin, parameterType)) {
+                if (!CommandArg.commandTable.contains(NewHonor.instance, parameterType)) {
+                    throw new NullPointerException("获取不到" + parameterType.getSimpleName() + "的参数值");
+                }
+                value = CommandArg.commandTable.get(NewHonor.instance, parameterType);
+            } else {
+                value = CommandArg.commandTable.get(plugin, parameterType);
+            }
+            if (value.getValue(sender, args[i]) == null) {
+                return objectList;
+            }
+            objectList.add(value.getValue(sender, args[i]));
+            i += 1;
+        }
+        return objectList;
     }
 }

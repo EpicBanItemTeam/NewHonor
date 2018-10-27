@@ -1,0 +1,6 @@
+name: NewHonor
+main: com.github.euonmyoji.newhonor.NewHonor
+version: BUKKIT
+
+commands:
+  NewHonor:

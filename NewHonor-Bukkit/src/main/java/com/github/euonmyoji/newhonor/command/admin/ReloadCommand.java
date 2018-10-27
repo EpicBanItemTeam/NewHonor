@@ -13,8 +13,8 @@ import java.io.IOException;
 public class ReloadCommand {
 
     @SubCommand(
-            command = "Admin Reload",
-            description = "重载配置",
+            command = "Admin reload",
+            description = "${newhonor.command.describe.admin.reload}",
             permission = "honor.admin"
     )
     public void execute(CommandSender sender) {

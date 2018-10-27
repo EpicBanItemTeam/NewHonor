@@ -5,12 +5,14 @@ import com.github.euonmyoji.newhonor.command.admin.ReloadCommand;
 import com.github.euonmyoji.newhonor.configuration.MainConfig;
 import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.mung.command.CommandRegisterer;
+import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * @author NewHonor authors
@@ -35,7 +37,7 @@ public class NewHonor extends JavaPlugin {
             langPath = Files.createDirectories(getDataFolder().toPath().resolve("Language"))
                     .resolve(mainConfig.getLanguage() + ".lang");
             if (Files.notExists(langPath)) {
-                saveResource(String.format("Language/%s.lang", mainConfig.getLanguage()), false);
+                saveResource(String.format("Description/%s.lang", mainConfig.getLanguage()), false);
             }
             LanguageManager.reload(langPath);
         } catch (IOException e) {
@@ -44,7 +46,9 @@ public class NewHonor extends JavaPlugin {
 
         /* 注册命令 */
         registerer = new CommandRegisterer(this, "NewHonor", prefix + "没有这个命令!");
-        registerer.register(ReloadCommand.class, HelpCommand.class);
+        Map<String, Class[]> map = Maps.newHashMap();
+        map.put("Admin", new Class[]{ReloadCommand.class});
+        registerer.register(new String[]{"Admin"}, map, ReloadCommand.class, HelpCommand.class);
 
         /* 介绍 */
         Bukkit.getConsoleSender().sendMessage("[§aNew§6Honor§7] §a成功加载NewHonor BUKKIT版本!");

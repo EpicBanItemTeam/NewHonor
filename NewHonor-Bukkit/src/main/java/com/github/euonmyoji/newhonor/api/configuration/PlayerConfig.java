@@ -12,6 +12,7 @@ import static com.github.euonmyoji.newhonor.manager.PlayerConfigManager.d;
 /**
  * @author yinyangshi
  */
+@SuppressWarnings("unused")
 public interface PlayerConfig {
     String USING_KEY = "usinghonor";
     String HONORS_KEY = "honors";
