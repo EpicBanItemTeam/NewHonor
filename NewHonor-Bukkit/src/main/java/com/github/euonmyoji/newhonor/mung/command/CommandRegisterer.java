@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.mung.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.common.manager.LanguageManager;
+import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.google.common.collect.Lists;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
