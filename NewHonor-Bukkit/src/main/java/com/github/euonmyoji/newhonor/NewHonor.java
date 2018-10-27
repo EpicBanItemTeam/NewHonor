@@ -59,7 +59,7 @@ public class NewHonor extends JavaPlugin {
         PlayerConfig.setDefaultConfigType(mainConfig.isMySQLEnable() ? "mysql" : "local");
 
         /* 注册命令 */
-        registerer = new CommandRegisterer(this, "NewHonor", prefix + "没有这个命令!");
+        registerer = new CommandRegisterer("NewHonor", prefix + "没有这个命令!");
         Map<String, Class[]> map = Maps.newHashMap();
         map.put("Admin", new Class[]{ReloadCommand.class});
         registerer.register(new String[]{"Admin"}, map, ReloadCommand.class, HelpCommand.class);

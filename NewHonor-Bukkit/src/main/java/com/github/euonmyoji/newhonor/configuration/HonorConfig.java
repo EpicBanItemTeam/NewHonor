@@ -14,7 +14,7 @@ public class HonorConfig extends MungConfig {
         super(NewHonor.instance, "honor", "conf");
     }
 
-    public boolean hasHonor(String id) {
+    public boolean isHonorVirtual(String id) {
         return config.getNode(id).isVirtual();
     }
 }

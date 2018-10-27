@@ -34,12 +34,12 @@ public class MungConfig {
         reload();
     }
 
-    protected void setDefault(String comment, Object defaultValue, String... node) {
+    protected void setDefault(String comment, Object defaultValue, String... nodes) {
+        CommentedConfigurationNode node = config.getNode(((Object[]) nodes));
         if (comment != null) {
-            config.getNode((Object[]) node).setComment(comment).getValue(defaultValue);
-            return;
+            node.setComment(node.getComment().orElse(comment));
         }
-        config.getNode((Object[]) node).getValue(defaultValue);
+        node.getValue(defaultValue);
     }
 
     public void saveDefault() {
@@ -58,6 +58,7 @@ public class MungConfig {
             loader.save(config);
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
             config = loader.createEmptyNode();
             return false;
         }

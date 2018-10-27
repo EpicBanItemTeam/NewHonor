@@ -7,26 +7,25 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
- * @author MungSoup
+ * @author MungSoup & yinyangshi
  */
 public class CommandRegisterer {
-    private Plugin plugin;
     private String command;
     private String noCommandMsg;
 
-    public CommandRegisterer(Plugin plugin, String command, String noCommandMsg) {
-        this.plugin = plugin;
+    public CommandRegisterer(String command, String noCommandMsg) {
         this.command = command;
         this.noCommandMsg = noCommandMsg;
     }
@@ -56,7 +55,7 @@ public class CommandRegisterer {
                 }
                 String argString = "".equals(commandArgs.args()) ? " " : " " + commandArgs.args() + " ";
                 String language = LanguageManager.getString(commandArgs.description().replaceFirst("\\$\\{", "")
-                        .replaceAll("[}]$", "")).replaceAll("&", "§");
+                        .replaceAll("[}]$", "")).replace("&", "§");
                 String description = commandArgs.description().matches("\\$\\{.*}") ? language : commandArgs.description();
                 String text = String.format("§a%s%s§f§l-> §7%s", commandArgs.command(), argString, description);
                 String click = String.format("/%s %s%s%s", label, commandArgs.command(), argString, commandArgs.click());
@@ -84,7 +83,7 @@ public class CommandRegisterer {
     }
 
     public void register(String[] helpCommands, Map<String, Class[]> helpCommandClassMap, Class... commandClasses) {
-        plugin.getServer().getPluginCommand(command).setExecutor((sender, cmd, label, args) -> {
+        Bukkit.getServer().getPluginCommand(command).setExecutor((sender, cmd, label, args) -> {
             if (args.length == 0) {
                 return help(commandClasses, label, sender, helpCommands);
             }
@@ -179,19 +178,15 @@ public class CommandRegisterer {
                 i += count;
                 continue;
             }
-            CommandArg.IValue value;
-            if (!CommandArg.commandTable.contains(plugin, parameterType)) {
-                if (!CommandArg.commandTable.contains(NewHonor.instance, parameterType)) {
-                    throw new NullPointerException("获取不到" + parameterType.getSimpleName() + "的参数值");
-                }
-                value = CommandArg.commandTable.get(NewHonor.instance, parameterType);
-            } else {
-                value = CommandArg.commandTable.get(plugin, parameterType);
+            BiFunction<CommandSender, String, ?> value = CommandArg.argMap.get(parameterType);
+            if (value == null) {
+                throw new NullPointerException("获取不到" + parameterType.getSimpleName() + "的参数值");
             }
-            if (value.getValue(sender, args[i]) == null) {
+            Object result = value.apply(sender, args[i]);
+            if (result == null) {
                 return objectList;
             }
-            objectList.add(value.getValue(sender, args[i]));
+            objectList.add(result);
             i += 1;
         }
         return objectList;
