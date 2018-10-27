@@ -11,7 +11,13 @@ buildscript {
 }
 
 plugins {
+    id 'ninja.miserable.blossom' version '1.0.1'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
+}
+
+blossom {
+    //参考build.gradle https://github.com/ginyai/GiftCode/blob/master/build.gradle
+    replaceToken('@bukkitVersion@', bukkitVersion)
 }
 
 apply plugin: 'java'
