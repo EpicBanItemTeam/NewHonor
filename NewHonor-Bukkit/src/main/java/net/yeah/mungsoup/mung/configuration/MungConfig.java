@@ -1,6 +1,5 @@
-package com.github.euonmyoji.newhonor.mung.configuration;
+package net.yeah.mungsoup.mung.configuration;
 
-import com.github.euonmyoji.newhonor.exception.ConfigException;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -15,7 +14,7 @@ import java.nio.file.Path;
  * @author MungSoup
  */
 public class MungConfig {
-    private CommentedConfigurationNode config;
+    public CommentedConfigurationNode config;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
     public MungConfig(Plugin plugin, String fileName, String fileType) throws IOException {
@@ -25,33 +24,25 @@ public class MungConfig {
             dataFolder = dataFolder.resolve(fileName.replaceAll("/.*.yml", ""));
         }
         Path path = Files.createDirectories(dataFolder).resolve(fileName + "." + fileType);
+        loader = HoconConfigurationLoader.builder().setPath(path).build();
         if (Files.notExists(path)) {
             Files.createFile(path);
+            reload();
+            saveDefault();
+            save();
         }
-        loader = HoconConfigurationLoader.builder().setPath(path).build();
         reload();
-        saveDefault();
-        save();
+    }
+
+    protected void setDefault(String comment, Object defaultValue, String... node) {
+        if (comment != null) {
+            config.getNode((Object[]) node).setComment(comment).getValue(defaultValue);
+            return;
+        }
+        config.getNode((Object[]) node).getValue(defaultValue);
     }
 
     public void saveDefault() {
-    }
-
-    protected void setDefault(String node, String defaultValue) {
-        config.getNode(node).getString(defaultValue);
-    }
-
-    protected String getString(String node, String... defaultValue) {
-        CommentedConfigurationNode configurationNode = config.getNode(node);
-        if (configurationNode.getString() == null) {
-            try {
-                throw new ConfigException("配置文件格式错误, 无法找到" + node + "的值");
-            } catch (ConfigException e) {
-                e.printStackTrace();
-            }
-            return defaultValue[0];
-        }
-        return configurationNode.getString();
     }
 
     public void reload() {
@@ -62,11 +53,13 @@ public class MungConfig {
         }
     }
 
-    private void save() {
+    public boolean save() {
         try {
             loader.save(config);
+            return true;
         } catch (IOException e) {
             config = loader.createEmptyNode();
+            return false;
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.mung.command;
+package net.yeah.mungsoup.mung.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

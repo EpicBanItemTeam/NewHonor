@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.mung.command;
+package net.yeah.mungsoup.mung.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.google.common.collect.HashBasedTable;
@@ -45,6 +45,7 @@ class CommandArg {
 
     private CommandArg(Plugin plugin, Class clazz, IValue value) {
         commandTable.put(plugin, clazz, value);
+
     }
 
     public interface IValue {

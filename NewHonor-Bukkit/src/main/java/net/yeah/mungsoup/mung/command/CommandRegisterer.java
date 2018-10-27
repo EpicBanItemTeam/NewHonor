@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.mung.command;
+package net.yeah.mungsoup.mung.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.manager.LanguageManager;

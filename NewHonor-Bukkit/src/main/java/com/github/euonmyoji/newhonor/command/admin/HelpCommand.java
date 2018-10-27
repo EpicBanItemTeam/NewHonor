@@ -1,6 +1,6 @@
 package com.github.euonmyoji.newhonor.command.admin;
 
-import com.github.euonmyoji.newhonor.mung.command.SubCommand;
+import net.yeah.mungsoup.mung.command.SubCommand;
 import org.bukkit.command.CommandSender;
 
 public class HelpCommand {

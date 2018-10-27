@@ -1,5 +1,5 @@
 name: NewHonor
-main: com.github.euonmyoji.newhonor.NewHonor
+main: com.github.euonmyoji.NewHonor
 version: BUKKIT
 
 commands:
