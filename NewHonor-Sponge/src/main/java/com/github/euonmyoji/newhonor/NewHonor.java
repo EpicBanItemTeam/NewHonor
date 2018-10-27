@@ -110,7 +110,7 @@ public final class NewHonor {
 
     @Listener
     public void onStarted(GameStartedServerEvent event) {
-        Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour");
+        Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour", "newhonor", "头衔", "称号");
         logger.info("NewHonor author email:1418780411@qq.com");
         hook();
         try {
