@@ -83,6 +83,9 @@ shadowJar() {
 
 sourceSets {
     main {
+        java {
+            srcDir '../NewHonor-Common/src/main/java'
+        }
         resources {
             srcDir '../NewHonor-Common/src/main/resources'
         }
