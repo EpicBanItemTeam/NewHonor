@@ -17,13 +17,15 @@ public class MungConfig {
     public CommentedConfigurationNode config;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
-    public MungConfig(Plugin plugin, String fileName, String fileType) throws IOException {
+    public MungConfig(Plugin plugin, String fileName) throws IOException {
         Path dataFolder = plugin.getDataFolder().toPath();
         final String strip = "/";
         if (fileName.contains(strip)) {
-            dataFolder = dataFolder.resolve(fileName.replaceAll("/.*.yml", ""));
+            String directory = fileName.replaceAll("/.*\\..*$", "/");
+            dataFolder = dataFolder.resolve(directory);
+            fileName = fileName.replace(directory, "");
         }
-        Path path = Files.createDirectories(dataFolder).resolve(fileName + "." + fileType);
+        Path path = Files.createDirectories(dataFolder).resolve(fileName);
         loader = HoconConfigurationLoader.builder().setPath(path).build();
         if (Files.notExists(path)) {
             Files.createFile(path);

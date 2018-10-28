@@ -7,6 +7,9 @@ import net.yeah.mungsoup.mung.command.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author MungSoup
+ */
 public class GiveCommand {
 
     @SubCommand(

@@ -38,7 +38,7 @@ public class CommandRegisterer {
     }
 
     private boolean help(Class[] commandClasses, String label, CommandSender sender, String[] helpCommands) {
-        String line = sender instanceof ConsoleCommandSender ? "§a========================================" : "§a§l－－－－－－－－－－－－－－－－－－－－";
+        String line = sender instanceof ConsoleCommandSender ? "§a========================================" : "§a§m§l－－－－－－－－－－－－－－－－－－－－";
         sender.sendMessage(line);
         sender.sendMessage("");
         for (Class clazz : commandClasses) {

@@ -12,7 +12,7 @@ import java.io.IOException;
 public class HonorConfig extends MungConfig {
 
     public HonorConfig() throws IOException {
-        super(NewHonor.instance, "honor", "conf");
+        super(NewHonor.instance, "honor.conf");
     }
 
     public boolean isHonorVirtual(String id) {

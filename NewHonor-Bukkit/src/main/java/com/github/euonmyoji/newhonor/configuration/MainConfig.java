@@ -22,7 +22,7 @@ public class MainConfig extends MungConfig {
 
 
     public MainConfig() throws IOException {
-        super(NewHonor.instance, "config", "conf");
+        super(NewHonor.instance, "config.conf");
     }
 
     @Override
