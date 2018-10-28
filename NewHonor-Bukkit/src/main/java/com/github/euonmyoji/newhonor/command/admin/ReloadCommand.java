@@ -3,7 +3,7 @@ package com.github.euonmyoji.newhonor.command.admin;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import net.yeah.mungsoup.mung.command.SubCommand;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.io.IOException;
 
@@ -17,11 +17,11 @@ public class ReloadCommand {
             description = "${newhonor.command.describe.admin.reload}",
             permission = "honor.admin"
     )
-    public void execute(CommandSender sender) {
+    public void execute(Player p) {
         try {
             LanguageManager.reload(NewHonor.langPath);
             NewHonor.mainConfig.reload();
-            sender.sendMessage(NewHonor.prefix + "成功重载配置文件!");
+            p.sendMessage(NewHonor.prefix + "成功重载配置文件!");
         } catch (IOException e) {
             e.printStackTrace();
         }

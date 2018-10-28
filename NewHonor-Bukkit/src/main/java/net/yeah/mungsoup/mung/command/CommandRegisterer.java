@@ -16,6 +16,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 /**
@@ -47,7 +48,6 @@ public class CommandRegisterer {
                 }
                 SubCommand commandArgs = method.getAnnotation(SubCommand.class);
                 if (!"".equals(commandArgs.permission()) && isNoPermission(sender, commandArgs.permission())) {
-                    sender.sendMessage(LanguageManager.getString("newhonor.listhonors.nopermission"));
                     continue;
                 }
                 if (isHelpCommand(helpCommands, commandArgs.command())) {
@@ -101,9 +101,6 @@ public class CommandRegisterer {
                     if (subCommandLength != args.length - length) {
                         continue;
                     }
-                    if (isHelpCommand(helpCommands, commandArgs.command())) {
-                        continue;
-                    }
                     for (int i = 0; i < subCommandArgs.length; i++) {
                         String subCommand = subCommandArgs[i];
                         if (args[i].equalsIgnoreCase(subCommand)) {
@@ -114,7 +111,7 @@ public class CommandRegisterer {
                         continue;
                     }
                     /* 判断命令参数 */
-                    if (args.length - count < length) {
+                    if (args.length - count != length) {
                         continue;
                     }
                     /* 判断方法里的参数与命令参数 */
@@ -135,7 +132,7 @@ public class CommandRegisterer {
                     }
                     /* 解析方法参数 */
                     try {
-                        method.invoke(clazz.newInstance(), checkArg(sender, commandArgs, args, count, method));
+                        method.invoke(clazz.newInstance(), Objects.requireNonNull(checkArg(sender, commandArgs, args, count, method)).toArray());
                         return true;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -184,7 +181,7 @@ public class CommandRegisterer {
             }
             Object result = value.apply(sender, args[i]);
             if (result == null) {
-                return objectList;
+                return null;
             }
             objectList.add(result);
             i += 1;

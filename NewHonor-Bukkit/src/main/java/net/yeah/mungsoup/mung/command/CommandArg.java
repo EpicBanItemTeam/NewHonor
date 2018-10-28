@@ -33,7 +33,7 @@ class CommandArg {
         }));
     }
 
-    private <T> CommandArg(Class<T> clazz, BiFunction<CommandSender, String, T> value) {
+    public <T> CommandArg(Class<T> clazz, BiFunction<CommandSender, String, T> value) {
         argMap.put(clazz, value);
     }
 }

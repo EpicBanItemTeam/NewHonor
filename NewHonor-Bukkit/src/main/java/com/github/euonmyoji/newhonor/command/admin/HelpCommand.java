@@ -8,6 +8,7 @@ public class HelpCommand {
     @SubCommand(
             command = "Admin",
             description = "${newhonor.command.describe.admin}",
+            permission = "newhonor.admin",
             console = true
     )
     public void execute(CommandSender sender) {

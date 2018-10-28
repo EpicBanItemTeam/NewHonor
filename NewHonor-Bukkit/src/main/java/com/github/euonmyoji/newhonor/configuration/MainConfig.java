@@ -28,12 +28,6 @@ public class MainConfig extends MungConfig {
     @Override
     public void saveDefault() {
         setDefault(null, Locale.getDefault().toString(), GENERAL_NODE, "language");
-        setDefault(null, "address", SQL_NODE, "address");
-        setDefault(null, "database", SQL_NODE, "database");
-        setDefault(null, false, SQL_NODE, "enable");
-        setDefault(null, "password", SQL_NODE, "password");
-        setDefault(null, "latin1", SQL_NODE, "update-encoding");
-        setDefault(null, "user", SQL_NODE, "user");
         setDefault(null, true, DEFAULT_HONOR_NODE, "enable");
         setDefault(LanguageManager.getString("newhonor.configuration.defaultliststyle.comment"), ImmutableList.of("default"), DEFAULT_HONOR_NODE, "honors");
         setDefault(null, false, GENERAL_NODE, "check-update");
