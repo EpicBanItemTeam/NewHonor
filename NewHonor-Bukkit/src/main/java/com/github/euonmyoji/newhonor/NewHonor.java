@@ -11,8 +11,10 @@ import com.github.euonmyoji.newhonor.listener.OnJoin;
 import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.manager.MysqlManager;
 import com.google.common.collect.Maps;
+import net.yeah.mungsoup.mung.command.CommandArg;
 import net.yeah.mungsoup.mung.command.CommandRegisterer;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -29,7 +31,6 @@ public class NewHonor extends JavaPlugin {
     public static MainConfig mainConfig;
     public static Path langPath;
     public static String prefix = "§a[New§6Honor§a] §7 ";
-    public static CommandRegisterer registerer;
     public static HonorConfig honorConfig;
 
     @Override
@@ -69,7 +70,14 @@ public class NewHonor extends JavaPlugin {
         PlayerConfig.setDefaultConfigType(MysqlManager.enable ? "mysql" : "local");
 
         /* 注册命令 */
-        registerer = new CommandRegisterer("NewHonor", prefix + "没有这个命令!");
+        new CommandArg(OfflinePlayer.class, ((commandSender, s) -> {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
+            if (offlinePlayer == null) {
+                return null;
+            }
+            return offlinePlayer;
+        }));
+        CommandRegisterer registerer = new CommandRegisterer("NewHonor", prefix + "没有这个命令!");
         Map<String, Class[]> map = Maps.newHashMap();
         map.put("Admin", new Class[]{ReloadCommand.class, GiveCommand.class});
         registerer.register(new String[]{"Admin"}, map, ReloadCommand.class, HelpCommand.class, GiveCommand.class);

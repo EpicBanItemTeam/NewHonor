@@ -4,9 +4,7 @@ import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.enums.ListHonorStyle;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
 import net.yeah.mungsoup.mung.configuration.MungConfig;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,7 +44,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
     private void noSaveGive(String id) {
         Optional<List<String>> honors = getOwnHonors();
         honors.ifPresent(strings -> {
-            if (!honorConfig.isHonorVirtual(id)) {
+            if (honorConfig.notExist(id)) {
                 strings.add(id);
                 config.getNode(HONORS_KEY).setValue(honors.get());
             }
@@ -61,7 +59,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
     @Override
     public boolean takeHonor(String... ids) {
         for (String id : ids) {
-            if (!honorConfig.isHonorVirtual(id)) {
+            if (honorConfig.notExist(id)) {
                 Optional<List<String>> honors = getOwnHonors();
                 honors.ifPresent(strings -> strings.remove(id));
             }
@@ -72,7 +70,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
     @Override
     public boolean giveHonor(String id) {
         Optional<List<String>> honors = getOwnHonors();
-        if (honors.isPresent() && !honors.get().contains(id) && !honorConfig.isHonorVirtual(id)) {
+        if (honors.isPresent() && !honors.get().contains(id) && honorConfig.notExist(id)) {
             honors.get().add(id);
             config.getNode(HONORS_KEY).setValue(honors.get());
             setUseHonor(id);
@@ -99,7 +97,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
     @Override
     public boolean setUseHonor(String id) {
         //todo: 不应该判断 传参进来就应该保证存在
-        if (!honorConfig.isHonorVirtual(id)) {
+        if (honorConfig.notExist(id)) {
             config.getNode(USING_KEY).setValue(id);
             return save();
         }
@@ -113,13 +111,8 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
 
     @Override
     public Optional<List<String>> getOwnHonors() {
-        try {
-            Optional<List<String>> optional = Optional.ofNullable(config.getNode(HONORS_KEY).getValue(new TypeToken<List<String>>() {
-            }));
-            if (!optional.isPresent()) {
-                return Optional.of(Lists.newArrayList());
-            }
-        } catch (ObjectMappingException e) {
+        Optional<List<String>> optional = Optional.ofNullable(config.getNode(HONORS_KEY).getList(o -> (String) o));
+        if (!optional.isPresent()) {
             return Optional.of(Lists.newArrayList());
         }
         return Optional.of(Lists.newArrayList());

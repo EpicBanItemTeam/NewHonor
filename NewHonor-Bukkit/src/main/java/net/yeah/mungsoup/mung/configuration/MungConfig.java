@@ -55,7 +55,7 @@ public class MungConfig {
         }
     }
 
-    public boolean save() {
+    protected boolean save() {
         try {
             loader.save(config);
             return true;

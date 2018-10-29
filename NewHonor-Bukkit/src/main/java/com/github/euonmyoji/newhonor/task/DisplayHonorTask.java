@@ -35,7 +35,4 @@ public class DisplayHonorTask implements Runnable {
         index++;
     }
 
-    public void cancel() {
-        this.running = false;
-    }
 }

@@ -11,7 +11,7 @@ import java.util.function.BiFunction;
 /**
  * @author MungSoup & yinyangshi
  */
-class CommandArg {
+public class CommandArg {
     static Map<Class<?>, BiFunction<CommandSender, String, ?>> argMap = new HashMap<>(5);
 
     static {
