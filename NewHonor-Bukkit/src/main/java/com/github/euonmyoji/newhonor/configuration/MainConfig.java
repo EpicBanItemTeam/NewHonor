@@ -3,9 +3,7 @@ package com.github.euonmyoji.newhonor.configuration;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import net.yeah.mungsoup.mung.configuration.MungConfig;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,12 +15,10 @@ import java.util.Optional;
  */
 public class MainConfig extends MungConfig {
     private final String GENERAL_NODE = "general";
-    private final String SQL_NODE = "SQL-settings";
     private final String DEFAULT_HONOR_NODE = "default-honors-settings";
 
-
     public MainConfig() throws IOException {
-        super(NewHonor.instance, "config", "conf");
+        super(NewHonor.instance, "config.conf");
     }
 
     @Override
@@ -42,14 +38,6 @@ public class MainConfig extends MungConfig {
     }
 
     Optional<List<String>> getDefaultOwnHonors() {
-        try {
-            return Optional.ofNullable(config.getNode(DEFAULT_HONOR_NODE, "honors").getList(TypeToken.of(String.class)));
-        } catch (ObjectMappingException e) {
-            return Optional.empty();
-        }
-    }
-
-    public boolean isMySQLEnable() {
-        return "address".equals(config.getNode(SQL_NODE, "address").getString("address"));
+        return Optional.ofNullable(config.getNode(DEFAULT_HONOR_NODE, "honors").getList(o -> (String) o));
     }
 }
