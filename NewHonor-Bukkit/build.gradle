@@ -67,8 +67,8 @@ configurations {
 }
 
 dependencies {
-    shade 'ninja.leaping.configurate:configurate-core:3.2'
-    shade 'ninja.leaping.configurate:configurate-hocon:3.2'
+    shade 'ninja.leaping.configurate:configurate-core:3.3'
+    shade 'ninja.leaping.configurate:configurate-hocon:3.3'
     shade 'com.google.guava:guava:21.0'
 
     //bukkit

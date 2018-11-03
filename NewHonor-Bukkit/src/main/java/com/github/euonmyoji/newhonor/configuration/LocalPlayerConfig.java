@@ -22,7 +22,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
     private UUID uuid;
 
     public LocalPlayerConfig(UUID uuid) throws IOException {
-        super(NewHonor.plugin, "data/" + uuid.toString() + ".conf");
+        super(NewHonor.plugin, "PlayerData/" + uuid.toString() + ".conf");
         this.uuid = uuid;
     }
 
