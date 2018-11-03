@@ -1,6 +1,9 @@
 package com.github.euonmyoji.newhonor.data;
 
+import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,11 +32,17 @@ public class Honor {
     }
 
     public List<String> getDisplayTexts() {
-        return config.getNode("displayValue").getList(o -> (String) o, ArrayList::new);
+        try {
+            //noinspection UnstableApiUsage
+            return config.getNode("displayValue").getList(TypeToken.of(String.class), ArrayList::new);
+        } catch (ObjectMappingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getHoverValue() {
-        return config.getNode("hoverValue", "value").getString("value");
+        return config.getNode("hoverValue", "value").getString("value").replace("&", "§");
     }
 
     public int[] getIntervalTicks() {
@@ -55,10 +64,16 @@ public class Honor {
         CommentedConfigurationNode node = config.getNode("item-value");
         int amount = node.getNode("Count").getInt(1);
         Material type = Material.getMaterial(node.getNode("ItemType").getString("minecraft:ice")
-                .replace("minecraft.", "").toUpperCase());
+                .replace("minecraft:", "").toUpperCase());
         int data = node.getNode("UnsafeDamage").getInt(0);
-        String displayName = node.getNode("UnsafeData", "display", "Name").getString("Name");
-        List<String> lore = node.getNode("UnsafeData", "display", "Lore").getList(o -> (String) o);
+        String displayName = node.getNode("UnsafeData", "display", "Name").getString("Name").replace("&", "§");
+        List<String> lore = null;
+        try {
+            //noinspection UnstableApiUsage
+            lore = node.getNode("UnsafeData", "display", "Lore").getList(TypeToken.of(String.class), ArrayList::new);
+        } catch (ObjectMappingException e) {
+            e.printStackTrace();
+        }
         ItemStack item = new ItemStack(type, amount, (short) data);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(displayName);
@@ -67,7 +82,17 @@ public class Honor {
         return item;
     }
 
+    public List<String> getSuffixes() {
+        try {
+            //noinspection UnstableApiUsage
+            return config.getNode("suffixValue").getList(TypeToken.of(String.class), ArrayList::new);
+        } catch (ObjectMappingException e) {
+            e.printStackTrace();
+        }
+        return Lists.newArrayList();
+    }
+
     public String getText() {
-        return config.getNode("value").getString("value");
+        return config.getNode("value").getString("value").replace("&", "§");
     }
 }

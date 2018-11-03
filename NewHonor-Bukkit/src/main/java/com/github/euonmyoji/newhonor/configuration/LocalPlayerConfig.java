@@ -55,7 +55,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
 
     @Override
     public boolean isUseHonor() {
-        return cfg.getNode(USEHONOR_KEY).getBoolean(false);
+        return cfg.getNode(USEHONOR_KEY).getBoolean(true);
     }
 
     @Override

@@ -29,7 +29,9 @@ public interface PlayerConfig {
      * @throws Exception when found any error
      */
     static PlayerConfig get(UUID uuid) throws Exception {
-        return PlayerConfigManager.map.get(getDefaultConfigType()).getConstructor(UUID.class).newInstance(uuid);
+        PlayerConfig playerConfig = PlayerConfigManager.map.get(getDefaultConfigType()).getConstructor(UUID.class).newInstance(uuid);
+        playerConfig.init();
+        return playerConfig;
     }
 
     /**

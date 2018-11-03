@@ -4,12 +4,17 @@ import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.command.admin.GiveCommand;
 import com.github.euonmyoji.newhonor.command.admin.HelpCommand;
 import com.github.euonmyoji.newhonor.command.admin.ReloadCommand;
+import com.github.euonmyoji.newhonor.command.player.GUICommand;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.LocalPlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.MainConfig;
+import com.github.euonmyoji.newhonor.hook.PAPIHook;
+import com.github.euonmyoji.newhonor.inventory.HonorGUI;
 import com.github.euonmyoji.newhonor.listener.OnJoin;
 import com.github.euonmyoji.newhonor.manager.MysqlManager;
+import com.github.euonmyoji.newhonor.task.DisplayHonorTask;
 import com.google.common.collect.Maps;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.yeah.mungsoup.mung.command.CommandArg;
 import net.yeah.mungsoup.mung.command.CommandRegisterer;
 import org.bukkit.Bukkit;
@@ -94,12 +99,21 @@ public class NewHonor extends JavaPlugin {
         CommandRegisterer registerer = new CommandRegisterer("NewHonor", prefix + "没有这个命令!");
         Map<String, Class[]> map = Maps.newHashMap();
         map.put("Admin", new Class[]{ReloadCommand.class, GiveCommand.class});
-        registerer.register(new String[]{"Admin"}, map, ReloadCommand.class, HelpCommand.class, GiveCommand.class);
+        registerer.register(new String[]{"Admin"}, map, ReloadCommand.class, HelpCommand.class, GiveCommand.class, GUICommand.class);
 
         /* 注册事件 */
         Bukkit.getPluginManager().registerEvents(new OnJoin(), this);
+        Bukkit.getPluginManager().registerEvents(new HonorGUI(), this);
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            PlaceholderAPI.registerPlaceholderHook("newhonor", new PAPIHook());
+        }
 
         /* 介绍 */
         Bukkit.getConsoleSender().sendMessage("[§aNew§6Honor§7] §a成功加载NewHonor BUKKIT版本!");
+    }
+
+    @Override
+    public void onDisable() {
+        DisplayHonorTask.tasks.forEach(DisplayHonorTask::cancel);
     }
 }

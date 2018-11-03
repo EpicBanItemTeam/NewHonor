@@ -44,7 +44,7 @@ public class Log {
 
     private void log(String log) {
         try (PrintWriter p = new PrintWriter(Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND))
-                .printf("%s %s", getDate(), log)) {
+                .printf("%s %s" + "\n", getDate(), log)) {
             p.flush();
         } catch (IOException e) {
             e.printStackTrace();

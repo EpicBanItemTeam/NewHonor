@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.task;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Team;
 
@@ -8,18 +9,20 @@ import java.util.List;
 
 public class DisplayHonorTask implements Runnable {
     private Team team;
-    private List<String> honors;
+    public static List<DisplayHonorTask> tasks = Lists.newArrayList();
+    private List<String> prefixes;
     private int[] delays;
-    private volatile boolean running;
+    private List<String> suffixes;
     private int index;
+    private volatile boolean running = true;
 
-    public DisplayHonorTask(Team team, List<String> honors, int... delays) {
-        if (honors.size() > delays.length) {
-            throw new IllegalArgumentException();
-        }
+    public DisplayHonorTask(Team team, List<String> prefixes, List<String> suffixes, int... delays) {
         this.team = team;
-        this.honors = honors;
+        this.prefixes = prefixes;
+        this.suffixes = suffixes;
         this.delays = delays;
+        tasks.add(this);
+        this.run();
     }
 
     @Override
@@ -27,12 +30,31 @@ public class DisplayHonorTask implements Runnable {
         if (!running) {
             return;
         }
-        team.setPrefix(honors.get(index));
-        Bukkit.getScheduler().runTaskLaterAsynchronously(NewHonor.plugin, this, delays[index]);
-        if (index == honors.size()) {
+        String prefix = prefixes.get(index).replace("&", "§");
+        int delay;
+        if (prefix.contains(";;")) {
+            delay = Integer.parseInt(prefix.split(";;")[1]);
+        } else {
+            delay = getDelay(delays, index);
+        }
+        team.setPrefix(prefix.replaceAll(";;[0-9]*", ""));
+        team.setSuffix(suffixes.get(index).replace("&", "§"));
+        Bukkit.getScheduler().runTaskLaterAsynchronously(NewHonor.plugin, this, delay);
+        index++;
+        if (index == prefixes.size()) {
             index = 0;
         }
-        index++;
+    }
+
+    private int getDelay(int[] delays, int index) {
+        if (delays.length == 1) {
+            return delays[0];
+        }
+        return delays[index];
+    }
+
+    public void cancel() {
+        this.running = false;
     }
 
 }
