@@ -28,7 +28,7 @@ public class DisplayHonorTask implements Runnable {
             return;
         }
         team.setPrefix(honors.get(index));
-        Bukkit.getScheduler().runTaskLaterAsynchronously(NewHonor.instance, this, delays[index]);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(NewHonor.plugin, this, delays[index]);
         if (index == honors.size()) {
             index = 0;
         }

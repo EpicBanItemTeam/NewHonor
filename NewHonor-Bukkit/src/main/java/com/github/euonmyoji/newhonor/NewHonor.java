@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class NewHonor extends JavaPlugin {
     public static boolean isPEXEnable = false;
-    public static NewHonor instance;
+    public static NewHonor plugin;
     public static MainConfig mainConfig;
     public static Path langPath;
     public static String prefix = "§a[New§6Honor§a] §7 ";
@@ -36,29 +36,29 @@ public class NewHonor extends JavaPlugin {
     @Override
     public void onEnable() {
         /* 初始化变量 */
-        instance = this;
+        plugin = this;
         isPEXEnable = Bukkit.getPluginManager().isPluginEnabled("PermissionsEx");
 
         /* 初始化配置 */
         try {
-            langPath = getDataFolder().toPath().resolve("Language");
+            langPath = getDataFolder().toPath().resolve("lang");
             String language = "zh_CN.lang";
             if (Files.notExists(langPath) && Files.notExists(langPath.resolve(language))) {
                 Files.createDirectories(langPath);
                 langPath = langPath.resolve(language);
-                saveResource("Language/zh_CN.lang", false);
+                Files.copy(getResource("assets/newhonor/lang/zh_CN.lang"), langPath);
                 LanguageManager.reload(langPath);
                 mainConfig = new MainConfig();
             } else {
                 mainConfig = new MainConfig();
                 langPath = langPath.resolve(mainConfig.getLanguage() + ".lang");
                 if (Files.notExists(langPath)) {
-                    saveResource(String.format("Language/%s.lang", mainConfig.getLanguage()), false);
+                    Files.copy(getResource("assets/newhonor/lang/" + language), langPath);
                 }
                 LanguageManager.reload(langPath);
             }
             honorConfig = new HonorConfig();
-            MysqlManager.init(mainConfig.config);
+            MysqlManager.init(mainConfig.cfg);
         } catch (IOException e) {
             e.printStackTrace();
         }

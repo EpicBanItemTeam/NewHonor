@@ -77,7 +77,7 @@ public final class MysqlManager {
                         e.printStackTrace();
                     }
                 }
-            }.runTaskAsynchronously(NewHonor.instance);
+            }.runTaskAsynchronously(NewHonor.plugin);
         }
     }
 
@@ -113,7 +113,7 @@ public final class MysqlManager {
                     }
                     done = true;
                 }
-            }.runTaskAsynchronously(NewHonor.instance);
+            }.runTaskAsynchronously(NewHonor.plugin);
             while (!done) {
                 try {
                     Thread.sleep(10);

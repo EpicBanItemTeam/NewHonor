@@ -18,7 +18,7 @@ public class MainConfig extends MungConfig {
     private final String DEFAULT_HONOR_NODE = "default-honors-settings";
 
     public MainConfig() throws IOException {
-        super(NewHonor.instance, "config.conf");
+        super(NewHonor.plugin, "config.conf");
     }
 
     @Override
@@ -34,10 +34,10 @@ public class MainConfig extends MungConfig {
     }
 
     public String getLanguage() {
-        return config.getNode(GENERAL_NODE, "language").getString();
+        return cfg.getNode(GENERAL_NODE, "language").getString();
     }
 
     Optional<List<String>> getDefaultOwnHonors() {
-        return Optional.ofNullable(config.getNode(DEFAULT_HONOR_NODE, "honors").getList(o -> (String) o));
+        return Optional.ofNullable(cfg.getNode(DEFAULT_HONOR_NODE, "honors").getList(o -> (String) o));
     }
 }

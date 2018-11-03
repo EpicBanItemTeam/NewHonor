@@ -16,7 +16,7 @@ public class OnJoin implements Listener {
 
     @EventHandler
     public void on(PlayerJoinEvent e) {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(NewHonor.instance, () -> {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(NewHonor.plugin, () -> {
             try {
                 Player player = e.getPlayer();
                 Scoreboard scoreboard = player.getScoreboard();

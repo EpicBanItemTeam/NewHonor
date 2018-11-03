@@ -59,9 +59,17 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
+configurations {
+    //http://www.mcbbs.net/forum.php?mod=redirect&goto=findpost&ptid=825934&pid=13448567
+    //哇 这个操作 真的舒服awa
+    shade
+    compile.extendsFrom(shade)
+}
+
 dependencies {
-    compile 'ninja.leaping.configurate:configurate-core:3.2'
-    compile 'ninja.leaping.configurate:configurate-hocon:3.2'
+    shade 'ninja.leaping.configurate:configurate-core:3.2'
+    shade 'ninja.leaping.configurate:configurate-hocon:3.2'
+    shade 'com.google.guava:guava:21.0'
 
     //bukkit
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
@@ -79,12 +87,6 @@ shadowJar() {
     configurations = [project.configurations.compile]
     classifier = ""
     from sourceSets.main.output
-    dependencies {
-        //noinspection GroovyAssignabilityCheck
-        include(dependency("ninja.leaping.configurate:configurate-core:3.2"))
-        //noinspection GroovyAssignabilityCheck
-        include(dependency("ninja.leaping.configurate:configurate-hocon:3.2"))
-    }
 }
 
 sourceSets {

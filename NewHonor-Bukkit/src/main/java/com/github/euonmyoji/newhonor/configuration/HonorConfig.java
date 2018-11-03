@@ -12,14 +12,14 @@ import java.io.IOException;
 public class HonorConfig extends MungConfig {
 
     public HonorConfig() throws IOException {
-        super(NewHonor.instance, "honor.conf");
+        super(NewHonor.plugin, "honor.conf");
     }
 
     boolean notExist(String id) {
-        return !config.getNode(id).isVirtual();
+        return !cfg.getNode(id).isVirtual();
     }
 
     public Honor getHonor(String id) {
-        return new Honor(config, id);
+        return new Honor(cfg, id);
     }
 }

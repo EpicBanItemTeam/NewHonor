@@ -102,7 +102,7 @@ public interface PlayerConfig {
             PlayerConfigManager.map.keySet().stream().filter(s -> !s.equals(id)).findAny()
                     .ifPresent(s -> {
                         setDefaultConfigType(s);
-                        NewHonor.instance.getLogger().info("[NewHonor]A plugin unregister " + id + ", so now is using " + s + " type to save&load playerdata");
+                        NewHonor.plugin.getLogger().info("[NewHonor]A plugin unregister " + id + ", so now is using " + s + " type to save&load playerdata");
                     });
         }
         return PlayerConfigManager.map.remove(id) != null;
@@ -129,7 +129,7 @@ public interface PlayerConfig {
                 PlayerConfigManager.map.keySet().stream().findAny()
                         .ifPresent(newId -> {
                             setDefaultConfigType(newId);
-                            NewHonor.instance.getLogger().info("[NewHonor]A plugin unregister " + id[0] + ", so now is using " + newId + " type to save&load playerdata");
+                            NewHonor.plugin.getLogger().info("[NewHonor]A plugin unregister " + id[0] + ", so now is using " + newId + " type to save&load playerdata");
                         });
             }
         }
