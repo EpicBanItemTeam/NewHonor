@@ -28,6 +28,7 @@ public class HonorGUI implements Listener {
 
     @EventHandler
     public void on(InventoryClickEvent e) {
+        //fixme 这什么破代码啊 :D (雾)
         if (e.getWhoClicked() instanceof Player && e.getClickedInventory() != null
                 && e.getClickedInventory().getTitle().contains("'s honor list")) {
             Player player = (Player) e.getWhoClicked();
@@ -38,6 +39,7 @@ public class HonorGUI implements Listener {
                     playerConfig.getOwnHonors().ifPresent(strings -> strings.forEach(s -> {
                         if (e.getCurrentItem().isSimilar(NewHonor.honorConfig.getHonor(s).getIcon())) {
                             try {
+                                //fixme: 没有通过命令修改使用头衔 不可以 这不命令
                                 if (playerConfig.setUseHonor(s)) {
                                     player.sendMessage("§a成功设置头衔");
                                     player.closeInventory();

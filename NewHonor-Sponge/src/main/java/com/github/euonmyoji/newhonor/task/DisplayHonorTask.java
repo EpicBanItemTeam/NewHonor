@@ -53,7 +53,8 @@ public class DisplayHonorTask implements Runnable {
             } catch (IllegalArgumentException | IndexOutOfBoundsException | NullPointerException e) {
                 NewHonor.logger.warn("The display value is wrong", e);
                 cancel();
-            } catch (Throwable ignore) {
+            } catch (Throwable t) {
+                NewHonor.logger.warn("Error while running display task " + id, t);
                 cancel();
             }
         }

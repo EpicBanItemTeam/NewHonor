@@ -11,10 +11,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+//fixme: 这个类一点都不Data 纯符「纯粹のData(确信)」
 /**
  * @author MungSoup
  */
-@SuppressWarnings("unused")
 public class Honor {
     private final String CLICK_VALUE_NODE = "clickValue";
     private CommentedConfigurationNode config;
