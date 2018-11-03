@@ -2,7 +2,7 @@
 newhonor.command.describe.admin=&c管理指令
 newhonor.command.describe.list=&e列出拥有的头衔
 newhonor.command.describe.settings=&e个人头衔设置
-newhonor.command.describe.effects=&e头衔药水效果组指令
+newhonor.command.describe.effects=&e头衔效果组指令
 #admin command
 newhonor.command.describe.admin.effects=&e给头衔设置药水效果组
 newhonor.command.describe.admin.add=&a添加头衔
@@ -14,17 +14,17 @@ newhonor.command.describe.admin.list=&e显示已创建的头衔
 newhonor.command.describe.admin.reload=&e重载插件配置文件
 newhonor.command.describe.admin.refresh=&e刷新插件缓存
 #settings command
-newhonor.command.describe.settings.usehonor=&a使用头衔
-newhonor.command.describe.settings.enableeffects=&a使用头衔药水buff
-newhonor.command.describe.settings.autochange=&a获得头衔时自动切换该头衔
-newhonor.command.describe.settings.liststyle=&a显示自己头衔方式
+newhonor.command.describe.settings.usehonor=&a是否使用头衔功能
+newhonor.command.describe.settings.enableeffects=&a是否使用头衔效果组
+newhonor.command.describe.settings.autochange=&a获得头衔时是否自动切换该头衔
+newhonor.command.describe.settings.liststyle=&a更改显示拥有头衔方式
 #effects command
-newhonor.command.describe.effects.set=&6设置一个药水效果组的一个药水效果
-newhonor.command.describe.effects.delete=&c删除一个药水效果组
-newhonor.command.describe.effects.remove=&c移除一个药水效果组的一个药水效果
-newhonor.command.describe.effects.info=&6查看一个药水效果组详细药水效果
+newhonor.command.describe.effects.set=&6设置一个效果组的一个药水效果
+newhonor.command.describe.effects.delete=&c删除一个效果组
+newhonor.command.describe.effects.remove=&c移除一个效果组的一个药水效果
+newhonor.command.describe.effects.info=&6查看一个效果组详细药水效果
 newhonor.command.describe.effects.listAllPotionEffects=&6查看所有支持的药水效果
-newhonor.command.describe.effects.listAllCreatedEffects=&6列出所有创建的药水效果组
+newhonor.command.describe.effects.listAllCreatedEffects=&6列出所有创建的效果组
 #settings args command
 newhonor.command.hovermessage.list=&a点击显示自己拥有的头衔
 newhonor.command.hovermessage.settings=&a点击进入修改设置界面

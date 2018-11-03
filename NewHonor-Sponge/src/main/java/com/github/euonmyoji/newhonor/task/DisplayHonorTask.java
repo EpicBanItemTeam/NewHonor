@@ -17,13 +17,14 @@ import static com.github.euonmyoji.newhonor.manager.DisplayHonorTaskManager.TASK
 public class DisplayHonorTask implements Runnable {
     private String id;
     private List<Text> values;
+    private List<Text> suffixes;
     private Team team;
     private int[] delays;
     private int index;
     private volatile boolean running = true;
 
-    public DisplayHonorTask(String id, List<Text> values, Team team, int[] delay) {
-        if (values.size() > delay.length) {
+    public DisplayHonorTask(String id, List<Text> values, List<Text> suffixes, Team team, int[] delay) {
+        if (values.size() > delay.length || values.size() != suffixes.size()) {
             throw new IllegalArgumentException();
         }
         this.id = id;
@@ -38,6 +39,7 @@ public class DisplayHonorTask implements Runnable {
             try (Timing timing = Timings.of(NewHonor.plugin, "NewHonorDisplayTask")) {
                 timing.startTimingIfSync();
                 team.setPrefix(values.get(index));
+                team.setSuffix(suffixes.get(index));
                 Task.builder().execute(this)
                         .delayTicks(delays[index]).name("NewHonor - displayHonor Task " + id + "#" + index)
                         .submit(NewHonor.plugin);

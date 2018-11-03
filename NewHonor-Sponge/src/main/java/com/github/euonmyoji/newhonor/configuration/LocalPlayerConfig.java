@@ -48,12 +48,12 @@ public class LocalPlayerConfig extends BasePlayerConfig {
 
     @Override
     public void init() {
-        Optional<List<String>> defaultHonors = PluginConfig.getDefaultOwnHonors();
-        if (defaultHonors.isPresent()) {
-            defaultHonors.get().forEach(this::noSaveGive);
+        List<String> defaultHonors = PluginConfig.getDefaultOwnHonors();
+        if (defaultHonors != null && !defaultHonors.isEmpty()) {
+            defaultHonors.forEach(this::noSaveGive);
             if (save()) {
                 //如果玩家没有使用中的头衔就用默认的第一个
-                setUseHonor(cfg.getNode(USING_KEY).getString(defaultHonors.get().get(0)));
+                setUseHonor(cfg.getNode(USING_KEY).getString(defaultHonors.get(0)));
             }
         }
     }

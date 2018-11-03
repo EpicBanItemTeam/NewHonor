@@ -27,7 +27,7 @@ public class HonorConfig {
         loader = HoconConfigurationLoader.builder()
                 .setPath(PluginConfig.cfgDir.resolve("honor.conf")).build();
         cfg = load();
-        PluginConfig.getDefaultOwnHonors().ifPresent(strings -> strings.forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]"))));
+        Optional.ofNullable(PluginConfig.getDefaultOwnHonors()).ifPresent(strings -> strings.forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]"))));
         cfg.removeChild("created-honors");
 
         save();

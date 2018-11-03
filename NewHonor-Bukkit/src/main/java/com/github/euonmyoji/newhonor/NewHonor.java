@@ -8,19 +8,22 @@ import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.LocalPlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.MainConfig;
 import com.github.euonmyoji.newhonor.listener.OnJoin;
-import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.manager.MysqlManager;
 import com.google.common.collect.Maps;
 import net.yeah.mungsoup.mung.command.CommandArg;
 import net.yeah.mungsoup.mung.command.CommandRegisterer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author NewHonor authors
@@ -29,7 +32,6 @@ public class NewHonor extends JavaPlugin {
     public static boolean isPEXEnable = false;
     public static NewHonor plugin;
     public static MainConfig mainConfig;
-    public static Path langPath;
     public static String prefix = "§a[New§6Honor§a] §7 ";
     public static HonorConfig honorConfig;
 
@@ -41,24 +43,25 @@ public class NewHonor extends JavaPlugin {
 
         /* 初始化配置 */
         try {
-            langPath = getDataFolder().toPath().resolve("lang");
-            String language = "zh_CN.lang";
-            if (Files.notExists(langPath) && Files.notExists(langPath.resolve(language))) {
-                Files.createDirectories(langPath);
-                langPath = langPath.resolve(language);
-                Files.copy(getResource("assets/newhonor/lang/zh_CN.lang"), langPath);
-                LanguageManager.reload(langPath);
-                mainConfig = new MainConfig();
-            } else {
-                mainConfig = new MainConfig();
-                langPath = langPath.resolve(mainConfig.getLanguage() + ".lang");
-                if (Files.notExists(langPath)) {
-                    Files.copy(getResource("assets/newhonor/lang/" + language), langPath);
+            Path langPath = getDataFolder().toPath().resolve("lang");
+            Files.createDirectories(langPath);
+
+            //c v 默认语言文件
+            {
+                final String cn = "zh_CN.lang";
+                final String en = "en_US.lang";
+                Path t;
+                if (Files.notExists(t = langPath.resolve(cn))) {
+                    Files.copy(getResource("assets/newhonor/lang/zh_CN.lang"), t);
                 }
-                LanguageManager.reload(langPath);
+                if (Files.notExists(t = langPath.resolve(en))) {
+                    Files.copy(getResource("assets/newhonor/lang/en_US.lang"), t);
+                }
             }
+
+            mainConfig = new MainConfig();
             honorConfig = new HonorConfig();
-            MysqlManager.init(mainConfig.cfg);
+            MysqlManager.init(mainConfig.cfg.getNode("SQL-settings"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,11 +74,22 @@ public class NewHonor extends JavaPlugin {
 
         /* 注册命令 */
         new CommandArg(OfflinePlayer.class, ((commandSender, s) -> {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
-            if (offlinePlayer == null) {
+            Player onlinePlayer = Bukkit.getPlayerExact(s);
+            if (onlinePlayer != null) {
+                return onlinePlayer;
+            }
+
+            //如果玩家不在线再这样
+            List<OfflinePlayer> list = Stream.of(Bukkit.getOfflinePlayers())
+                    .filter(p -> p.getName().equals(s))
+                    .collect(Collectors.toList());
+            if (list.size() > 1) {
+                commandSender.sendMessage(NewHonor.prefix + "found 2 or more users!, ");
+            } else if (list.isEmpty()) {
+                commandSender.sendMessage(NewHonor.prefix + "User " + s + " not found!");
                 return null;
             }
-            return offlinePlayer;
+            return list.get(0);
         }));
         CommandRegisterer registerer = new CommandRegisterer("NewHonor", prefix + "没有这个命令!");
         Map<String, Class[]> map = Maps.newHashMap();

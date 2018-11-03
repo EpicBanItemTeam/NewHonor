@@ -33,6 +33,7 @@ public class HonorData {
     private Text value;
     private String strValue;
     private List<Text> displayValue;
+    private List<Text> suffixes;
     private int[] delay;
     private ItemStack item;
 
@@ -94,7 +95,7 @@ public class HonorData {
             }
         }
 
-        value = valueBuilder.build();
+        value = valueBuilder.trim().build();
         int defaultDelay = cfg.getNode("intervalTicks").getInt(1);
         try {
             List<String> rawDisplayValue = cfg.getNode("displayValue").getList(TypeToken.of(String.class), Collections.singletonList(strValue));
@@ -104,12 +105,22 @@ public class HonorData {
 
                 @Override
                 public Text apply(String s) {
-                    String[] data = s.split(";;");
+                    String[] data = s.split(";;", 2);
                     delay[index] = data.length == 1 ? defaultDelay : Integer.valueOf(data[1]);
                     index++;
-                    return Util.toText(data[0]);
+                    return Text.builder().append(Util.toText(data[0])).onClick(value.getClickAction().orElse(null))
+                            .onHover(value.getHoverAction().orElse(null))
+                            .trim().build();
                 }
             }).collect(Collectors.toList());
+
+            List<String> rawSuffixes = cfg.getNode("suffixesValue").getList(TypeToken.of(String.class));
+            if (rawSuffixes != null) {
+                suffixes = rawDisplayValue.stream().map(Util::toText).collect(Collectors.toList());
+                while (suffixes.size() < displayValue.size()) {
+                    suffixes.add(Text.of(""));
+                }
+            }
         } catch (ObjectMappingException e) {
             NewHonor.logger.warn("honor config error", e);
         }
@@ -152,6 +163,10 @@ public class HonorData {
 
     public List<Text> getDisplayValue() {
         return this.displayValue;
+    }
+
+    public List<Text> getSuffixes() {
+        return this.suffixes;
     }
 
     public String getStrValue() {

@@ -15,10 +15,10 @@ import java.util.List;
 public final class DisplayHonorTaskManager {
     public static final HashMap<String, DisplayHonorTask> TASKS = new HashMap<>();
 
-    public static void submit(String id, List<Text> values, Team team, int[] delay) {
+    public static void submit(String id, List<Text> values, List<Text> suffixes, Team team, int[] delay) {
         synchronized (TASKS) {
             if (TASKS.get(id) == null) {
-                DisplayHonorTask task = new DisplayHonorTask(id, values, team, delay);
+                DisplayHonorTask task = new DisplayHonorTask(id, values, suffixes, team, delay);
                 Task.builder().delayTicks(1).name("NewHonor - display task:" + id)
                         .execute(task).submit(NewHonor.plugin);
                 TASKS.put(id, task);

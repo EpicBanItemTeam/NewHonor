@@ -15,7 +15,9 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static com.github.euonmyoji.newhonor.manager.LanguageManager.getString;
 
@@ -61,6 +63,7 @@ public final class PluginConfig {
         String path = generalNode.getNode(DATA_DIR).getString("default");
         cfgDir = "default".equals(path) ? defaultCfgDir : Paths.get(path);
 
+        SpongeLanguageManager.init();
         SpongeLanguageManager.reload();
 
         CommentedConfigurationNode extraNode = cfg.getNode("extra");
@@ -130,9 +133,8 @@ public final class PluginConfig {
         reload();
     }
 
-    public static Locale getUsingLang() {
-        String[] args = generalNode.getNode(LANGUAGE).getString(Locale.getDefault().toString()).split("_", 2);
-        return new Locale(args[0], args[1]);
+    public static String getUsingLang() {
+        return generalNode.getNode(LANGUAGE).getString(Locale.getDefault().toString());
     }
 
     public static boolean isCheckUpdate() {
@@ -165,14 +167,14 @@ public final class PluginConfig {
         }
     }
 
-    public static Optional<List<String>> getDefaultOwnHonors() {
+    public static List<String> getDefaultOwnHonors() {
         try {
             return cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true) ?
-                    Optional.ofNullable(cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).getValue(LIST_STRING_TYPE)) : Optional.empty();
+                    cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).getValue(LIST_STRING_TYPE) : null;
         } catch (ObjectMappingException e) {
             NewHonor.logger.error("default own honor is error!", e);
-            return Optional.of(Collections.emptyList());
         }
+        return null;
     }
 
     public static ListHonorStyle defaultListHonorStyle() {

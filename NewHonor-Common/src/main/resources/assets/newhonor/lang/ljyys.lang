@@ -1,0 +1,65 @@
+#本语言文件纯属ljyys 不可正常食用  无视就好了daze
+#newhonor command
+newhonor.command.describe.admin=&c这里是管理指令哟~
+newhonor.command.describe.list=&e列出拥有的头衔
+newhonor.command.describe.settings=&e查看你的设置的指令，主人
+newhonor.command.describe.effects=&e头衔效果组指令，没权限的滚开啦
+#admin command
+newhonor.command.describe.admin.effects=&e给头衔捆绑一个不可描述的效果组吧
+newhonor.command.describe.admin.add=&a添加头衔~
+newhonor.command.describe.admin.set=&e设置头衔daze
+newhonor.command.describe.admin.delete=&c删除一个头衔qwq
+newhonor.command.describe.admin.give=&a给予玩家头衔 (可以多个玩家的master~)
+newhonor.command.describe.admin.take=&c移除玩家的头衔 (可以多个玩家的master~)
+newhonor.command.describe.admin.list=&e显示已创建的头衔
+newhonor.command.describe.admin.reload=&emaster不要输入这个 ... 会让人重载的啦！
+newhonor.command.describe.admin.refresh=&e可以清掉被玩坏后留下的痕迹
+#settings command
+newhonor.command.describe.settings.usehonor=&a是否食用我┑(￣Д ￣)┍
+newhonor.command.describe.settings.enableeffects=&a是否食用头衔效果组(可以变强daze)
+newhonor.command.describe.settings.autochange=&a是否自动试试新玩意o(*￣▽￣*)o
+newhonor.command.describe.settings.liststyle=&a显示自己头衔方式╰(￣ω￣ｏ)
+#effects command
+newhonor.command.describe.effects.set=&6设置一个效果组的一个药水效果
+newhonor.command.describe.effects.delete=&c删除一个效果组
+newhonor.command.describe.effects.remove=&c移除一个效果组的一个药水效果
+newhonor.command.describe.effects.info=&6查看一个效果组详细药水效果
+newhonor.command.describe.effects.listAllPotionEffects=&6查看所有支持的药水效果
+newhonor.command.describe.effects.listAllCreatedEffects=&6列出所有创建的效果组
+#settings args command
+newhonor.command.hovermessage.list=&a只要点到我就展示你拥有的头衔 嘿嘿嘿
+newhonor.command.hovermessage.settings=&a点我真没什么作用daze(大声)
+newhonor.hovermessage.settings.usehonor=&6左键后我相信你不知道怎么改设置的 哼
+newhonor.hovermessage.settings.enableeffects=&6左键后我相信你不知道怎么改设置的 哼
+newhonor.hovermessage.settings.autochange=&6左键后我相信你不知道怎么改设置的 哼
+newhonor.hovermessage.settings.liststyle=&6左键后我相信你不知道怎么改设置的 哼(小声:试试tab)
+#change honor
+newhonor.changehonor.succeed=&e[&b头衔插件&e] &a修改使用头衔成功 #居然让你成功了 嘤嘤嘤
+newhonor.changehonor.failed=&e[&b头衔插件&e] &c这个头衔我觉得不行，给你换默认了。
+newhonor.changehonor.unknownsource=&e[&b头衔插件&e] &c你谁啊
+#list honors (player)
+newhonor.listhonors.invtitle=&e%player%&a拥有的头衔 &c头衔总数:%n% 页码:%page%
+newhonor.listhonors.title=&e%ownername% &a拥有的头衔
+newhonor.listhonors.header=&e%ownername% &a正在使用的头衔 &r%honor%&r &a，药水效果组: &d%effectsID%
+newhonor.listhonors.contexts=&a头衔: &r%honor%&r &a，药水效果组: &6%effectsID%
+newhonor.listhonors.clickuse=&e你猜猜点击&r%honor%&r&e能干嘛da⭐ze
+newhonor.listhonors.empty=&e[&b头衔插件&e] 头衔都没 丢人 褪裙吧
+newhonor.listhonors.nopermission=&e[&b头衔插件&e] &c就不给你看！
+newhonor.listhonors.previous=你猜作用啊(上一页啦)
+newhonor.listhonors.next=你猜作用啊(下一页啦)
+#list honors (admin)
+newhonor.listcreatedhonors.title=&a&l所有创建的头衔
+newhonor.listcreatedhonors.contexts=&e头衔id: &6%honorid% &a，头衔: &r%honor%&r &a，&3药水效果组: &d%effectsID%
+#events
+newhonor.event.changehonorbylose=&e[&b头衔插件&e] 你因为不再拥有头衔&r%honor%&r&e，所以自动将头衔变成了&r%changedhonor%
+#errors
+newhonor.command.arg.error.honornotpresent=该头衔id不存在
+#warns
+newhonor.command.arg.warn.honornotpresent=[NewHonor警告]本参数的honorid应存在，但是我们发现了这个honorid不存在。
+#config
+newhonor.configuration.extra.comment=你可以无视这个配置节点。
+newhonor.configuration.permissionmanage.comment=权限管理头衔，靠newhonor.honor.honorid来管理honorid头衔是否被玩家拥有，如果没有这个权限则无法使用该头衔。
+newhonor.configuration.extra.parallelgoal.comment=被操作的目标大小超过了这个goal后则并行(如果操作支持并行) 默认:16
+newhonor.configuration.datadirpath.comment=设置插件所使用的数据的文件夹路径(头衔数据 玩家数据 药水效果组数据) 默认:default
+newhonor.configuration.displayhonor.comment=显示头衔在tab和头顶上，可能需要额外配置一点兼容参数 如果你装了nucleus或者其他聊天插件(兼容配置参考wiki或询问他人)
+newhonor.configuration.defaultliststyle.comment=玩家默认选择自己头衔界面样式(ITEM 或 TEXT)

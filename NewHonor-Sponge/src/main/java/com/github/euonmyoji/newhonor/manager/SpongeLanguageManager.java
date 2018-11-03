@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
 
 import static com.github.euonmyoji.newhonor.manager.LanguageManager.getString;
 
@@ -19,7 +18,7 @@ import static com.github.euonmyoji.newhonor.manager.LanguageManager.getString;
  * @author yinyangshi
  */
 public class SpongeLanguageManager {
-    private static Locale locale;
+    private static String lang;
     private static Path langFile;
 
     public static Text getText(String key) {
@@ -30,7 +29,25 @@ public class SpongeLanguageManager {
         return Util.toText(getString(key, def));
     }
 
-    private static void init() {
+    public static void init() {
+        try {
+            Files.createDirectories(PluginConfig.cfgDir.resolve("lang"));
+        } catch (IOException e) {
+            NewHonor.logger.warn("create lang dir error", e);
+        }
+        for (String lang : new String[]{"lang/en_US.lang", "lang/zh_CN.lang"}) {
+            Sponge.getAssetManager().getAsset(NewHonor.plugin, lang)
+                    .ifPresent(asset -> {
+                        try {
+                            asset.copyToFile(PluginConfig.cfgDir.resolve(lang));
+                        } catch (IOException e) {
+                            NewHonor.logger.warn("copy language file error", e);
+                        }
+                    });
+        }
+    }
+
+    private static void check() {
         try {
             Path langFolder = PluginConfig.cfgDir.resolve("lang");
             if (Files.notExists(langFolder)) {
@@ -38,14 +55,14 @@ public class SpongeLanguageManager {
             }
             try {
                 if (Files.notExists(langFile)) {
-                    Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/" + locale.toString() + ".lang")
-                            .orElseThrow(() -> new FileNotFoundException("asset didn't found locale language file!"))
+                    Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/" + lang + ".lang")
+                            .orElseThrow(() -> new FileNotFoundException("asset didn't found language file!"))
                             .copyToFile(langFile);
                 }
             } catch (FileNotFoundException ignore) {
                 NewHonor.logger.info("locale language file not found");
-                langFile = PluginConfig.cfgDir.resolve("lang").resolve(Locale.US.toString() + ".lang");
-                Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/" + Locale.US.toString() + ".lang")
+                langFile = PluginConfig.cfgDir.resolve("lang/en_US.lang");
+                Sponge.getAssetManager().getAsset(NewHonor.plugin, "lang/en_US.lang")
                         .orElseThrow(() -> new IOException("asset didn't found language file!"))
                         .copyToFile(langFile);
             }
@@ -56,9 +73,9 @@ public class SpongeLanguageManager {
 
     public static void reload() {
         try {
-            locale = PluginConfig.getUsingLang();
-            langFile = PluginConfig.cfgDir.resolve("lang").resolve(locale.toString() + ".lang");
-            init();
+            lang = PluginConfig.getUsingLang();
+            langFile = PluginConfig.cfgDir.resolve("lang/" + lang + ".lang");
+            check();
             LanguageManager.reload(langFile);
         } catch (IOException e) {
             NewHonor.logger.error("reload language file error!", e);

@@ -11,11 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * @author MungSoup
+ * @author MungSoup & yinyangshi edited
  */
 public class MungConfig {
     public CommentedConfigurationNode cfg;
-    private ConfigurationLoader<CommentedConfigurationNode> loader;
+    protected ConfigurationLoader<CommentedConfigurationNode> loader;
 
     public MungConfig(Plugin plugin, String fileName) throws IOException {
         Path dataFolder = plugin.getDataFolder().toPath();
@@ -36,6 +36,10 @@ public class MungConfig {
         reload();
     }
 
+    protected MungConfig() {
+        //for special config
+    }
+
     protected void setDefault(String comment, Object defaultValue, String... nodes) {
         CommentedConfigurationNode node = cfg.getNode(((Object[]) nodes));
         if (comment != null) {
@@ -51,6 +55,7 @@ public class MungConfig {
         try {
             cfg = loader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true));
         } catch (IOException e) {
+            e.printStackTrace();
             cfg = loader.createEmptyNode();
         }
     }

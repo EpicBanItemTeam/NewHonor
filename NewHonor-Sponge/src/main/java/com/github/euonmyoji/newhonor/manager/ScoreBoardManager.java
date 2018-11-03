@@ -74,19 +74,24 @@ public final class ScoreBoardManager {
                 if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
                     HonorData valueData = NewHonor.plugin.honorTextCache.get(uuid);
                     List<Text> prefixes = valueData.getDisplayValue();
+                    List<Text> suffixes = valueData.getSuffixes();
                     Text prefix = prefixes.get(0);
                     if (isTeamPresent) {
                         optionalTeam.get().setPrefix(prefix);
+                        if (suffixes != null) {
+                            optionalTeam.get().setSuffix(suffixes.get(0));
+                        }
                     } else {
                         optionalTeam = Optional.of(Team.builder()
                                 .name(honorID)
                                 .prefix(prefix)
+                                .suffix(suffixes != null ? suffixes.get(0) : Text.of(""))
                                 .build());
                         getScoreBoard().registerTeam(optionalTeam.get());
                     }
                     optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
                     if (prefixes.size() > 1) {
-                        DisplayHonorTaskManager.submit(honorID, prefixes, optionalTeam.orElseThrow(NoSuchFieldError::new), valueData.getDelay());
+                        DisplayHonorTaskManager.submit(honorID, prefixes, suffixes, optionalTeam.orElseThrow(NoSuchFieldError::new), valueData.getDelay());
                     }
                 }
             }

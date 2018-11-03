@@ -3,22 +3,38 @@ package com.github.euonmyoji.newhonor.configuration;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import net.yeah.mungsoup.mung.configuration.MungConfig;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 /**
- * @author MungSoup
+ * @author MungSoup yinyangshi
  */
 public class MainConfig extends MungConfig {
     private final String GENERAL_NODE = "general";
     private final String DEFAULT_HONOR_NODE = "default-honors-settings";
 
     public MainConfig() throws IOException {
-        super(NewHonor.plugin, "config.conf");
+        String fileName = "config.conf";
+        Path dataFolder = NewHonor.plugin.getDataFolder().toPath();
+
+        Path path = Files.createDirectories(dataFolder).resolve(fileName);
+        loader = HoconConfigurationLoader.builder().setPath(path).build();
+        reload();
+
+        if (Files.notExists(path)) {
+            reload();
+            saveDefault();
+            save();
+        }
+        reload();
     }
 
     @Override
@@ -33,11 +49,33 @@ public class MainConfig extends MungConfig {
         setDefault(LanguageManager.getString("newhonor.configuration.permissionmanage.comment"), true, GENERAL_NODE, "permission-manage");
     }
 
-    public String getLanguage() {
-        return cfg.getNode(GENERAL_NODE, "language").getString();
+    @Override
+    public void reload() {
+        super.reload();
+        try {
+            String usingLang = getLanguage() + ".lang";
+            Path langPath = NewHonor.plugin.getDataFolder().toPath().resolve("lang/" + usingLang);
+            if (Files.notExists(langPath)) {
+                Files.copy(NewHonor.plugin.getResource("assets/newhonor/lang/" + usingLang), langPath);
+            }
+            LanguageManager.reload(langPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    Optional<List<String>> getDefaultOwnHonors() {
-        return Optional.ofNullable(cfg.getNode(DEFAULT_HONOR_NODE, "honors").getList(o -> (String) o));
+    private String getLanguage() {
+        return cfg.getNode(GENERAL_NODE, "language").getString(Locale.getDefault().toString());
+    }
+
+    List<String> getDefaultOwnHonors() {
+        try {
+            return cfg.getNode(DEFAULT_HONOR_NODE, "enable").getBoolean(true) ?
+                    cfg.getNode(DEFAULT_HONOR_NODE, "honors").getList(TypeToken.of(String.class)) : null;
+        } catch (ObjectMappingException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

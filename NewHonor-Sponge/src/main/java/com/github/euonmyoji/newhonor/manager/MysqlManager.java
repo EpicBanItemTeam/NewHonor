@@ -162,11 +162,11 @@ public final class MysqlManager {
 
         @Override
         public void init() throws SQLException {
-            Optional<List<String>> defaultHonors = PluginConfig.getDefaultOwnHonors();
-            if (defaultHonors.isPresent()) {
-                giveHonor(defaultHonors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""));
+            List<String> defaultHonors = PluginConfig.getDefaultOwnHonors();
+            if (defaultHonors != null && !defaultHonors.isEmpty()) {
+                giveHonor(defaultHonors.stream().reduce((s, s2) -> s + D + s2).orElse(""));
                 if (getUsingHonorID() == null) {
-                    setUseHonor(defaultHonors.get().get(0));
+                    setUseHonor(defaultHonors.get(0));
                 }
             }
         }
