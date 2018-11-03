@@ -116,7 +116,7 @@ public class HonorData {
 
             List<String> rawSuffixes = cfg.getNode("suffixValue").getList(TypeToken.of(String.class));
             if (rawSuffixes != null) {
-                suffixes = rawDisplayValue.stream().map(Util::toText).collect(Collectors.toList());
+                suffixes = rawSuffixes.stream().map(Util::toText).collect(Collectors.toList());
                 while (suffixes.size() < displayValue.size()) {
                     suffixes.add(Text.of(""));
                 }

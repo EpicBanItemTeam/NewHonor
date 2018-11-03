@@ -29,6 +29,7 @@ public class DisplayHonorTask implements Runnable {
         }
         this.id = id;
         this.values = values;
+        this.suffixes = suffixes;
         this.team = team;
         this.delays = delay;
     }
@@ -39,7 +40,9 @@ public class DisplayHonorTask implements Runnable {
             try (Timing timing = Timings.of(NewHonor.plugin, "NewHonorDisplayTask")) {
                 timing.startTimingIfSync();
                 team.setPrefix(values.get(index));
-                team.setSuffix(suffixes.get(index));
+                if (suffixes != null && suffixes.size() > index) {
+                    team.setSuffix(suffixes.get(index));
+                }
                 Task.builder().execute(this)
                         .delayTicks(delays[index]).name("NewHonor - displayHonor Task " + id + "#" + index)
                         .submit(NewHonor.plugin);
@@ -47,7 +50,7 @@ public class DisplayHonorTask implements Runnable {
                 if (index == values.size()) {
                     index = 0;
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | IndexOutOfBoundsException | NullPointerException e) {
                 NewHonor.logger.warn("The display value is wrong", e);
                 cancel();
             } catch (Throwable ignore) {

@@ -78,14 +78,12 @@ public final class ScoreBoardManager {
                     Text prefix = prefixes.get(0);
                     if (isTeamPresent) {
                         optionalTeam.get().setPrefix(prefix);
-                        if (suffixes != null) {
-                            optionalTeam.get().setSuffix(suffixes.get(0));
-                        }
+                        optionalTeam.get().setSuffix(suffixes == null ? Text.of("") : suffixes.get(0));
                     } else {
                         optionalTeam = Optional.of(Team.builder()
                                 .name(honorID)
                                 .prefix(prefix)
-                                .suffix(suffixes != null ? suffixes.get(0) : Text.of(""))
+                                .suffix(suffixes == null ? Text.of("") : suffixes.get(0))
                                 .build());
                         getScoreBoard().registerTeam(optionalTeam.get());
                     }
