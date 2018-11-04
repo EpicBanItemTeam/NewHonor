@@ -20,6 +20,7 @@ import java.util.logging.Logger;
  */
 @Getter
 public class Honor {
+    //TODO 赋值emmm
     private final ClickEvent.Action clickType;
     private final HoverEvent.Action hoverType;
     private final String clilckValue, hoverValue, text;
