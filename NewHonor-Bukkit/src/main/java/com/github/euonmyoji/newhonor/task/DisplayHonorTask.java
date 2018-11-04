@@ -29,13 +29,8 @@ public class DisplayHonorTask implements Runnable {
     public void run() {
         if (running) {
             String prefix = prefixes.get(index).replace("&", "§");
-            int delay;
+            int delay = prefix.contains(";;") ? Integer.parseInt(prefix.split(";;")[1]) : getDelay(delays, index);
             //fixme: 这些拖慢服务器的代码啊 给我消失吧 拯救世界 刻不容缓！ 多执行一点代码多发出一点热量会让全球变暖啊！
-            if (prefix.contains(";;")) {
-                delay = Integer.parseInt(prefix.split(";;")[1]);
-            } else {
-                delay = getDelay(delays, index);
-            }
             team.setPrefix(prefix.replaceAll(";;[0-9]*", ""));
             team.setSuffix(suffixes.get(index).replace("&", "§"));
             Bukkit.getScheduler().runTaskLaterAsynchronously(NewHonor.plugin, this, delay);

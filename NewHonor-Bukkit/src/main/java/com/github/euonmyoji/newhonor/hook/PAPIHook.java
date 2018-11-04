@@ -6,7 +6,6 @@ import com.github.euonmyoji.newhonor.data.Honor;
 import me.clip.placeholderapi.PlaceholderHook;
 import org.bukkit.entity.Player;
 
-//fixme: 包呢 库呢 没库写什么🐎
 public class PAPIHook extends PlaceholderHook {
 
     @Override
@@ -19,7 +18,7 @@ public class PAPIHook extends PlaceholderHook {
                     case "text":
                         return honor.getText();
                     case "click_value":
-                        return honor.getClickValue();
+                        return honor.getClilckValue();
                     case "hover_value":
                         return honor.getHoverValue();
                 }

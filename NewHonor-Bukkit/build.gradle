@@ -13,6 +13,7 @@ buildscript {
 plugins {
     id 'ninja.miserable.blossom' version '1.0.1'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'net.ltgt.apt' version '0.10'
 }
 
 blossom {
@@ -70,6 +71,10 @@ dependencies {
     shade 'ninja.leaping.configurate:configurate-core:3.3'
     shade 'ninja.leaping.configurate:configurate-hocon:3.3'
     shade 'com.google.guava:guava:21.0'
+
+    //lombok
+    compileOnly 'org.projectlombok:lombok:1.18.4'
+    apt 'org.projectlombok:lombok:1.18.4'
 
     //bukkit
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
