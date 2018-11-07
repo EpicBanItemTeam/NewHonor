@@ -22,7 +22,7 @@ public class OnJoin implements Listener {
             playerConfig.checkPermission();
             if (playerConfig.isUseHonor()) {
                 String honorID = playerConfig.getUsingHonorID();
-                if (honorID == null) {
+                if (honorID == null || NewHonor.honorConfig.notExist(honorID)) {
                     return;
                 }
                 Honor honor = NewHonor.honorConfig.getHonor(honorID);

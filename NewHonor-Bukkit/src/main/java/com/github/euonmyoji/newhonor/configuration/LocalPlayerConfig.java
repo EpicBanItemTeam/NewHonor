@@ -46,7 +46,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
     private void noSaveGive(String id) {
         Optional<List<String>> honors = getOwnHonors();
         honors.ifPresent(strings -> {
-            if (honorConfig.notExist(id)) {
+            if (!honorConfig.notExist(id)) {
                 strings.add(id);
                 cfg.getNode(HONORS_KEY).setValue(honors.get());
             }
@@ -61,7 +61,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
     @Override
     public boolean takeHonor(String... ids) {
         for (String id : ids) {
-            if (honorConfig.notExist(id)) {
+            if (!honorConfig.notExist(id)) {
                 Optional<List<String>> honors = getOwnHonors();
                 honors.ifPresent(strings -> strings.remove(id));
             }
@@ -72,7 +72,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
     @Override
     public boolean giveHonor(String id) {
         Optional<List<String>> honors = getOwnHonors();
-        if (honors.isPresent() && !honors.get().contains(id) && honorConfig.notExist(id)) {
+        if (honors.isPresent() && !honors.get().contains(id) && !honorConfig.notExist(id)) {
             honors.get().add(id);
             cfg.getNode(HONORS_KEY).setValue(honors.get());
             setUseHonor(id);
@@ -99,7 +99,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
     @Override
     public boolean setUseHonor(String id) {
         //todo: 不应该判断 传参进来就应该保证存在
-        if (honorConfig.notExist(id)) {
+        if (!honorConfig.notExist(id)) {
             cfg.getNode(USING_KEY).setValue(id);
             return save();
         }

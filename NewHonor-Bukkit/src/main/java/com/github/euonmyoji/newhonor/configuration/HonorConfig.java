@@ -44,8 +44,8 @@ public class HonorConfig extends MungConfig {
         }
     }
 
-    boolean notExist(String id) {
-        return !cfg.getNode(id).isVirtual();
+    public boolean notExist(String id) {
+        return cfg.getNode(id).isVirtual();
     }
 
     public Honor getHonor(String id) {

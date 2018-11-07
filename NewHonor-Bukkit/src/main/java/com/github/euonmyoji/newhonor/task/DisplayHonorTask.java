@@ -17,6 +17,9 @@ public class DisplayHonorTask implements Runnable {
     private volatile boolean running = true;
 
     public DisplayHonorTask(Team team, List<String> prefixes, List<String> suffixes, int delay) {
+        if (prefixes.size() != suffixes.size() && prefixes.size() == 0) {
+            return;
+        }
         this.team = team;
         this.prefixes = prefixes;
         this.suffixes = suffixes;

@@ -24,10 +24,10 @@ public class ItemSerializable implements TypeSerializer {
         int durability = value.getNode("Durability").getInt(0);
         ItemStack item = new ItemStack(material, amount, (short) durability);
         ItemMeta meta = item.getItemMeta();
-        if (nameNode.isVirtual()) {
+        if (!nameNode.isVirtual()) {
             meta.setDisplayName(nameNode.getString());
         }
-        if (loreNode.isVirtual()) {
+        if (!loreNode.isVirtual()) {
             meta.setLore(loreNode.getList(TypeToken.of(String.class)));
         }
         item.setItemMeta(meta);
