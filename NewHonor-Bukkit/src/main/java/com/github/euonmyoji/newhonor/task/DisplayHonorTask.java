@@ -11,16 +11,16 @@ public class DisplayHonorTask implements Runnable {
     private Team team;
     public static List<DisplayHonorTask> tasks = Lists.newArrayList();
     private List<String> prefixes;
-    private int[] delays;
+    private int delay;
     private List<String> suffixes;
     private int index;
     private volatile boolean running = true;
 
-    public DisplayHonorTask(Team team, List<String> prefixes, List<String> suffixes, int... delays) {
+    public DisplayHonorTask(Team team, List<String> prefixes, List<String> suffixes, int delay) {
         this.team = team;
         this.prefixes = prefixes;
         this.suffixes = suffixes;
-        this.delays = delays;
+        this.delay = delay;
         tasks.add(this);
         this.run();
     }
@@ -29,23 +29,16 @@ public class DisplayHonorTask implements Runnable {
     public void run() {
         if (running) {
             String prefix = prefixes.get(index).replace("&", "§");
-            int delay = prefix.contains(";;") ? Integer.parseInt(prefix.split(";;")[1]) : getDelay(delays, index);
+            int delay1 = prefix.contains(";;") ? Integer.parseInt(prefix.split(";;")[1]) : delay;
             //fixme: 这些拖慢服务器的代码啊 给我消失吧 拯救世界 刻不容缓！ 多执行一点代码多发出一点热量会让全球变暖啊！
             team.setPrefix(prefix.replaceAll(";;[0-9]*", ""));
             team.setSuffix(suffixes.get(index).replace("&", "§"));
-            Bukkit.getScheduler().runTaskLaterAsynchronously(NewHonor.plugin, this, delay);
+            Bukkit.getScheduler().runTaskLaterAsynchronously(NewHonor.plugin, this, delay1);
             index++;
             if (index == prefixes.size()) {
                 index = 0;
             }
         }
-    }
-
-    private int getDelay(int[] delays, int index) {
-        if (delays.length == 1) {
-            return delays[0];
-        }
-        return delays[index];
     }
 
     public void cancel() {

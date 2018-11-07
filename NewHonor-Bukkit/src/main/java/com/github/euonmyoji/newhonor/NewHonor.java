@@ -108,6 +108,7 @@ public class NewHonor extends JavaPlugin {
             PlaceholderAPI.registerPlaceholderHook("newhonor", new PAPIHook());
         }
 
+
         /* 介绍 */
         Bukkit.getConsoleSender().sendMessage("[§aNew§6Honor§7] §a成功加载NewHonor BUKKIT版本!");
     }

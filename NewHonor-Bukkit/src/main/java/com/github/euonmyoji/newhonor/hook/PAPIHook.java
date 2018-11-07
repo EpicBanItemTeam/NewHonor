@@ -18,7 +18,7 @@ public class PAPIHook extends PlaceholderHook {
                     case "text":
                         return honor.getText();
                     case "click_value":
-                        return honor.getClilckValue();
+                        return honor.getClickValue();
                     case "hover_value":
                         return honor.getHoverValue();
                 }

@@ -33,7 +33,7 @@ public class OnJoin implements Listener {
                 } else {
                     team = scoreboard.getTeam(honorID);
                 }
-                new DisplayHonorTask(team, honor.getDisplayTexts(), honor.getSuffixes(), honor.getIntervalTicks());
+                new DisplayHonorTask(team, honor.getDisplayTexts(), honor.getSuffixes(), honor.getIntervalTick());
             }
         } catch (Exception e1) {
             e1.printStackTrace();
