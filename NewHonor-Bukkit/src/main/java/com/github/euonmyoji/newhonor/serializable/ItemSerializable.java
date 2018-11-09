@@ -1,5 +1,6 @@
 package com.github.euonmyoji.newhonor.serializable;
 
+import com.github.euonmyoji.newhonor.NewHonor;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -10,11 +11,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
-public class ItemSerializable implements TypeSerializer {
+/**
+ * @author NewHonor authors
+ */
+public class ItemSerializable implements TypeSerializer<ItemStack> {
 
     @Override
-    public Object deserialize(TypeToken type, ConfigurationNode value) throws ObjectMappingException {
+    public ItemStack deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
         if (type != TypeToken.of(ItemStack.class)) {
             return null;
         }
@@ -35,14 +38,10 @@ public class ItemSerializable implements TypeSerializer {
     }
 
     @Override
-    public void serialize(TypeToken type, Object obj, ConfigurationNode value) {
-        if (type != TypeToken.of(ItemStack.class)) {
-            return;
+    public void serialize(TypeToken<?> type, ItemStack item, ConfigurationNode value) {
+        if (!TypeToken.of(ItemStack.class).equals(type)) {
+            NewHonor.plugin.getLogger().info("未知type进行序列化" + type + ",raw:" + type.getRawType());
         }
-        if (!(obj instanceof ItemStack)) {
-            return;
-        }
-        ItemStack item = (ItemStack) obj;
         String material = item.getType().toString();
         int amount = item.getAmount();
         int durability = item.getDurability();

@@ -7,6 +7,9 @@ import org.bukkit.scoreboard.Team;
 
 import java.util.List;
 
+/**
+ * @author NewHonor authors
+ */
 public class DisplayHonorTask implements Runnable {
     private Team team;
     public static List<DisplayHonorTask> tasks = Lists.newArrayList();
