@@ -84,6 +84,7 @@ public final class ScoreBoardManager {
                                 .name(honorID)
                                 .prefix(prefix)
                                 .suffix(suffixes == null ? Text.of("") : suffixes.get(0))
+                                .allowFriendlyFire(true)
                                 .build());
                         getScoreBoard().registerTeam(optionalTeam.get());
                     }
