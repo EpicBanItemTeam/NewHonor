@@ -275,13 +275,13 @@ public final class HonorCommand {
                 src.sendMessage(of("/honor effects listAllCreatedEffects -", getText("newhonor.command.describe.effects.listAllCreatedEffects")));
                 return CommandResult.success();
             })
-            .child(EffectsCommand.delete, "delete")
-            .child(EffectsCommand.set, "set")
-            .child(EffectsCommand.remove, "remove")
-            .child(EffectsCommand.info, "info")
-            .child(EffectsCommand.listAllPotionEffects, "listAllPotionEffects")
-            .child(EffectsCommand.listAllCreatedEffects, "listAllCreatedEffects")
-            .child(EffectsCommand.listAllParticle, "listAllParticle")
+            .child(EffectsCommand.DELETE, "delete")
+            .child(EffectsCommand.SET, "set")
+            .child(EffectsCommand.REMOVE, "remove")
+            .child(EffectsCommand.INFO, "info")
+            .child(EffectsCommand.LIST_ALL_POTION_EFFECTS, "listAllPotionEffects")
+            .child(EffectsCommand.LIST_ALL_CREATED_EFFECTS, "listAllCreatedEffects")
+            .child(EffectsCommand.LIST_ALL_PARTICLE, "listAllParticle")
             .build();
 
     public static CommandSpec honor = CommandSpec.builder()

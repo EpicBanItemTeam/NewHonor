@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class EffectsCommand {
-    static CommandSpec delete = CommandSpec.builder()
+    static final CommandSpec DELETE = CommandSpec.builder()
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {
                 String effectsID = args.<String>getOne(Text.of("effectsID")).orElseThrow(NoSuchFieldError::new);
@@ -40,7 +40,7 @@ final class EffectsCommand {
             })
             .build();
 
-    static CommandSpec set = CommandSpec.builder()
+    static final CommandSpec SET = CommandSpec.builder()
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))),
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("effectID"))),
                     GenericArguments.onlyOne(GenericArguments.integer(Text.of("level"))))
@@ -74,7 +74,7 @@ final class EffectsCommand {
             })
             .build();
 
-    static CommandSpec remove = CommandSpec.builder()
+    static final CommandSpec REMOVE = CommandSpec.builder()
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))),
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("effectID"))))
             .executor((src, args) -> {
@@ -112,7 +112,7 @@ final class EffectsCommand {
             })
             .build();
 
-    static CommandSpec info = CommandSpec.builder()
+    static final CommandSpec INFO = CommandSpec.builder()
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("effectsID"))))
             .executor((src, args) -> {
                 String effectID = args.<String>getOne(Text.of("effectsID")).orElseThrow(NoSuchFieldError::new);
@@ -134,7 +134,7 @@ final class EffectsCommand {
             })
             .build();
 
-    static CommandSpec listAllCreatedEffects = CommandSpec.builder()
+    static final CommandSpec LIST_ALL_CREATED_EFFECTS = CommandSpec.builder()
             .executor((src, args) -> {
                 PaginationList.Builder builder = PaginationList.builder()
                         .title(Text.of("Created Effects")).padding(Text.of("-"));
@@ -150,7 +150,7 @@ final class EffectsCommand {
             })
             .build();
 
-    static CommandSpec listAllParticle = CommandSpec.builder()
+    static final CommandSpec LIST_ALL_PARTICLE = CommandSpec.builder()
             .executor((src, args) -> {
                 PaginationList.Builder builder = PaginationList.builder();
                 builder.title(Text.of("Particle ID List")).padding(Text.of("-"));
@@ -161,7 +161,7 @@ final class EffectsCommand {
             })
             .build();
 
-    static CommandSpec listAllPotionEffects = CommandSpec.builder()
+    static final CommandSpec LIST_ALL_POTION_EFFECTS = CommandSpec.builder()
             .executor((src, args) -> {
                 PaginationList.Builder builder = PaginationList.builder();
                 builder.title(Text.of("PotionEffect List")).padding(Text.of("-")).header(Text.of("(Left is PotionEffect ID)"));
