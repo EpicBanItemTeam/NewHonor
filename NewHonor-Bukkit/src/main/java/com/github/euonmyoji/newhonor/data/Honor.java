@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 /**
  * @author MungSoup
  */
-@Getter
 public class Honor {
     private ClickEvent.Action clickType;
     private HoverEvent.Action hoverType;
@@ -68,6 +67,46 @@ public class Honor {
         } catch (ObjectMappingException e) {
             e.printStackTrace();
         }
+    }
+
+    public ClickEvent.Action getClickType() {
+        return this.clickType;
+    }
+
+    public HoverEvent.Action getHoverType() {
+        return this.hoverType;
+    }
+
+    public String getClickValue() {
+        return this.clickValue;
+    }
+
+    public String getHoverValue() {
+        return this.hoverValue;
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public List<String> getDisplayTexts() {
+        return this.displayTexts;
+    }
+
+    public List<String> getSuffixes() {
+        return this.suffixes;
+    }
+
+    public int getIntervalTick() {
+        return this.intervalTick;
+    }
+
+    public TextComponent getTellraw() {
+        return this.tellraw;
+    }
+
+    public ItemStack getIcon() {
+        return this.icon;
     }
 
     private String color(String msg) {
