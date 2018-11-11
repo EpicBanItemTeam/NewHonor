@@ -44,6 +44,21 @@ public class HonorConfig extends MungConfig {
         }
     }
 
+    public boolean addHonor(String id, String honor) {
+        if (notExist(id)) {
+            cfg.getNode(id, "value").setValue(honor);
+//            valueMap.put(id, new HonorData(cfg.getNode(id), id)); no such map in bukkit version
+            return save();
+        }
+        return false;
+    }
+
+    public boolean setHonor(String id, String honor) {
+        cfg.getNode(id, "value").setValue(honor);
+//        valueMap.put(id, new HonorData(cfg.getNode(id), id)); no such map in bukkit version
+        return save();
+    }
+
     public boolean notExist(String id) {
         return cfg.getNode(id).isVirtual();
     }

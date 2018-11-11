@@ -18,6 +18,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
+import org.spongepowered.api.text.Text;
 
 import java.nio.file.Files;
 import java.sql.SQLException;
@@ -167,9 +168,11 @@ final class AdminCommand {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
                 String honor = args.<String>getOne(of("honor")).orElseThrow(NoSuchFieldError::new);
                 if (HonorConfig.addHonor(id, honor)) {
-                    Log.info(src.getName() + " added a honor:" + id);
-                    src.sendMessage(of("[NewHonor]add a honor successful"));
+                    Log.info(src.getName() + " added an honor:" + id);
+                    src.sendMessage(of("[NewHonor]add an honor successful"));
                     return CommandResult.success();
+                } else {
+                    src.sendMessage(Text.of("[NewHonor]add an honor failed!"));
                 }
                 return CommandResult.empty();
             })
