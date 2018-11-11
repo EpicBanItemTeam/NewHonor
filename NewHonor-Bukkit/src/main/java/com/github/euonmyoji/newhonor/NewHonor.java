@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor;
 
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.command.admin.AdminCommand;
 import com.github.euonmyoji.newhonor.command.admin.GiveCommand;
 import com.github.euonmyoji.newhonor.command.admin.HelpCommand;
 import com.github.euonmyoji.newhonor.command.admin.ReloadCommand;
@@ -99,7 +100,11 @@ public class NewHonor extends JavaPlugin {
         CommandRegisterer registerer = new CommandRegisterer("NewHonor", prefix + "没有这个命令!");
         Map<String, Class[]> map = Maps.newHashMap();
         map.put("Admin", new Class[]{ReloadCommand.class, GiveCommand.class});
-        registerer.register(new String[]{"Admin"}, map, ReloadCommand.class, HelpCommand.class, GiveCommand.class, GUICommand.class);
+        registerer.register(new String[]{"Admin"}, map, ReloadCommand.class,
+                HelpCommand.class,
+                GiveCommand.class,
+                GUICommand.class,
+                AdminCommand.class);
 
         /* 注册事件 */
         Bukkit.getPluginManager().registerEvents(new OnJoin(), this);

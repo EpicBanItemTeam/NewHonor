@@ -50,10 +50,10 @@ public class AdminCommand {
     public void set(CommandSender sender, OfflinePlayer player, String id, String value) {
         try {
             if (honorConfig.setHonor(id, value)) {
-                NewHonor.plugin.getLogger().info(sender.getName() + " added an honor:" + id);
-                sender.sendMessage("[NewHonor]add an honor successful");
+                NewHonor.plugin.getLogger().info(sender.getName() + " set an honor:" + id);
+                sender.sendMessage("[NewHonor]set an honor successful");
             } else {
-                sender.sendMessage("[NewHonor]add an honor failed!");
+                sender.sendMessage("[NewHonor]set an honor failed!");
             }
         } catch (Exception e) {
             e.printStackTrace();
