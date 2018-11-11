@@ -2,7 +2,6 @@ package com.github.euonmyoji.newhonor.command.admin;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import net.yeah.mungsoup.mung.command.SubCommand;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 import static com.github.euonmyoji.newhonor.NewHonor.honorConfig;
@@ -20,7 +19,7 @@ public class AdminCommand {
             hover = "§b就是创建头衔啦!",
             console = true
     )
-    public void add(CommandSender sender, OfflinePlayer player, String id, String value) {
+    public void add(CommandSender sender, String id, String value) {
         try {
             if (honorConfig.notExist(id)) {
                 if (honorConfig.addHonor(id, value)) {
@@ -47,7 +46,7 @@ public class AdminCommand {
             hover = "§b就是设置头衔啦!",
             console = true
     )
-    public void set(CommandSender sender, OfflinePlayer player, String id, String value) {
+    public void set(CommandSender sender, String id, String value) {
         try {
             if (honorConfig.setHonor(id, value)) {
                 NewHonor.plugin.getLogger().info(sender.getName() + " set an honor:" + id);
