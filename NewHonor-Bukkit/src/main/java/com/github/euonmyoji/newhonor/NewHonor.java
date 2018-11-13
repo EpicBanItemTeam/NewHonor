@@ -13,14 +13,18 @@ import com.github.euonmyoji.newhonor.hook.PAPIHook;
 import com.github.euonmyoji.newhonor.inventory.HonorGUI;
 import com.github.euonmyoji.newhonor.listener.OnJoin;
 import com.github.euonmyoji.newhonor.manager.MysqlManager;
+import com.github.euonmyoji.newhonor.serializable.ItemSerializable;
 import com.github.euonmyoji.newhonor.task.DisplayHonorTask;
 import com.google.common.collect.Maps;
+import com.google.common.reflect.TypeToken;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.yeah.mungsoup.mung.command.CommandArg;
 import net.yeah.mungsoup.mung.command.CommandRegisterer;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -46,7 +50,7 @@ public class NewHonor extends JavaPlugin {
         /* 初始化变量 */
         plugin = this;
         isPEXEnable = Bukkit.getPluginManager().isPluginEnabled("PermissionsEx");
-
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(ItemStack.class), new ItemSerializable());
         /* 初始化配置 */
         try {
             Path langPath = getDataFolder().toPath().resolve("lang");

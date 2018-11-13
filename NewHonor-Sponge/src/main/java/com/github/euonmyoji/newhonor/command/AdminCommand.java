@@ -1,12 +1,12 @@
 package com.github.euonmyoji.newhonor.command;
 
-import com.github.euonmyoji.newhonor.command.args.HonorIDArg;
-import com.github.euonmyoji.newhonor.api.Level;
-import com.github.euonmyoji.newhonor.manager.TaskManager;
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.Level;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.command.args.HonorIDArg;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
+import com.github.euonmyoji.newhonor.manager.TaskManager;
 import com.github.euonmyoji.newhonor.util.Log;
 import com.github.euonmyoji.newhonor.util.Util;
 import org.spongepowered.api.Sponge;
@@ -14,7 +14,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.pagination.PaginationList;
@@ -224,10 +223,10 @@ final class AdminCommand {
             } catch (Exception e) {
                 NewHonor.logger.warn("Update Task error!", e);
             }
-            Sponge.getServer().getOnlinePlayers().stream().map(Player::getUniqueId)
-                    .map(uuid -> {
+            Sponge.getServer().getOnlinePlayers().stream()
+                    .map(player -> {
                         try {
-                            return PlayerConfig.get(uuid);
+                            return PlayerConfig.get(player.getUniqueId());
                         } catch (Throwable e) {
                             NewHonor.logger.error("error about sql!", e);
                         }

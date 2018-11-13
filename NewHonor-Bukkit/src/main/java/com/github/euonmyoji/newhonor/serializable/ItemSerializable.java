@@ -1,6 +1,5 @@
 package com.github.euonmyoji.newhonor.serializable;
 
-import com.github.euonmyoji.newhonor.NewHonor;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -18,9 +17,6 @@ public class ItemSerializable implements TypeSerializer<ItemStack> {
 
     @Override
     public ItemStack deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        if (type != TypeToken.of(ItemStack.class)) {
-            return null;
-        }
         ConfigurationNode nameNode = value.getNode("Name"), loreNode = value.getNode("Lore");
         Material material = Material.getMaterial(value.getNode("Type").getString());
         int amount = value.getNode("Count").getInt(1);
@@ -39,9 +35,6 @@ public class ItemSerializable implements TypeSerializer<ItemStack> {
 
     @Override
     public void serialize(TypeToken<?> type, ItemStack item, ConfigurationNode value) {
-        if (!TypeToken.of(ItemStack.class).equals(type)) {
-            NewHonor.plugin.getLogger().info("未知type进行序列化" + type + ",raw:" + type.getRawType());
-        }
         String material = item.getType().toString();
         int amount = item.getAmount();
         int durability = item.getDurability();

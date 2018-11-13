@@ -1,7 +1,6 @@
 package com.github.euonmyoji.newhonor.data;
 
 import com.google.common.reflect.TypeToken;
-import lombok.Getter;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -10,6 +9,7 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public class Honor {
             displayTexts = config.getNode("displayValue").getList(TypeToken.of(String.class), ArrayList::new);
             suffixes = config.getNode("suffixValue").getList(TypeToken.of(String.class), ArrayList::new);
             intervalTick = config.getNode("intervalTicks").getInt(1);
-            icon = config.getNode("item-value").getValue(TypeToken.of(ItemStack.class));
+            icon = config.getNode("item-value").getValue(TypeToken.of(ItemStack.class), new ItemStack(Material.NAME_TAG, 1));
         } catch (ObjectMappingException e) {
             e.printStackTrace();
         }
