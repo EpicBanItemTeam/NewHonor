@@ -18,6 +18,9 @@ public class ItemSerializable implements TypeSerializer<ItemStack> {
     @Override
     public ItemStack deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
         ConfigurationNode nameNode = value.getNode("Name"), loreNode = value.getNode("Lore");
+        if (value.isVirtual()) {
+            return null;
+        }
         Material material = Material.getMaterial(value.getNode("Type").getString());
         int amount = value.getNode("Count").getInt(1);
         int durability = value.getNode("Durability").getInt(0);
