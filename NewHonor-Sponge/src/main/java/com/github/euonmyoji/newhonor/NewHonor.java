@@ -276,7 +276,7 @@ public final class NewHonor {
 
     private void checkUpdate() {
         try {
-            final String u = "https://api.github.com/repos/euOnmyoji/NewHonor-plugin-for-sponge/releases";
+            final String u = "https://api.github.com/repositories/121261530/releases";
             HttpsURLConnection con = (HttpsURLConnection) new URL(u)
                     .openConnection();
             con.setRequestMethod("GET");
