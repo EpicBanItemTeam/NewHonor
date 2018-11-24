@@ -16,6 +16,7 @@ import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
+import javassist.bytecode.annotation.NoSuchClassError;
 import org.bstats.sponge.Metrics2;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -29,8 +30,10 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.plugin.meta.version.ComparableVersion;
 
+import javax.management.RuntimeErrorException;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -110,7 +113,8 @@ public final class NewHonor {
 
     @Listener
     public void onStarted(GameStartedServerEvent event) {
-        Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour", "newhonor", "头衔", "称号");
+        //纽尊严? 过于真实        idea from sponge 咕咕咕 group
+        Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour", "newhonor", "头衔", "称号", "纽尊严");
         logger.info("NewHonor author email:1418780411@qq.com");
         hook();
         try {
@@ -125,6 +129,15 @@ public final class NewHonor {
         metrics.addCustomChart(new Metrics2.SimplePie("usehaloeffects", () -> HaloEffectsOfferTask.TASK_DATA.size() > 0 ?
                 "true" : "false"));
         metrics.addCustomChart(new Metrics2.SimplePie("usenucleus", () -> hookedNucleus ? "true" : "false"));
+
+        try {
+            if (!Sponge.getMetricsConfigManager().areMetricsEnabled(this)) {
+                Sponge.getServer().getConsole()
+                        .sendMessage(Text.of("[NewHonor]If you think newhonor is a good plugin and want to support newhonor, please enable metrics, thanks!"));
+            }
+        } catch (NoClassDefFoundError | NoSuchMethodError ignore) {
+            //do not spam the server (ignore)
+        }
     }
 
     @Listener
@@ -220,7 +233,7 @@ public final class NewHonor {
             Task.builder().execute(() -> {
                 r.run();
                 r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
-            }).async().name("NewHonor - do something with playerdata " + pd.hashCode()).submit(plugin);
+            }).async().name("NewHonor - do something with player data " + pd.hashCode()).submit(plugin);
         } else {
             r.run();
             r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));

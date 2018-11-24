@@ -328,8 +328,8 @@ public final class HonorCommand {
             Inventory.Builder builder = Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
                     .property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(Util.toText(langBuilder("newhonor.listhonors.invtitle")
                             .replaceName(player.getName())
-                            .replace("%n%", String.valueOf(list.size()))
-                            .replace("%page%", String.valueOf(page))
+                            .replace("%n%", Integer.toString(list.size()))
+                            .replace("%page%", Integer.toString(page))
                             .build())))
                     .listener(InteractInventoryEvent.class, event -> {
                         if (!(event instanceof InteractInventoryEvent.Open
@@ -344,9 +344,7 @@ public final class HonorCommand {
                                 if (id != null) {
                                     Sponge.getCommandManager().process(player, "honor use " + id);
                                     Task.builder().execute(player::closeInventory).submit(NewHonor.plugin);
-                                    return;
-                                }
-                                if (page > 1 && previous[0] != null && item.equalTo(previous[0])) {
+                                } else if (page > 1 && previous[0] != null && item.equalTo(previous[0])) {
                                     Inventory inv = getHonorsInv(player, list, using, page - 1);
                                     Task.builder().execute(() -> player.openInventory(inv)).submit(NewHonor.plugin);
                                 } else if (next[0] != null && item.equalTo(next[0])) {
