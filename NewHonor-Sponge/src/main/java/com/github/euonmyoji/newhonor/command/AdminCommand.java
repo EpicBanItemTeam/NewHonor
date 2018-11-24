@@ -30,15 +30,12 @@ import static com.github.euonmyoji.newhonor.manager.SpongeLanguageManager.getTex
 import static org.spongepowered.api.text.Text.of;
 
 final class AdminCommand {
-    private static NewHonor plugin = NewHonor.plugin;
-
     static CommandSpec refresh = CommandSpec.builder()
             .executor((src, args) -> {
                 refreshCache(src);
                 return CommandResult.success();
             })
             .build();
-
     static CommandSpec give = CommandSpec.builder()
             .arguments(GenericArguments.user(of("user")),
                     new HonorIDArg(of("id")))
@@ -75,7 +72,6 @@ final class AdminCommand {
                 return CommandResult.success();
             })
             .build();
-
     static CommandSpec take = CommandSpec.builder()
             .arguments(GenericArguments.user(of("user")),
                     new HonorIDArg(of("id")))
@@ -110,24 +106,6 @@ final class AdminCommand {
                 return CommandResult.success();
             })
             .build();
-
-    static CommandSpec list = CommandSpec.builder()
-            .executor((src, args) -> {
-                Task.builder().async().execute(() -> {
-                    PaginationList.Builder builder = PaginationList.builder().title(getText("newhonor.listcreatedhonors.title")).padding(of("-"));
-                    builder.contents(HonorConfig.getAllCreatedHonors().stream().map(id -> Util.toText(langBuilder("newhonor.listcreatedhonors.contexts")
-                            .replace("%honorid%", id)
-                            .replace("%honor%", HonorConfig.getHonorData(id).getStrValue())
-                            .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
-                            .build()))
-                            .filter(text -> !text.toString().contains("there is something wrong"))
-                            .collect(Collectors.toList()));
-                    builder.build().sendTo(src);
-                }).submit(plugin);
-                return CommandResult.success();
-            })
-            .build();
-
     static CommandSpec set = CommandSpec.builder()
             .arguments(new HonorIDArg(of("honorID"), true, Level.WARNING),
                     GenericArguments.string(of("honor")))
@@ -144,7 +122,6 @@ final class AdminCommand {
                 return CommandResult.empty();
             })
             .build();
-
     static CommandSpec delete = CommandSpec.builder()
             .arguments(new HonorIDArg(of("honorID")))
             .executor((src, args) -> {
@@ -159,7 +136,6 @@ final class AdminCommand {
                 return CommandResult.empty();
             })
             .build();
-
     static CommandSpec add = CommandSpec.builder()
             .arguments(new HonorIDArg(of("honorID"), false, Level.ERROR),
                     GenericArguments.string(of("honor")))
@@ -176,7 +152,6 @@ final class AdminCommand {
                 return CommandResult.empty();
             })
             .build();
-
     static CommandSpec effects = CommandSpec.builder()
             .arguments(new HonorIDArg(of("honorID")),
                     GenericArguments.string(of("effectsID")))
@@ -195,7 +170,6 @@ final class AdminCommand {
                 return CommandResult.empty();
             })
             .build();
-
     static CommandSpec reload = CommandSpec.builder()
             .executor((src, args) -> {
                 src.sendMessage(of("[NewHonor]start reload"));
@@ -207,6 +181,27 @@ final class AdminCommand {
                 return CommandResult.success();
             })
             .build();
+    private static NewHonor plugin = NewHonor.plugin;
+    static CommandSpec list = CommandSpec.builder()
+            .executor((src, args) -> {
+                Task.builder().async().execute(() -> {
+                    PaginationList.Builder builder = PaginationList.builder().title(getText("newhonor.listcreatedhonors.title")).padding(of("-"));
+                    builder.contents(HonorConfig.getAllCreatedHonors().stream().map(id -> Util.toText(langBuilder("newhonor.listcreatedhonors.contexts")
+                            .replace("%honorid%", id)
+                            .replace("%honor%", HonorConfig.getHonorData(id).getStrValue())
+                            .replace("%effectsID%", HonorConfig.getEffectsID(id).orElse("null"))
+                            .build()))
+                            .filter(text -> !text.toString().contains("there is something wrong"))
+                            .collect(Collectors.toList()));
+                    builder.build().sendTo(src);
+                }).submit(plugin);
+                return CommandResult.success();
+            })
+            .build();
+
+    private AdminCommand() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * 删掉已经不再使用的缓存并更新所有缓存的text
@@ -237,9 +232,5 @@ final class AdminCommand {
             long endTime = System.currentTimeMillis();
             src.sendMessage(of("[NewHonor]refreshed successfully in " + (endTime - startTime) + " ms"));
         }).async().name("newhonor - refresh").submit(NewHonor.plugin);
-    }
-
-    private AdminCommand() {
-        throw new UnsupportedOperationException();
     }
 }

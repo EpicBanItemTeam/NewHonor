@@ -16,7 +16,6 @@ import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
-import javassist.bytecode.annotation.NoSuchClassError;
 import org.bstats.sponge.Metrics2;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -33,7 +32,6 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.plugin.meta.version.ComparableVersion;
 
-import javax.management.RuntimeErrorException;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -55,34 +53,96 @@ import static com.github.euonmyoji.newhonor.configuration.PluginConfig.FORCE_ENA
                 @Dependency(id = NewHonor.NUCLEUS_ID, optional = true)})
 public final class NewHonor {
     public static final String NEWHONOR_ID = "newhonor";
+    public static final String VERSION = "@spongeVersion@";
+    public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
     static final String NUCLEUS_ID = "nucleus";
     static final String PAPI_ID = "placeholderapi";
     static final String UCHAT_ID = "ultimatechat";
-
-    public static final String VERSION = "@spongeVersion@";
-    public static final NewHonorMessageChannel M_MESSAGE = new NewHonorMessageChannel();
+    private static final Object CACHE_LOCK = new Object();
+    public static Logger logger;
+    public static NewHonor plugin;
+    public final HashMap<UUID, HonorData> honorTextCache = new HashMap<>();
+    public final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
+    private final UltimateChatEventListener UChatListener = new UltimateChatEventListener();
+    private final NewHonorMessageListener NewHonorListener = new NewHonorMessageListener();
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path defaultCfgDir;
+    private boolean enabledPlaceHolderAPI = false;
+    private boolean hookedNucleus = false;
+    private boolean hookedUChat = false;
+    @Inject
+    private Metrics2 metrics;
 
-    public static Logger logger;
+    /**
+     * 清掉插件缓存 任务缓存
+     */
+    public static void clearCaches() {
+        synchronized (CACHE_LOCK) {
+            plugin.honorTextCache.clear();
+            plugin.playerUsingEffectCache.clear();
+        }
+        synchronized (EffectsOfferTask.TASK_DATA) {
+            EffectsOfferTask.TASK_DATA.clear();
+        }
+        synchronized (HaloEffectsOfferTask.TASK_DATA) {
+            HaloEffectsOfferTask.TASK_DATA.clear();
+        }
+        DisplayHonorTaskManager.clear();
+    }
+
+    public static void clearPlayerCache(UUID uuid) {
+        synchronized (CACHE_LOCK) {
+            plugin.honorTextCache.remove(uuid);
+            plugin.playerUsingEffectCache.remove(uuid);
+        }
+    }
+
+    /**
+     * 对玩家配置进行检查 然后更新缓存
+     *
+     * @param pd 玩家配置
+     */
+    public static void updateCache(PlayerConfig pd) {
+        Runnable r = () -> {
+            try {
+                synchronized (CACHE_LOCK) {
+                    pd.checkUsingHonor();
+                    plugin.playerUsingEffectCache.remove(pd.getUUID());
+                    plugin.honorTextCache.remove(pd.getUUID());
+                    if (pd.isUseHonor()) {
+                        HonorData data = pd.getUsingHonorValue();
+                        if (data != null) {
+                            plugin.honorTextCache.put(pd.getUUID(), data);
+                        }
+                        if (pd.isEnabledEffects()) {
+                            HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("error about data!", e);
+            }
+        };
+        Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> ScoreBoardManager.initPlayer(player));
+
+        //r为插件数据修改 异步(有mysql) r2为玩家自身数据修改 可能不存在需要运行的 需要同步
+        //为了保证更新时缓存为最新 r需要先运行
+        if (Sponge.getServer().isMainThread()) {
+            Task.builder().execute(() -> {
+                r.run();
+                r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
+            }).async().name("NewHonor - do something with player data " + pd.hashCode()).submit(plugin);
+        } else {
+            r.run();
+            r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
+        }
+    }
 
     @Inject
     public void setLogger(Logger l) {
         logger = l;
     }
-
-    public static NewHonor plugin;
-    public final HashMap<UUID, HonorData> honorTextCache = new HashMap<>();
-    public final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
-    private static final Object CACHE_LOCK = new Object();
-
-    private final UltimateChatEventListener UChatListener = new UltimateChatEventListener();
-    private final NewHonorMessageListener NewHonorListener = new NewHonorMessageListener();
-
-    private boolean enabledPlaceHolderAPI = false;
-    private boolean hookedNucleus = false;
-    private boolean hookedUChat = false;
 
     @Listener
     public void onPreInit(GamePreInitializationEvent event) {
@@ -107,9 +167,6 @@ public final class NewHonor {
             logger.warn("init plugin IOE!", e);
         }
     }
-
-    @Inject
-    private Metrics2 metrics;
 
     @Listener
     public void onStarted(GameStartedServerEvent event) {
@@ -162,30 +219,6 @@ public final class NewHonor {
         Task.builder().async().execute(() -> clearPlayerCache(event.getTargetEntity().getUniqueId())).submit(this);
     }
 
-    /**
-     * 清掉插件缓存 任务缓存
-     */
-    public static void clearCaches() {
-        synchronized (CACHE_LOCK) {
-            plugin.honorTextCache.clear();
-            plugin.playerUsingEffectCache.clear();
-        }
-        synchronized (EffectsOfferTask.TASK_DATA) {
-            EffectsOfferTask.TASK_DATA.clear();
-        }
-        synchronized (HaloEffectsOfferTask.TASK_DATA) {
-            HaloEffectsOfferTask.TASK_DATA.clear();
-        }
-        DisplayHonorTaskManager.clear();
-    }
-
-    public static void clearPlayerCache(UUID uuid) {
-        synchronized (CACHE_LOCK) {
-            plugin.honorTextCache.remove(uuid);
-            plugin.playerUsingEffectCache.remove(uuid);
-        }
-    }
-
     public void reload() {
         Sponge.getEventManager().post(new NewHonorReloadEvent());
         PluginConfig.reload();
@@ -197,47 +230,6 @@ public final class NewHonor {
             logger.warn("reload error!", e);
         }
         NewHonor.plugin.hook();
-    }
-
-    /**
-     * 对玩家配置进行检查 然后更新缓存
-     *
-     * @param pd 玩家配置
-     */
-    public static void updateCache(PlayerConfig pd) {
-        Runnable r = () -> {
-            try {
-                synchronized (CACHE_LOCK) {
-                    pd.checkUsingHonor();
-                    plugin.playerUsingEffectCache.remove(pd.getUUID());
-                    plugin.honorTextCache.remove(pd.getUUID());
-                    if (pd.isUseHonor()) {
-                        HonorData data = pd.getUsingHonorValue();
-                        if (data != null) {
-                            plugin.honorTextCache.put(pd.getUUID(), data);
-                        }
-                        if (pd.isEnabledEffects()) {
-                            HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("error about data!", e);
-            }
-        };
-        Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> ScoreBoardManager.initPlayer(player));
-
-        //r为插件数据修改 异步(有mysql) r2为玩家自身数据修改 可能不存在需要运行的 需要同步
-        //为了保证更新时缓存为最新 r需要先运行
-        if (Sponge.getServer().isMainThread()) {
-            Task.builder().execute(() -> {
-                r.run();
-                r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
-            }).async().name("NewHonor - do something with player data " + pd.hashCode()).submit(plugin);
-        } else {
-            r.run();
-            r2.ifPresent(runnable -> Task.builder().execute(runnable).submit(plugin));
-        }
     }
 
     private void hook() {

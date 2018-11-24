@@ -48,6 +48,11 @@ public class LanguageManager {
         private final String key;
         private String value;
 
+        private Builder(String key) {
+            this.key = key;
+            this.value = getString(key);
+        }
+
         public Builder replace(String old, String instead) {
             value = value.replace(old, instead);
             return this;
@@ -70,11 +75,6 @@ public class LanguageManager {
 
         public String build() {
             return value;
-        }
-
-        private Builder(String key) {
-            this.key = key;
-            this.value = getString(key);
         }
     }
 }

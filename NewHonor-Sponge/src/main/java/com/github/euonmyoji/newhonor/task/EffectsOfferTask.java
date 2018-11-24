@@ -39,6 +39,10 @@ public class EffectsOfferTask {
         }).name("NewHonor - Effects Offer Task").intervalTicks(PluginConfig.getIntervalTicks()).submit(NewHonor.plugin);
     }
 
+    private EffectsOfferTask() {
+        throw new UnsupportedOperationException();
+    }
+
     public static void update(Iterable<String> effects) {
         synchronized (TASK_DATA) {
             TASK_DATA.clear();
@@ -64,6 +68,22 @@ public class EffectsOfferTask {
         private LocalDateTime lastRunTime = LocalDateTime.MIN;
         private int lastDelay = 0;
 
+        private SelfTaskData(EffectsConfig config) throws ObjectMappingException {
+            id = config.getId();
+            potionEffects = config.getEffects();
+            delayData = new RandomDelayData(config.cfg.getNode(EFFECTS_KEY, "delay").getString("0"));
+            config.cfg.getNode(EFFECTS_KEY, "random").getChildrenMap().forEach((o, cfg) -> {
+                try {
+                    randomList.add(new RandomEffectsData(cfg, id));
+                } catch (ObjectMappingException e) {
+                    NewHonor.logger.warn(String.format("There is something wrong with effects id:%s, random id:%s",
+                            id, o.toString()), e);
+                }
+            });
+            CommentedConfigurationNode node = config.cfg.getNode("effects", PARTICLES_KEY);
+            particleEffectData = node.isVirtual() ? null : new ParticleEffectData(node, id);
+        }
+
         private void call() {
             List<Player> list = Util.getStream(Util.getPlayerUsingEffects(id)).map(Sponge.getServer()::getPlayer)
                     .filter(Optional::isPresent)
@@ -79,22 +99,6 @@ public class EffectsOfferTask {
                     }
                 });
             }
-        }
-
-        private SelfTaskData(EffectsConfig config) throws ObjectMappingException {
-            id = config.getId();
-            potionEffects = config.getEffects();
-            delayData = new RandomDelayData(config.cfg.getNode(EFFECTS_KEY, "delay").getString("0"));
-            config.cfg.getNode(EFFECTS_KEY, "random").getChildrenMap().forEach((o, cfg) -> {
-                try {
-                    randomList.add(new RandomEffectsData(cfg, id));
-                } catch (ObjectMappingException e) {
-                    NewHonor.logger.warn(String.format("There is something wrong with effects id:%s, random id:%s",
-                            id, o.toString()), e);
-                }
-            });
-            CommentedConfigurationNode node = config.cfg.getNode("effects", PARTICLES_KEY);
-            particleEffectData = node.isVirtual() ? null : new ParticleEffectData(node, id);
         }
 
         private void execute(List<Player> list) {
@@ -116,9 +120,5 @@ public class EffectsOfferTask {
             }).submit(NewHonor.plugin);
 
         }
-    }
-
-    private EffectsOfferTask() {
-        throw new UnsupportedOperationException();
     }
 }

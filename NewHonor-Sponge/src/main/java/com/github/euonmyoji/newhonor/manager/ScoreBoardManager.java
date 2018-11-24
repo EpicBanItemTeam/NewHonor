@@ -18,9 +18,13 @@ import java.util.UUID;
  * @author yinyangshi
  */
 public final class ScoreBoardManager {
+    private static final Object LOCK = new Object();
     public static boolean enable = false;
     private static Scoreboard scoreboard = Scoreboard.builder().build();
-    private static final Object LOCK = new Object();
+
+    private ScoreBoardManager() {
+        throw new UnsupportedOperationException();
+    }
 
     public static void init() {
         if (enable) {
@@ -123,9 +127,5 @@ public final class ScoreBoardManager {
 
     private static void initAllPlayers() {
         Sponge.getServer().getOnlinePlayers().forEach(ScoreBoardManager::initPlayer);
-    }
-
-    private ScoreBoardManager() {
-        throw new UnsupportedOperationException();
     }
 }

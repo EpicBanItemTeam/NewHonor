@@ -15,10 +15,25 @@ import javax.annotation.Nullable;
  * @author yinyangshi
  */
 public final class PlaceHolderManager {
-    private static PlaceHolderManager instance;
     private static final String VALUE_T = "value";
     private static final String STR_T = "strvalue";
     private static final String ID_T = "usingid";
+    private static PlaceHolderManager instance;
+
+    private PlaceHolderManager() {
+        PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
+        service.loadAll(this, NewHonor.plugin).forEach(builder -> {
+            if (NewHonor.NEWHONOR_ID.equals(builder.getId())) {
+                try {
+                    builder.description("newhonor text").version("1.5").author("yinyangshi").plugin(NewHonor.plugin)
+                            .addTokens(VALUE_T, STR_T, ID_T)
+                            .buildAndRegister();
+                } catch (Exception e) {
+                    NewHonor.logger.warn("offer PAPI failed", e);
+                }
+            }
+        });
+    }
 
     public static void create() {
         if (instance == null) {
@@ -51,21 +66,6 @@ public final class PlaceHolderManager {
         }
 
         return null;
-    }
-
-    private PlaceHolderManager() {
-        PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
-        service.loadAll(this, NewHonor.plugin).forEach(builder -> {
-            if (NewHonor.NEWHONOR_ID.equals(builder.getId())) {
-                try {
-                    builder.description("newhonor text").version("1.5").author("yinyangshi").plugin(NewHonor.plugin)
-                            .addTokens(VALUE_T, STR_T, ID_T)
-                            .buildAndRegister();
-                } catch (Exception e) {
-                    NewHonor.logger.warn("offer PAPI failed", e);
-                }
-            }
-        });
     }
 
 }

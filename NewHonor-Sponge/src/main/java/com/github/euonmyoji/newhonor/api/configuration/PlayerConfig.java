@@ -65,6 +65,15 @@ public interface PlayerConfig {
     }
 
     /**
+     * 获取玩家数据默认类型
+     *
+     * @return string of type
+     */
+    static String getDefaultConfigType() {
+        return d;
+    }
+
+    /**
      * 设置玩家数据默认用什么
      *
      * @param type the type of config
@@ -74,15 +83,6 @@ public interface PlayerConfig {
             throw new IllegalArgumentException("The type is not present!");
         }
         d = type;
-    }
-
-    /**
-     * 获取玩家数据默认类型
-     *
-     * @return string of type
-     */
-    static String getDefaultConfigType() {
-        return d;
     }
 
     /**
@@ -256,14 +256,6 @@ public interface PlayerConfig {
     void enableAutoChange(boolean auto) throws SQLException;
 
     /**
-     * 玩家列出自己拥有头衔方式
-     *
-     * @param style 方式
-     * @throws SQLException when found any SQL E
-     */
-    void setListHonorStyle(ListHonorStyle style) throws SQLException;
-
-    /**
      * 玩家获得新头衔后是否自动切换
      *
      * @return true if yes
@@ -278,6 +270,14 @@ public interface PlayerConfig {
      * @throws SQLException when any sql e
      */
     ListHonorStyle getListHonorStyle() throws SQLException;
+
+    /**
+     * 玩家列出自己拥有头衔方式
+     *
+     * @param style 方式
+     * @throws SQLException when found any SQL E
+     */
+    void setListHonorStyle(ListHonorStyle style) throws SQLException;
 
     /**
      * 检查玩家拥有的头衔是否有不正确的地方

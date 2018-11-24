@@ -29,8 +29,8 @@ public class HaloEffectsData {
     private final double chance;
     private final double radius;
     private final boolean include;
-    public LocalDateTime lastRunTime = LocalDateTime.MIN;
     private final String effectID;
+    public LocalDateTime lastRunTime = LocalDateTime.MIN;
     public int lastDelay = 0;
 
     public HaloEffectsData(CommentedConfigurationNode cfg, String id) throws ObjectMappingException {

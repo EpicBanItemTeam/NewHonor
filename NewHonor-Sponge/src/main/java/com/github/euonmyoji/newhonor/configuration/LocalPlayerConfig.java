@@ -64,6 +64,12 @@ public class LocalPlayerConfig extends BasePlayerConfig {
     }
 
     @Override
+    public void setListHonorStyle(ListHonorStyle style) {
+        cfg.getNode(LIST_HONOR_STYLE_KEY).setValue(style.toString());
+        save();
+    }
+
+    @Override
     public boolean isUseHonor() {
         return cfg.getNode(USEHONOR_KEY).getBoolean(true);
     }
@@ -101,12 +107,6 @@ public class LocalPlayerConfig extends BasePlayerConfig {
     @Override
     public void setWhetherUseHonor(boolean use) {
         cfg.getNode(USEHONOR_KEY).setValue(use);
-        save();
-    }
-
-    @Override
-    public void setListHonorStyle(ListHonorStyle style) {
-        cfg.getNode(LIST_HONOR_STYLE_KEY).setValue(style.toString());
         save();
     }
 

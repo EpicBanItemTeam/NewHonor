@@ -49,19 +49,10 @@ import static org.spongepowered.api.text.action.TextActions.showText;
  * @author yinyangshi
  */
 public final class HonorCommand {
-    private static String ADMIN_PERMISSION = "newhonor.admin";
     private static final HashMap<UUID, Integer> USE_CD = new HashMap<>();
+    private static final ItemStack GLASS = ItemStack.builder().itemType(ItemTypes.GLASS_PANE).add(Keys.DISPLAY_NAME, Text.of("")).build();
+    private static String ADMIN_PERMISSION = "newhonor.admin";
     private static String ID_KEY = "id";
-
-    static {
-        Task.builder().execute(() -> new HashMap<>(USE_CD).forEach((uuid, integer) -> {
-            USE_CD.put(uuid, integer - 1);
-            if (USE_CD.get(uuid) <= 0) {
-                USE_CD.remove(uuid);
-            }
-        })).async().intervalTicks(20).submit(NewHonor.plugin);
-    }
-
     private static CommandSpec data = CommandSpec.builder()
             .permission(ADMIN_PERMISSION)
             .executor((src, args) -> {
@@ -305,8 +296,13 @@ public final class HonorCommand {
             .child(data, "data")
             .build();
 
-    private HonorCommand() {
-        throw new UnsupportedOperationException();
+    static {
+        Task.builder().execute(() -> new HashMap<>(USE_CD).forEach((uuid, integer) -> {
+            USE_CD.put(uuid, integer - 1);
+            if (USE_CD.get(uuid) <= 0) {
+                USE_CD.remove(uuid);
+            }
+        })).async().intervalTicks(20).submit(NewHonor.plugin);
     }
 
     //00 01 02 03 04 05 06 07 08
@@ -316,7 +312,9 @@ public final class HonorCommand {
     //36 37 38 39 40 41 42 43 44
     //45 46 47 48 49 50 51 52 53
 
-    private static final ItemStack GLASS = ItemStack.builder().itemType(ItemTypes.GLASS_PANE).add(Keys.DISPLAY_NAME, Text.of("")).build();
+    private HonorCommand() {
+        throw new UnsupportedOperationException();
+    }
 
     private static Inventory getHonorsInv(Player player, List<HonorData> list, HonorData using, int page) {
         final int onePage = 5 * 9;

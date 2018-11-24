@@ -29,9 +29,9 @@ public class RandomEffectsData {
     private final List<PotionEffect> potionEffects;
     private final ParticleEffectData particleEffectData;
     private final double chance;
+    private final String id;
     public LocalDateTime lastRunTime = LocalDateTime.MIN;
     public int lastDelay = 0;
-    private final String id;
 
     public RandomEffectsData(CommentedConfigurationNode cfg, String id) throws ObjectMappingException {
         this.id = id;

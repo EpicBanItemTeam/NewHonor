@@ -11,8 +11,8 @@ import java.util.List;
  * @author NewHonor authors
  */
 public class DisplayHonorTask implements Runnable {
-    private Team team;
     public static List<DisplayHonorTask> tasks = Lists.newArrayList();
+    private Team team;
     private List<String> prefixes;
     private int delay;
     private List<String> suffixes;

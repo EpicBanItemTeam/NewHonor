@@ -26,16 +26,10 @@ import static com.github.euonmyoji.newhonor.manager.LanguageManager.getString;
  * @author yinyangshi
  */
 public final class PluginConfig {
-    public static int parallelGoal = 16;
-
-    public static CommentedConfigurationNode cfg;
-    public static CommentedConfigurationNode generalNode;
-
+    public static final String DISPLAY_HONOR = "displayHonor";
+    public static final String FORCE_ENABLE_DEFAULT_LISTENER = "force-enable-default-listener";
     private static final TypeToken<List<String>> LIST_STRING_TYPE = new TypeToken<List<String>>() {
     };
-    private static ConfigurationLoader<CommentedConfigurationNode> loader;
-    public static Path cfgDir;
-    public static Path defaultCfgDir;
     private static final String DATA_DIR = "data-dir-path";
     private static final String CHECK_UPDATE = "check-update";
     private static final String LANGUAGE = "lang";
@@ -43,10 +37,17 @@ public final class PluginConfig {
     private static final String DEFAULT_HONORS_SETTINGS = "default-honors-settings";
     private static final String INTERVAL_TICKS = "effects-check-interval-ticks";
     private static final String PARALLEL_GOAL = "parallel-goal";
-
-    public static final String DISPLAY_HONOR = "displayHonor";
-    public static final String FORCE_ENABLE_DEFAULT_LISTENER = "force-enable-default-listener";
     private static final String PERMISSION_MANAGE = "permission-manage";
+    public static int parallelGoal = 16;
+    public static CommentedConfigurationNode cfg;
+    public static CommentedConfigurationNode generalNode;
+    public static Path cfgDir;
+    public static Path defaultCfgDir;
+    private static ConfigurationLoader<CommentedConfigurationNode> loader;
+
+    private PluginConfig() {
+        throw new UnsupportedOperationException();
+    }
 
     public static void init() {
         loader = HoconConfigurationLoader.builder()
@@ -185,7 +186,6 @@ public final class PluginConfig {
         return cfg.getNode("extra", INTERVAL_TICKS).getInt(8);
     }
 
-
     public static boolean permissionManageHonors() {
         return generalNode.getNode(PERMISSION_MANAGE).getBoolean(false);
     }
@@ -198,9 +198,5 @@ public final class PluginConfig {
             cfg = loader.createEmptyNode(ConfigurationOptions.defaults());
         }
         generalNode = cfg.getNode("general");
-    }
-
-    private PluginConfig() {
-        throw new UnsupportedOperationException();
     }
 }

@@ -15,6 +15,10 @@ import java.util.Optional;
 public final class NucleusManager {
     private static boolean done;
 
+    private NucleusManager() {
+        throw new UnsupportedOperationException();
+    }
+
     public static void doIt() {
         try {
             if (!done) {
@@ -31,9 +35,5 @@ public final class NucleusManager {
         } catch (PluginAlreadyRegisteredException e) {
             NewHonor.logger.warn("Unknown error", e);
         }
-    }
-
-    private NucleusManager() {
-        throw new UnsupportedOperationException();
     }
 }

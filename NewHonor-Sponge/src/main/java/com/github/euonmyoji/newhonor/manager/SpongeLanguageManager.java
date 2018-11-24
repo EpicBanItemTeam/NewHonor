@@ -21,6 +21,10 @@ public class SpongeLanguageManager {
     private static String lang;
     private static Path langFile;
 
+    private SpongeLanguageManager() {
+        throw new UnsupportedOperationException();
+    }
+
     public static Text getText(String key) {
         return Util.toText(getString(key));
     }
@@ -80,9 +84,5 @@ public class SpongeLanguageManager {
         } catch (IOException e) {
             NewHonor.logger.error("reload language file error!", e);
         }
-    }
-
-    private SpongeLanguageManager() {
-        throw new UnsupportedOperationException();
     }
 }

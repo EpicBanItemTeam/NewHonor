@@ -12,8 +12,8 @@ import java.util.Random;
  * @author yinyangshi
  */
 public class RandomDelayData {
-    private final List<Range> ranges = new ArrayList<>();
     private static final Random R = new Random();
+    private final List<Range> ranges = new ArrayList<>();
 
     public RandomDelayData(String arg) {
         try {
@@ -31,13 +31,9 @@ public class RandomDelayData {
     }
 
     private class Range {
+        private static final int MAX_LENGTH = 2;
         private int min;
         private int max;
-        private static final int MAX_LENGTH = 2;
-
-        private int get() {
-            return min == max ? min : R.nextInt(1 + max - min) + min;
-        }
 
         private Range(String[] arg) throws NumberFormatException {
             if (arg.length == 1) {
@@ -51,6 +47,10 @@ public class RandomDelayData {
             } else {
                 throw new IllegalArgumentException("Not a correct delay expression");
             }
+        }
+
+        private int get() {
+            return min == max ? min : R.nextInt(1 + max - min) + min;
         }
     }
 }

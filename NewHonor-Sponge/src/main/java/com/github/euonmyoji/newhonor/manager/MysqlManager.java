@@ -27,8 +27,8 @@ import static com.github.euonmyoji.newhonor.configuration.PluginConfig.cfg;
  * @author yinyangshi
  */
 public final class MysqlManager {
-    public static boolean enable = false;
     private static final String TABLE_NAME = "NewHonorPlayerData";
+    public static boolean enable = false;
     private static String address;
     private static short port;
     private static String database;
@@ -36,6 +36,10 @@ public final class MysqlManager {
     private static String password;
     private static String update_encoding;
     private static SqlService sql;
+
+    private MysqlManager() {
+        throw new UnsupportedOperationException();
+    }
 
     public static void init() {
         reloadSQLInfo();
@@ -96,11 +100,14 @@ public final class MysqlManager {
                 address, port, database, user, password);
     }
 
+    private static Connection getConnection() throws SQLException {
+        return getDataSource(getURL()).getConnection();
+    }
+
     public static class MysqlPlayerConfig extends BasePlayerConfig {
+        private static final String D = ",";
         private List<SQLException> es = new ArrayList<>();
         private boolean done;
-
-        private static final String D = ",";
 
         public MysqlPlayerConfig(UUID uuid) throws SQLException {
             this.uuid = uuid;
@@ -135,15 +142,6 @@ public final class MysqlManager {
         public void enableAutoChange(boolean auto) throws SQLException {
             try (Connection con = getConnection()) {
                 try (PreparedStatement state = con.prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", AUTO_CHANGE_KEY, auto ? 1 : 0, uuid))) {
-                    state.executeUpdate();
-                }
-            }
-        }
-
-        @Override
-        public void setListHonorStyle(ListHonorStyle style) throws SQLException {
-            try (Connection con = getConnection()) {
-                try (PreparedStatement state = con.prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", LIST_HONOR_STYLE_KEY, style.toString(), uuid))) {
                     state.executeUpdate();
                 }
             }
@@ -303,6 +301,15 @@ public final class MysqlManager {
         }
 
         @Override
+        public void setListHonorStyle(ListHonorStyle style) throws SQLException {
+            try (Connection con = getConnection()) {
+                try (PreparedStatement state = con.prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'", LIST_HONOR_STYLE_KEY, style.toString(), uuid))) {
+                    state.executeUpdate();
+                }
+            }
+        }
+
+        @Override
         public Optional<List<String>> getOwnHonors() throws SQLException {
             try (Connection con = getConnection()) {
                 try (PreparedStatement state = con.prepareStatement(String.format("select %s from %s where UUID = '%s'", HONORS_KEY, TABLE_NAME, uuid))) {
@@ -316,13 +323,5 @@ public final class MysqlManager {
             }
             return Optional.empty();
         }
-    }
-
-    private static Connection getConnection() throws SQLException {
-        return getDataSource(getURL()).getConnection();
-    }
-
-    private MysqlManager() {
-        throw new UnsupportedOperationException();
     }
 }

@@ -1,8 +1,8 @@
 package com.github.euonmyoji.newhonor.command.args;
 
-import com.github.euonmyoji.newhonor.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.enums.ListHonorStyle;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;

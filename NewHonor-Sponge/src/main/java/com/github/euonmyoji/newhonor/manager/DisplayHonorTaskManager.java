@@ -15,6 +15,10 @@ import java.util.List;
 public final class DisplayHonorTaskManager {
     public static final HashMap<String, DisplayHonorTask> TASKS = new HashMap<>();
 
+    private DisplayHonorTaskManager() {
+        throw new UnsupportedOperationException();
+    }
+
     public static void submit(String id, List<Text> values, List<Text> suffixes, Team team, int[] delay) {
         synchronized (TASKS) {
             if (TASKS.get(id) == null) {
@@ -31,9 +35,5 @@ public final class DisplayHonorTaskManager {
             new HashMap<>(TASKS).values().forEach(DisplayHonorTask::cancel);
             TASKS.clear();
         }
-    }
-
-    private DisplayHonorTaskManager() {
-        throw new UnsupportedOperationException();
     }
 }

@@ -28,6 +28,10 @@ public class HaloEffectsOfferTask {
         }).name("NewHonor - Halo Effects Offer Task").intervalTicks(PluginConfig.getIntervalTicks()).submit(NewHonor.plugin);
     }
 
+    private HaloEffectsOfferTask() {
+        throw new UnsupportedOperationException();
+    }
+
     public static void update(Iterable<String> effects) {
         synchronized (TASK_DATA) {
             TASK_DATA.clear();
@@ -44,6 +48,18 @@ public class HaloEffectsOfferTask {
         private final Collection<HaloEffectsData> randomList = new ArrayList<>();
         private final String id;
 
+        private HaloTaskData(EffectsConfig config) {
+            id = config.getId();
+            config.cfg.getNode(HALO_KEY).getChildrenMap().forEach((o, cfg) -> {
+                try {
+                    randomList.add(new HaloEffectsData(cfg, id));
+                } catch (ObjectMappingException e) {
+                    NewHonor.logger.warn(String.format("There is something wrong with effects id:%s, random id:%s",
+                            id, o.toString()), e);
+                }
+            });
+        }
+
         private void call() {
             List<Player> list = Util.getStream(Util.getPlayerUsingEffects(id)).map(Sponge.getServer()::getPlayer)
                     .filter(Optional::isPresent)
@@ -57,21 +73,5 @@ public class HaloEffectsOfferTask {
                 });
             }
         }
-
-        private HaloTaskData(EffectsConfig config) {
-            id = config.getId();
-            config.cfg.getNode(HALO_KEY).getChildrenMap().forEach((o, cfg) -> {
-                try {
-                    randomList.add(new HaloEffectsData(cfg, id));
-                } catch (ObjectMappingException e) {
-                    NewHonor.logger.warn(String.format("There is something wrong with effects id:%s, random id:%s",
-                            id, o.toString()), e);
-                }
-            });
-        }
-    }
-
-    private HaloEffectsOfferTask() {
-        throw new UnsupportedOperationException();
     }
 }

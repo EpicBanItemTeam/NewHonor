@@ -23,6 +23,10 @@ public class HonorConfig {
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     private static HashMap<String, HonorData> valueMap = new HashMap<>();
 
+    private HonorConfig() {
+        throw new UnsupportedOperationException();
+    }
+
     public static void init() {
         loader = HoconConfigurationLoader.builder()
                 .setPath(PluginConfig.cfgDir.resolve("honor.conf")).build();
@@ -118,9 +122,5 @@ public class HonorConfig {
                 .map(s -> "&r" + s.replace("{playername}", playername))
                 .map(s -> "&r" + s.replace("{newhonor}", HonorConfig.getHonorData(id).getStrValue() + "&r"))
                 .map(TextSerializers.FORMATTING_CODE::deserialize);
-    }
-
-    private HonorConfig() {
-        throw new UnsupportedOperationException();
     }
 }

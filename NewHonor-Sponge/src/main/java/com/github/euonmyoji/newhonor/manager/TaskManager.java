@@ -11,6 +11,10 @@ import java.util.List;
  * @author yinyangshi
  */
 public final class TaskManager {
+    private TaskManager() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * 更新插件任务缓存
      *
@@ -20,9 +24,5 @@ public final class TaskManager {
         List<String> effects = EffectsConfig.getCreatedEffects();
         EffectsOfferTask.update(effects);
         HaloEffectsOfferTask.update(effects);
-    }
-
-    private TaskManager() {
-        throw new UnsupportedOperationException();
     }
 }

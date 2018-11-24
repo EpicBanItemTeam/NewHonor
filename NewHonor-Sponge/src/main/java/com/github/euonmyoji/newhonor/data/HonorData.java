@@ -153,6 +153,14 @@ public class HonorData {
         }
     }
 
+    private static Text jsonToText(String str) {
+        try {
+            return TextSerializers.JSON.deserialize(str);
+        } catch (TextParseException e) {
+            return TextSerializers.FORMATTING_CODE.deserialize(str);
+        }
+    }
+
     public String getId() {
         return this.id;
     }
@@ -175,14 +183,6 @@ public class HonorData {
 
     public int[] getDelay() {
         return this.delay;
-    }
-
-    private static Text jsonToText(String str) {
-        try {
-            return TextSerializers.JSON.deserialize(str);
-        } catch (TextParseException e) {
-            return TextSerializers.FORMATTING_CODE.deserialize(str);
-        }
     }
 
     public ItemStack getItem() {
