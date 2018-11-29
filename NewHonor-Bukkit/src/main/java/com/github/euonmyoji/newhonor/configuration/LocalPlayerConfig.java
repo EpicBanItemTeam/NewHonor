@@ -49,6 +49,7 @@ public class LocalPlayerConfig extends MungConfig implements PlayerConfig {
             if (!honorConfig.notExist(id)) {
                 strings.add(id);
                 cfg.getNode(HONORS_KEY).setValue(honors.get());
+                NewHonor.plugin.updateCache(this);
             }
         });
     }

@@ -1,11 +1,17 @@
 package com.github.euonmyoji.newhonor.task;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.data.Honor;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author NewHonor authors
@@ -18,8 +24,45 @@ public class DisplayHonorTask implements Runnable {
     private List<String> suffixes;
     private int index;
     private volatile boolean running = true;
+    private static final Object LOCK = new Object();
 
-    public DisplayHonorTask(Team team, List<String> prefixes, List<String> suffixes, int delay) {
+    public static void init(Player p) throws Exception{
+        UUID uuid = p.getUniqueId();
+        PlayerConfig pd = PlayerConfig.get(uuid);
+        String honorID = pd.getUsingHonorID();
+        if (honorID == null) {
+            return;
+        }
+        synchronized (LOCK) {
+            Scoreboard scoreboard = p.getScoreboard();
+            scoreboard.getTeams().forEach(team -> team.removeEntry(uuid.toString()));
+            Optional<Team> optionalTeam = Optional.of(scoreboard.getTeam(honorID));
+            boolean isTeamPresent = optionalTeam.isPresent();
+            if (pd.isUseHonor()) {
+                if (NewHonor.honorCacheMap.containsKey(uuid)) {
+                    Honor valueData = NewHonor.honorCacheMap.get(uuid);
+                    List<String> prefixes = valueData.getDisplayTexts();
+                    List<String> suffixes = valueData.getSuffixes();
+                    String prefix = prefixes.get(0);
+                    if (isTeamPresent) {
+                        optionalTeam.get().setPrefix(prefix);
+                        optionalTeam.get().setSuffix(suffixes == null ? "" : suffixes.get(0));
+                    } else {
+                        Team team = scoreboard.registerNewTeam(honorID);
+                        team.setPrefix(prefix);
+                        team.setSuffix(suffixes == null ? "" : suffixes.get(0));
+                        optionalTeam = Optional.of(team);
+                    }
+                    optionalTeam.ifPresent(team -> team.addEntry(uuid.toString()));
+                    if (prefixes.size() > 1) {
+                        new DisplayHonorTask(optionalTeam.get(), prefixes, suffixes, valueData.getIntervalTick());
+                    }
+                }
+            }
+        }
+    }
+
+    private DisplayHonorTask(Team team, List<String> prefixes, List<String> suffixes, int delay) {
         if (prefixes.size() != suffixes.size() && prefixes.size() == 0) {
             return;
         }

@@ -9,9 +9,9 @@ import com.github.euonmyoji.newhonor.command.player.GUICommand;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.LocalPlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.MainConfig;
+import com.github.euonmyoji.newhonor.data.Honor;
 import com.github.euonmyoji.newhonor.hook.PAPIHook;
 import com.github.euonmyoji.newhonor.inventory.HonorGUI;
-import com.github.euonmyoji.newhonor.listener.OnJoin;
 import com.github.euonmyoji.newhonor.manager.MysqlManager;
 import com.github.euonmyoji.newhonor.serializable.ItemSerializable;
 import com.github.euonmyoji.newhonor.task.DisplayHonorTask;
@@ -30,8 +30,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,10 +46,13 @@ public class NewHonor extends JavaPlugin {
     public static MainConfig mainConfig;
     public static String prefix = "§a[New§6Honor§a] §7 ";
     public static HonorConfig honorConfig;
+    public static Map<UUID, Honor> honorCacheMap = new HashMap<>();
+    private static Logger logger;
 
     @Override
     public void onEnable() {
         /* 初始化变量 */
+        logger = getLogger();
         plugin = this;
         isPEXEnable = Bukkit.getPluginManager().isPluginEnabled("PermissionsEx");
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(ItemStack.class), new ItemSerializable());
@@ -111,7 +116,6 @@ public class NewHonor extends JavaPlugin {
                 AdminCommand.class);
 
         /* 注册事件 */
-        Bukkit.getPluginManager().registerEvents(new OnJoin(), this);
         Bukkit.getPluginManager().registerEvents(new HonorGUI(), this);
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             PlaceholderAPI.registerPlaceholderHook("newhonor", new PAPIHook());
@@ -120,6 +124,27 @@ public class NewHonor extends JavaPlugin {
 
         /* 介绍 */
         Bukkit.getConsoleSender().sendMessage("[§aNew§6Honor§7] §a成功加载NewHonor BUKKIT版本!");
+    }
+
+    public void updateCache(PlayerConfig playerConfig) {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            try {
+                playerConfig.checkUsingHonor();
+                if (playerConfig.isUseHonor()) {
+                    Optional<Honor> honor = Optional.of(honorConfig.getHonor(playerConfig.getUsingHonorID()));
+                    honor.ifPresent(data -> {
+                        honorCacheMap.put(playerConfig.getUUID(), data);
+                        try {
+                            DisplayHonorTask.init(Bukkit.getPlayer(playerConfig.getUUID()));
+                        } catch (Exception e) {
+                            logger.log(Level.WARNING, "error about task!", e);
+                        }
+                    });
+                }
+            } catch (SQLException e) {
+                logger.log(Level.WARNING, "error about data!", e);
+            }
+        });
     }
 
     @Override
