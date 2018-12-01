@@ -14,13 +14,13 @@ import javax.annotation.Nullable;
 /**
  * @author yinyangshi
  */
-public final class PlaceHolderManager {
+public final class PlaceholderManager {
     private static final String VALUE_T = "value";
     private static final String STR_T = "strvalue";
     private static final String ID_T = "usingid";
-    private static PlaceHolderManager instance;
+    private static PlaceholderManager instance;
 
-    private PlaceHolderManager() {
+    private PlaceholderManager() {
         PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
         service.loadAll(this, NewHonor.plugin).forEach(builder -> {
             if (NewHonor.NEWHONOR_ID.equals(builder.getId())) {
@@ -37,7 +37,7 @@ public final class PlaceHolderManager {
 
     public static void create() {
         if (instance == null) {
-            instance = new PlaceHolderManager();
+            instance = new PlaceholderManager();
         }
     }
 

@@ -192,8 +192,11 @@ public final class NewHonor {
                 Sponge.getServer().getConsole()
                         .sendMessage(Text.of("[NewHonor]If you think newhonor is a good plugin and want to support newhonor, please enable metrics, thanks!"));
             }
-        } catch (NoClassDefFoundError | NoSuchMethodError ignore) {
+        } catch (NoClassDefFoundError | NoSuchMethodError e) {
             //do not spam the server (ignore)
+            metrics.cancel();
+            Task.builder().delayTicks(60 * 20).execute(metrics::cancel).submit(this);
+            logger.info("NoMetricsManagerClassDefFound, try canceling the metrics");
         }
     }
 
@@ -249,7 +252,7 @@ public final class NewHonor {
 
         //hook PAPI
         if (Sponge.getPluginManager().getPlugin(PAPI_ID).isPresent()) {
-            PlaceHolderManager.create();
+            PlaceholderManager.create();
             if (!enabledPlaceHolderAPI) {
                 logger.info("hooked PAPI, you can use '%newhonor%' now.");
             }
