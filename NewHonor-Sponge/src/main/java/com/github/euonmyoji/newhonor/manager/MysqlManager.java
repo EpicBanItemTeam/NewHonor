@@ -267,7 +267,7 @@ public final class MysqlManager {
         @Override
         public ListHonorStyle getListHonorStyle() throws SQLException {
             try (Connection con = getConnection(); PreparedStatement state = con
-                    .prepareStatement(String.format("select %s from %s where UUID = ?", TABLE_NAME, LIST_HONOR_STYLE_KEY))) {
+                    .prepareStatement(String.format("select %s from %s where UUID = ?", LIST_HONOR_STYLE_KEY, TABLE_NAME))) {
                 state.setString(1, uuid.toString());
                 ResultSet result = state.executeQuery();
                 String s;
