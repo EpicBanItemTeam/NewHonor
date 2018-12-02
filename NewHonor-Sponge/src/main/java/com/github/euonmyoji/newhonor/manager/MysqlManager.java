@@ -245,10 +245,9 @@ public final class MysqlManager {
             boolean isRight = isOwnHonor(id) && !HonorConfig.isVirtual(id);
             if ("".equals(id) || isRight) {
                 try (Connection con = getConnection(); PreparedStatement state = con
-                        .prepareStatement("UPDATE NewHonorPlayerData SET ?=? WHERE UUID = ?")) {
-                    state.setString(1, USING_KEY);
-                    state.setString(2, id);
-                    state.setString(3, uuid.toString());
+                        .prepareStatement(String.format("UPDATE %s SET %s=? WHERE UUID = ?", TABLE_NAME, USING_KEY))) {
+                    state.setString(1, id);
+                    state.setString(2, uuid.toString());
                     return state.executeUpdate() < 2;
                 }
             }
@@ -267,10 +266,9 @@ public final class MysqlManager {
 
         @Override
         public ListHonorStyle getListHonorStyle() throws SQLException {
-            try (Connection con = getConnection(); PreparedStatement state = con.prepareStatement("select ? from ? where UUID = ?")) {
-                state.setString(1, LIST_HONOR_STYLE_KEY);
-                state.setString(2, TABLE_NAME);
-                state.setString(3, uuid.toString());
+            try (Connection con = getConnection(); PreparedStatement state = con
+                    .prepareStatement(String.format("select %s from %s where UUID = ?", TABLE_NAME, LIST_HONOR_STYLE_KEY))) {
+                state.setString(1, uuid.toString());
                 ResultSet result = state.executeQuery();
                 String s;
                 return result.next() && (s = result.getString(LIST_HONOR_STYLE_KEY)) != null ?
@@ -281,10 +279,9 @@ public final class MysqlManager {
         @Override
         public void setListHonorStyle(ListHonorStyle style) throws SQLException {
             try (Connection con = getConnection(); PreparedStatement state = con
-                    .prepareStatement("UPDATE NewHonorPlayerData SET ?=? WHERE UUID = ?")) {
-                state.setString(1, LIST_HONOR_STYLE_KEY);
-                state.setString(2, style.toString());
-                state.setString(3, uuid.toString());
+                    .prepareStatement(String.format("UPDATE %s SET %s=? WHERE UUID = ?", TABLE_NAME, LIST_HONOR_STYLE_KEY))) {
+                state.setString(1, style.toString());
+                state.setString(2, uuid.toString());
                 state.executeUpdate();
             }
         }
