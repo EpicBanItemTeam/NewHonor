@@ -137,7 +137,7 @@ public final class HonorCommand {
                                         List<HonorData> dataList = honors.get().stream().map(HonorConfig::getHonorData)
                                                 .filter(Objects::nonNull)
                                                 .collect(Collectors.toList());
-                                        ((Player) src).openInventory(getHonorsInv(((Player) src), dataList, using, 1));
+                                        ((Player) src).openInventory(getHonorsInv(((Player) src), dataList, using, 1, isSelf, user.getName()));
                                     }).submit(NewHonor.plugin);
                                 } else {
                                     //text list ------------------------------------------ TEXT TEXT
@@ -316,7 +316,7 @@ public final class HonorCommand {
         throw new UnsupportedOperationException();
     }
 
-    private static Inventory getHonorsInv(Player player, List<HonorData> list, HonorData using, int page) {
+    private static Inventory getHonorsInv(Player player, List<HonorData> list, HonorData using, int page, boolean isSelf, String name) {
         final int onePage = 5 * 9;
         try (Timing timing = Timings.of(NewHonor.plugin, "ShowHonorsInvTime")) {
             timing.startTimingIfSync();
@@ -325,7 +325,7 @@ public final class HonorCommand {
             HashMap<String, String> map = new HashMap<>(list.size() - (page - 1) * onePage);
             Inventory.Builder builder = Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
                     .property(InventoryTitle.PROPERTY_NAME, new InventoryTitle(Util.toText(langBuilder("newhonor.listhonors.invtitle")
-                            .replaceName(player.getName())
+                            .replaceName(name)
                             .replace("%n%", Integer.toString(list.size()))
                             .replace("%page%", Integer.toString(page))
                             .build())))
@@ -339,14 +339,14 @@ public final class HonorCommand {
                             ItemStack item = eve.getCursorTransaction().getFinal().createStack();
                             if (item.getType() != ItemTypes.AIR) {
                                 String id = map.get(Util.toStr(item.get(Keys.DISPLAY_NAME).orElse(Text.of(""))));
-                                if (id != null) {
+                                if (id != null && isSelf) {
                                     Sponge.getCommandManager().process(player, "honor use " + id);
                                     Task.builder().execute(player::closeInventory).submit(NewHonor.plugin);
                                 } else if (page > 1 && previous[0] != null && item.equalTo(previous[0])) {
-                                    Inventory inv = getHonorsInv(player, list, using, page - 1);
+                                    Inventory inv = getHonorsInv(player, list, using, page - 1, isSelf, name);
                                     Task.builder().execute(() -> player.openInventory(inv)).submit(NewHonor.plugin);
                                 } else if (next[0] != null && item.equalTo(next[0])) {
-                                    Inventory inv = getHonorsInv(player, list, using, page + 1);
+                                    Inventory inv = getHonorsInv(player, list, using, page + 1, isSelf, name);
                                     Task.builder().execute(() -> player.openInventory(inv)).submit(NewHonor.plugin);
                                 }
                             }

@@ -28,7 +28,7 @@ import static com.github.euonmyoji.newhonor.manager.LanguageManager.getString;
 public final class PluginConfig {
     public static final String DISPLAY_HONOR = "displayHonor";
     public static final String FORCE_ENABLE_DEFAULT_LISTENER = "force-enable-default-listener";
-    private static final TypeToken<List<String>> LIST_STRING_TYPE = new TypeToken<List<String>>() {
+    private static final TypeToken<List<String>> STRINGS_TYPES = new TypeToken<List<String>>() {
     };
     private static final String DATA_DIR = "data-dir-path";
     private static final String CHECK_UPDATE = "check-update";
@@ -57,6 +57,9 @@ public final class PluginConfig {
         generalNode.getNode(DATA_DIR).getString("default");
         generalNode.getNode(CHECK_UPDATE).getBoolean(false);
         generalNode.getNode(LANGUAGE).getString(Locale.getDefault().toString());
+        generalNode.getNode(DISPLAY_HONOR).getBoolean(false);
+        generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false);
+        generalNode.getNode(PERMISSION_MANAGE).getBoolean(false);
         generalNode.getNode("default-list-style").getString("TEXT");
 
         cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true);
@@ -73,7 +76,7 @@ public final class PluginConfig {
 
         try {
             if (cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).isVirtual()) {
-                cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).setValue(LIST_STRING_TYPE, new ArrayList<String>() {{
+                cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).setValue(STRINGS_TYPES, new ArrayList<String>() {{
                     add("default");
                 }});
             }
@@ -81,53 +84,8 @@ public final class PluginConfig {
             NewHonor.logger.error("Exception while set default-own-honors!", e);
         }
 
-        //the hook init(?)
-        //已经不在使用的N个配置文件node
-        cfg.removeChild("usePAPI");
-        cfg.removeChild("compatibleUChat");
-        cfg.removeChild(DISPLAY_HONOR);
-        cfg.removeChild(PERMISSION_MANAGE);
-        cfg.removeChild(DATA_DIR);
-        cfg.removeChild(CHECK_UPDATE);
-        cfg.removeChild(LANGUAGE);
-        cfg.removeChild(FORCE_ENABLE_DEFAULT_LISTENER);
-
-        generalNode.getNode(DISPLAY_HONOR).getBoolean(false);
-        generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean(false);
-        generalNode.getNode(PERMISSION_MANAGE).getBoolean(false);
-
-        //comments
-        generalNode.getNode(PERMISSION_MANAGE).setComment(generalNode.getNode(PERMISSION_MANAGE).getComment()
-                .orElse(getString("newhonor.configuration.permissionmanage.comment", "If you enable this, the honor must be given by permission" +
-                        "\n(The player who doesn't have the permission of honor, the player won't use it any longer." +
-                        "\neg: The honor's id is 'honorid' then you should give player permission:'newhonor.honor.honorid'.")));
-        generalNode.getNode(DISPLAY_HONOR).setComment(generalNode.getNode(DISPLAY_HONOR).getComment()
-                .orElse(getString("newhonor.configuration.displayhonor.comment", "Display honor in the tab & head." +
-                        "\nIf you installed nucleus, you may change something in the nucleus configuration." +
-                        "\nThe display value can not longer than 16 chars!(including color code: &?)")));
-        generalNode.getNode(DATA_DIR).setComment(generalNode.getNode(DATA_DIR).getComment()
-                .orElse(getString("newhonor.configuration.datadirpath.comment",
-                        "Change the data dir (player data&honor data&effects data)")));
-        generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).setComment(generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getComment()
-                .orElse(getString("newhonor.configuration.forceenabledefaultlistener.comment",
-                        "force enable the default listener when installed nucleus or enabled displayHonor to show honor in the chat")));
-        generalNode.getNode(LANGUAGE).setComment(generalNode.getNode(LANGUAGE).getComment()
-                .orElse(getString("newhonor.configuration.lang.comment",
-                        "set the plugin language (if supported)")));
-        generalNode.getNode(CHECK_UPDATE).setComment(generalNode.getNode(CHECK_UPDATE).getComment()
-                .orElse(getString("newhonor.configuration.checkupdate.comment",
-                        "check plugin update when starting the server (async)")));
-        generalNode.getNode("default-list-style").setComment(generalNode.getNode("default-list-style").getComment()
-                .orElse(getString("newhonor.configuration.defaultliststyle.comment",
-                        "The default list honors style(TEXT OR ITEM)")));
-        extraNode.setComment(extraNode.getComment().orElse(getString("newhonor.configuration.extra.comment"
-                , "the extra settings, you can ignore this node")));
-        extraNode.getNode(INTERVAL_TICKS).setComment(extraNode.getNode(INTERVAL_TICKS).getComment().orElse(getString(
-                "newhonor.configuration.extra.intervalticks.comment"
-                , "多少tick检查一次效果组是否该刷新了 默认为8tick")));
-        extraNode.getNode(PARALLEL_GOAL).setComment(extraNode.getNode(PARALLEL_GOAL).getComment().orElse(getString(
-                "newhonor.configuration.extra.parallelgoal.comment"
-                , "If the operation's size is bigger than this goal, it will be parallel. (if supported). default: 16")));
+        checkConfigVersion();
+        setComment();
 
         MysqlManager.init();
         save();
@@ -171,7 +129,7 @@ public final class PluginConfig {
     public static List<String> getDefaultOwnHonors() {
         try {
             return cfg.getNode(DEFAULT_HONORS_SETTINGS, "enable").getBoolean(true) ?
-                    cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).getValue(LIST_STRING_TYPE) : null;
+                    cfg.getNode(DEFAULT_HONORS_SETTINGS, DEFAULT_HONORS).getValue(STRINGS_TYPES) : null;
         } catch (ObjectMappingException e) {
             NewHonor.logger.error("default own honor is error!", e);
         }
@@ -198,5 +156,53 @@ public final class PluginConfig {
             cfg = loader.createEmptyNode(ConfigurationOptions.defaults());
         }
         generalNode = cfg.getNode("general");
+    }
+
+    private static void setComment() {
+        generalNode.getNode(PERMISSION_MANAGE).setComment(generalNode.getNode(PERMISSION_MANAGE).getComment()
+                .orElse(getString("newhonor.configuration.permissionmanage.comment", "If you enable this, the honor must be given by permission" +
+                        "\n(The player who doesn't have the permission of honor, the player won't use it any longer." +
+                        "\neg: The honor's id is 'honorid' then you should give player permission:'newhonor.honor.honorid'.")));
+        generalNode.getNode(DISPLAY_HONOR).setComment(generalNode.getNode(DISPLAY_HONOR).getComment()
+                .orElse(getString("newhonor.configuration.displayhonor.comment", "Display honor in the tab & head." +
+                        "\nIf you installed nucleus, you may change something in the nucleus configuration." +
+                        "\nThe display value can not longer than 16 chars!(including color code: &?)")));
+        generalNode.getNode(DATA_DIR).setComment(generalNode.getNode(DATA_DIR).getComment()
+                .orElse(getString("newhonor.configuration.datadirpath.comment",
+                        "Change the data dir (player data&honor data&effects data)")));
+        generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).setComment(generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getComment()
+                .orElse(getString("newhonor.configuration.forceenabledefaultlistener.comment",
+                        "force enable the default listener when installed nucleus or enabled displayHonor to show honor in the chat")));
+        generalNode.getNode(LANGUAGE).setComment(generalNode.getNode(LANGUAGE).getComment()
+                .orElse(getString("newhonor.configuration.lang.comment",
+                        "set the plugin language (if supported)")));
+        generalNode.getNode(CHECK_UPDATE).setComment(generalNode.getNode(CHECK_UPDATE).getComment()
+                .orElse(getString("newhonor.configuration.checkupdate.comment",
+                        "check plugin update when starting the server (async)")));
+        generalNode.getNode("default-list-style").setComment(generalNode.getNode("default-list-style").getComment()
+                .orElse(getString("newhonor.configuration.defaultliststyle.comment",
+                        "The default list honors style(TEXT OR ITEM)")));
+        CommentedConfigurationNode extraNode = cfg.getNode("extra");
+        extraNode.setComment(extraNode.getComment().orElse(getString("newhonor.configuration.extra.comment"
+                , "the extra settings, you can ignore this node")));
+        extraNode.getNode(INTERVAL_TICKS).setComment(extraNode.getNode(INTERVAL_TICKS).getComment().orElse(getString(
+                "newhonor.configuration.extra.intervalticks.comment"
+                , "多少tick检查一次效果组是否该刷新了 默认为8tick")));
+        extraNode.getNode(PARALLEL_GOAL).setComment(extraNode.getNode(PARALLEL_GOAL).getComment().orElse(getString(
+                "newhonor.configuration.extra.parallelgoal.comment"
+                , "If the operation's size is bigger than this goal, it will be parallel. (if supported). default: 16")));
+    }
+
+    private static void checkConfigVersion() {
+        //the hook init(?)
+        //已经不在使用的N个配置文件node
+        cfg.removeChild("usePAPI");
+        cfg.removeChild("compatibleUChat");
+        cfg.removeChild(DISPLAY_HONOR);
+        cfg.removeChild(PERMISSION_MANAGE);
+        cfg.removeChild(DATA_DIR);
+        cfg.removeChild(CHECK_UPDATE);
+        cfg.removeChild(LANGUAGE);
+        cfg.removeChild(FORCE_ENABLE_DEFAULT_LISTENER);
     }
 }
