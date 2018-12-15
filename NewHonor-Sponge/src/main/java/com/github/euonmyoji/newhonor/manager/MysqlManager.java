@@ -69,14 +69,15 @@ public final class MysqlManager {
                             PlayerConfig.USING_KEY + " varchar(64)," +
                             PlayerConfig.HONORS_KEY + " TEXT," +
                             PlayerConfig.USEHONOR_KEY + " BOOL DEFAULT 1," +
-                            PlayerConfig.LIST_HONOR_STYLE_KEY + " varchar(32)" +
+                            PlayerConfig.AUTO_CHANGE_KEY + " BOOL DEFAULT 1," +
+                            PlayerConfig.LIST_HONOR_STYLE_KEY + " varchar(32)," +
                             PlayerConfig.ENABLE_EFFECTS_KEY + " BOOL DEFAULT 1);");
                     try {
                         s.execute(String.format("ALTER TABLE %s ADD %s bool default 1;", TABLE_NAME, PlayerConfig.AUTO_CHANGE_KEY));
                     } catch (Exception ignore) {
                     }
                     try {
-                        s.execute(String.format("ALTER TABLE %s ADD %s varchar(32);", PlayerConfig.LIST_HONOR_STYLE_KEY, PlayerConfig.AUTO_CHANGE_KEY));
+                        s.execute(String.format("ALTER TABLE %s ADD %s varchar(32);", TABLE_NAME, PlayerConfig.LIST_HONOR_STYLE_KEY));
                     } catch (Exception ignore) {
                     }
                 } catch (SQLException e) {
@@ -105,7 +106,7 @@ public final class MysqlManager {
     public static class MysqlPlayerConfig extends BasePlayerConfig {
         private static final String D = ",";
         private List<SQLException> es = new ArrayList<>();
-        private boolean done;
+        private volatile boolean done;
 
         public MysqlPlayerConfig(UUID uuid) throws SQLException {
             this.uuid = uuid;
