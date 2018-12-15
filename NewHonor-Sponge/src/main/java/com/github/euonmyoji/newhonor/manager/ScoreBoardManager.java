@@ -64,37 +64,36 @@ public final class ScoreBoardManager {
      */
     private static void execute(Player p) throws Exception {
         UUID uuid = p.getUniqueId();
-        PlayerConfig pd = PlayerConfig.get(p);
+        PlayerConfig pd = PlayerConfig.get(uuid);
         String honorID = pd.getUsingHonorID();
-        if (honorID == null) {
-            return;
-        }
         synchronized (LOCK) {
             p.getScoreboard().getTeams().forEach(team -> team.removeMember(p.getTeamRepresentation()));
-
-            Optional<Team> optionalTeam = getScoreBoard().getTeam(honorID);
-            boolean isTeamPresent = optionalTeam.isPresent();
-            if (pd.isUseHonor()) {
-                if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
-                    HonorData valueData = NewHonor.plugin.honorTextCache.get(uuid);
-                    List<Text> prefixes = valueData.getDisplayValue();
-                    List<Text> suffixes = valueData.getSuffixes();
-                    Text prefix = prefixes.get(0);
-                    if (isTeamPresent) {
-                        optionalTeam.get().setPrefix(prefix);
-                        optionalTeam.get().setSuffix(suffixes == null ? Text.of("") : suffixes.get(0));
-                    } else {
-                        optionalTeam = Optional.of(Team.builder()
-                                .name(honorID)
-                                .prefix(prefix)
-                                .suffix(suffixes == null ? Text.of("") : suffixes.get(0))
-                                .allowFriendlyFire(true)
-                                .build());
-                        getScoreBoard().registerTeam(optionalTeam.get());
-                    }
-                    optionalTeam.ifPresent(team -> team.addMember(p.getTeamRepresentation()));
-                    if (prefixes.size() > 1) {
-                        DisplayHonorTaskManager.submit(honorID, prefixes, suffixes, optionalTeam.orElseThrow(NoSuchFieldError::new), valueData.getDelay());
+            if (honorID != null) {
+                Optional<Team> optionalTeam = getScoreBoard().getTeam(honorID);
+                if (pd.isUseHonor()) {
+                    if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
+                        HonorData valueData = NewHonor.plugin.honorTextCache.get(uuid);
+                        List<Text> prefixes = valueData.getDisplayValue();
+                        List<Text> suffixes = valueData.getSuffixes();
+                        Text prefix = prefixes.get(0);
+                        Team team;
+                        if (optionalTeam.isPresent()) {
+                            team = optionalTeam.get();
+                            team.setPrefix(prefix);
+                            team.setSuffix(suffixes == null ? Text.of("") : suffixes.get(0));
+                        } else {
+                            team = Team.builder()
+                                    .name(honorID)
+                                    .prefix(prefix)
+                                    .suffix(suffixes == null ? Text.of("") : suffixes.get(0))
+                                    .allowFriendlyFire(true)
+                                    .build();
+                            getScoreBoard().registerTeam(team);
+                        }
+                        team.addMember(p.getTeamRepresentation());
+                        if (prefixes.size() > 1) {
+                            DisplayHonorTaskManager.submit(honorID, prefixes, suffixes, team, valueData.getDelay());
+                        }
                     }
                 }
             }

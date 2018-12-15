@@ -10,10 +10,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author yinyangshi
@@ -31,7 +28,10 @@ public class HonorConfig {
         loader = HoconConfigurationLoader.builder()
                 .setPath(PluginConfig.cfgDir.resolve("honor.conf")).build();
         cfg = load();
-        Optional.ofNullable(PluginConfig.getDefaultOwnHonors()).ifPresent(strings -> strings.forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]"))));
+        List<String> list = PluginConfig.getDefaultOwnHonors();
+        if (list != null) {
+            list.forEach(id -> noSaveSet(id, cfg.getNode(id, "value").getString("[default]")));
+        }
         cfg.removeChild("created-honors");
 
         save();
