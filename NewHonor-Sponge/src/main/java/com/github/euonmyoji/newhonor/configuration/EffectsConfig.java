@@ -2,7 +2,6 @@ package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.util.Util;
-import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -79,7 +78,7 @@ public class EffectsConfig {
             return loader.load();
         } catch (IOException e) {
             NewHonor.logger.error("EffectsData Config has error!", e);
-            return loader.createEmptyNode(ConfigurationOptions.defaults());
+            return cfg;
         }
     }
 
@@ -98,7 +97,7 @@ public class EffectsConfig {
     }
 
     public boolean anyMatchType(List<String> args, PotionEffectType type) {
-        //noinspection ConstantConditions 出问题一定是有人不会用:D
+        //noinspection OptionalGetWithoutIsPresent
         return args.stream()
                 .map(s -> Sponge.getRegistry()
                         .getType(PotionEffectType.class, s.split(CONNECT_KEY, 2)[0]).get())

@@ -6,6 +6,7 @@ import com.flowpowered.math.vector.Vector3d;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.OfferType;
 import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
+import com.github.euonmyoji.newhonor.util.RandomDelay;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -23,7 +24,7 @@ import java.util.List;
  * @author yinyangshi
  */
 public class HaloEffectsData {
-    private final RandomDelayData delayData;
+    private final RandomDelay delayData;
     private final List<PotionEffect> potionEffects;
     private final ParticleEffectData particleEffectData;
     private final double chance;
@@ -35,7 +36,7 @@ public class HaloEffectsData {
 
     public HaloEffectsData(CommentedConfigurationNode cfg, String id) throws ObjectMappingException {
         effectID = id;
-        delayData = new RandomDelayData(cfg.getNode("delay").getString("0"));
+        delayData = new RandomDelay(cfg.getNode("delay").getString("0"));
         radius = cfg.getNode("radius").getDouble(5);
         chance = cfg.getNode("chance").getDouble(1);
         include = cfg.getNode("include-me").getBoolean(false);

@@ -46,8 +46,7 @@ public class DisplayHonorTask implements Runnable {
                 Task.builder().execute(this)
                         .delayTicks(delays[index]).name("NewHonor - displayHonor Task " + id + "#" + index)
                         .submit(NewHonor.plugin);
-                index++;
-                if (index == values.size()) {
+                if (++index == values.size()) {
                     index = 0;
                 }
             } catch (IllegalArgumentException | IndexOutOfBoundsException | NullPointerException e) {

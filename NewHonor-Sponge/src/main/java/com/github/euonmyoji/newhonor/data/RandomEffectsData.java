@@ -5,6 +5,7 @@ import co.aikar.timings.Timings;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.OfferType;
 import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
+import com.github.euonmyoji.newhonor.util.RandomDelay;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -25,7 +26,7 @@ import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KE
  * @author yinyangshi
  */
 public class RandomEffectsData {
-    private final RandomDelayData delayData;
+    private final RandomDelay delayData;
     private final List<PotionEffect> potionEffects;
     private final ParticleEffectData particleEffectData;
     private final double chance;
@@ -35,7 +36,7 @@ public class RandomEffectsData {
 
     public RandomEffectsData(CommentedConfigurationNode cfg, String id) throws ObjectMappingException {
         this.id = id;
-        delayData = new RandomDelayData(cfg.getNode("delay").getString("15"));
+        delayData = new RandomDelay(cfg.getNode("delay").getString("15"));
         potionEffects = Util.getPotionEffects(cfg, Util.getPotionEffectsDurationTick(cfg), cfg.getNode("show").getBoolean());
         chance = cfg.getNode("chance").getDouble(1);
         particleEffectData = cfg.getNode(PARTICLES_KEY).isVirtual() ? null : new ParticleEffectData(cfg.getNode(PARTICLES_KEY), id);

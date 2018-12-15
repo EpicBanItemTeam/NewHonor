@@ -8,7 +8,7 @@ import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import com.github.euonmyoji.newhonor.data.ParticleEffectData;
-import com.github.euonmyoji.newhonor.data.RandomDelayData;
+import com.github.euonmyoji.newhonor.util.RandomDelay;
 import com.github.euonmyoji.newhonor.data.RandomEffectsData;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -60,7 +60,7 @@ public class EffectsOfferTask {
     }
 
     private static class SelfTaskData {
-        private final RandomDelayData delayData;
+        private final RandomDelay delayData;
         private final List<PotionEffect> potionEffects;
         private final String id;
         private final Collection<RandomEffectsData> randomList = new ArrayList<>();
@@ -71,7 +71,7 @@ public class EffectsOfferTask {
         private SelfTaskData(EffectsConfig config) throws ObjectMappingException {
             id = config.getId();
             potionEffects = config.getEffects();
-            delayData = new RandomDelayData(config.cfg.getNode(EFFECTS_KEY, "delay").getString("0"));
+            delayData = new RandomDelay(config.cfg.getNode(EFFECTS_KEY, "delay").getString("0"));
             config.cfg.getNode(EFFECTS_KEY, "random").getChildrenMap().forEach((o, cfg) -> {
                 try {
                     randomList.add(new RandomEffectsData(cfg, id));

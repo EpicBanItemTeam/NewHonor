@@ -196,6 +196,7 @@ public final class PluginConfig {
     private static void checkConfigVersion() {
         //the hook init(?)
         //已经不在使用的N个配置文件node
+        //暂时不写版本号进文件:D  就当是1.0
         cfg.removeChild("usePAPI");
         cfg.removeChild("compatibleUChat");
         cfg.removeChild(DISPLAY_HONOR);

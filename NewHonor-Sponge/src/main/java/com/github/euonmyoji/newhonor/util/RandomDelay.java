@@ -1,4 +1,4 @@
-package com.github.euonmyoji.newhonor.data;
+package com.github.euonmyoji.newhonor.util;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 
@@ -11,11 +11,11 @@ import java.util.Random;
  *
  * @author yinyangshi
  */
-public class RandomDelayData {
+public class RandomDelay {
     private static final Random R = new Random();
     private final List<Range> ranges = new ArrayList<>();
 
-    public RandomDelayData(String arg) {
+    public RandomDelay(String arg) {
         try {
             String[] ors = arg.split(",");
             for (String value : ors) {
@@ -31,7 +31,6 @@ public class RandomDelayData {
     }
 
     private class Range {
-        private static final int MAX_LENGTH = 2;
         private int min;
         private int max;
 
@@ -39,7 +38,7 @@ public class RandomDelayData {
             if (arg.length == 1) {
                 min = Integer.parseInt(arg[0]);
                 max = min;
-            } else if (arg.length == MAX_LENGTH) {
+            } else if (arg.length == 1 + 1) {
                 int a = Integer.parseInt(arg[0]);
                 int b = Integer.parseInt(arg[1]);
                 min = Math.min(a, b);

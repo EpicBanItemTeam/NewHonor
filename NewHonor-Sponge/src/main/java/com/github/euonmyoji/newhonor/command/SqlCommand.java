@@ -31,6 +31,7 @@ final class SqlCommand {
                                 .map(Path::getFileName).map(Path::toString)
                                 .map(s -> s.replace(".conf", ""))
                                 .collect(Collectors.toList());
+                        NewHonor.logger.info("src: " + src.getName() + " is updating local data to sql");
                         for (String s : list) {
                             UUID uuid = UUID.fromString(s);
                             PlayerConfig sqlCfg = PlayerConfig.getOf("mysql", uuid);
@@ -65,6 +66,7 @@ final class SqlCommand {
                                 .map(Path::getFileName).map(Path::toString)
                                 .map(s -> s.replace(".conf", ""))
                                 .collect(Collectors.toList());
+                        NewHonor.logger.info("src: " + src.getName() + " is download sql data to local");
                         for (String s : list) {
                             UUID uuid = UUID.fromString(s);
                             PlayerConfig sqlCfg = PlayerConfig.getOf("mysql", uuid);

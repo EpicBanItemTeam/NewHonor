@@ -2,7 +2,6 @@ package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.data.HonorData;
-import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -79,8 +78,8 @@ public class HonorConfig {
         try {
             return loader.load();
         } catch (IOException e) {
-            NewHonor.logger.error("HonorData Config has error!", e);
-            return loader.createEmptyNode(ConfigurationOptions.defaults());
+            NewHonor.logger.error("load Honor Config error!", e);
+            return cfg;
         }
     }
 
