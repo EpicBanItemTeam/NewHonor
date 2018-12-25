@@ -26,8 +26,8 @@ import static org.spongepowered.api.text.action.TextActions.showText;
  * @author yinyangshi
  */
 public final class HonorCommand {
+    public static String ADMIN_PERMISSION = "newhonor.admin";
     private static final HashMap<UUID, Integer> USE_CD = new HashMap<>();
-    static String ADMIN_PERMISSION = "newhonor.admin";
     private static String ID_KEY = "id";
     private static CommandSpec data = CommandSpec.builder()
             .permission(ADMIN_PERMISSION)

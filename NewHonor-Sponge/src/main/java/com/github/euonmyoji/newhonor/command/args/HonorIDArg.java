@@ -2,6 +2,7 @@ package com.github.euonmyoji.newhonor.command.args;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.Level;
+import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.util.Util;
 import org.spongepowered.api.command.CommandSource;
@@ -72,7 +73,7 @@ public class HonorIDArg extends CommandElement {
 
     @Override
     public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
-        if (shouldPresent) {
+        if (shouldPresent && src.hasPermission(HonorCommand.ADMIN_PERMISSION)) {
             if (args.hasNext()) {
                 try {
                     String arg = args.next();

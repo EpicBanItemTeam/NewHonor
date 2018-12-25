@@ -171,7 +171,7 @@ public final class NewHonor {
     @Listener
     public void onStarted(GameStartedServerEvent event) {
         //纽尊严? 过于真实        idea from sponge 咕咕咕 group
-        Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour", "newhonor", "头衔", "称号", "纽尊严");
+        Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour", "newhonor", "头衔", "称号", "纽尊严", "tx", "ch");
         logger.info("NewHonor author email:1418780411@qq.com");
         hook();
         try {
