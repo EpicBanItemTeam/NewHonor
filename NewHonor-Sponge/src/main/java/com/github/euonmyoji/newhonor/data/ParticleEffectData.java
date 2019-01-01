@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static sun.misc.FloatingDecimal.parseDouble;
+import static java.lang.Double.parseDouble;
 
 /**
  * @author yinyangshi
