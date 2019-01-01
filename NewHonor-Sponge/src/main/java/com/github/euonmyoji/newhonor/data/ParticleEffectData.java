@@ -21,12 +21,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static sun.misc.FloatingDecimal.parseDouble;
+
 /**
  * @author yinyangshi
  */
 public class ParticleEffectData {
     public static final String PARTICLES_KEY = "particles";
-    private int radius;
+    private int radiusSquared;
     private List<Consumer<Location<World>>> consumers = new ArrayList<>();
 
     public ParticleEffectData(CommentedConfigurationNode cfg, String id) {
@@ -42,13 +44,24 @@ public class ParticleEffectData {
             String[] velocity = node.getNode("velocity").getString("0,0,0").split(",", 3);
             String[] offset = node.getNode("offset").getString("0,0,0").split(",", 3);
             String[] color = node.getNode("color").getString(nullValue).split(",", 3);
+            final Vector3d locationOffset;
+            {
+                String s = node.getNode("locationOffset").getString();
+                if (s != null) {
+                    String[] arg = s.split(",", 3);
+                    locationOffset = new Vector3d(parseDouble(arg[0]), parseDouble(arg[1]), parseDouble(arg[2]));
+                } else {
+                    locationOffset = null;
+                }
+            }
             int quantity = node.getNode("quantity").getInt(1);
-            radius = node.getNode("radius").getInt(-1);
+            radiusSquared = node.getNode("radius").getInt(-1);
+            radiusSquared *= radiusSquared;
 
             ParticleEffect.Builder builder = ParticleEffect.builder()
                     .type(type)
-                    .velocity(new Vector3d(Double.valueOf(velocity[0]), Double.valueOf(velocity[1]), Double.valueOf(velocity[2])))
-                    .offset(new Vector3d(Double.valueOf(offset[0]), Double.valueOf(offset[1]), Double.valueOf(offset[2])))
+                    .velocity(new Vector3d(parseDouble(velocity[0]), parseDouble(velocity[1]), parseDouble(velocity[2])))
+                    .offset(new Vector3d(parseDouble(offset[0]), parseDouble(offset[1]), parseDouble(offset[2])))
                     .quantity(quantity);
 
             try {
@@ -74,9 +87,31 @@ public class ParticleEffectData {
             ///build build build build build
             ParticleEffect particle = builder.build();
             //如果没有指定半径则用无半径方法 or else
-            consumers.add(radius > 0 ? (o -> o.getExtent().getPlayers()
-                    .forEach(player -> player.spawnParticles(particle, o.getPosition(), radius))) : (o -> o.getExtent().getPlayers()
-                    .forEach(player -> player.spawnParticles(particle, o.getPosition()))));
+            if (radiusSquared > 0) {
+                if (locationOffset != null) {
+                    consumers.add(o -> o.getExtent().getPlayers()
+                            .forEach(player -> {
+                                if (player.getLocation().getPosition().distanceSquared(o.getPosition()) <= radiusSquared) {
+                                    player.spawnParticles(particle, o.getPosition().add(locationOffset));
+                                }
+                            }));
+                } else {
+                    consumers.add(o -> o.getExtent().getPlayers()
+                            .forEach(player -> {
+                                if (player.getLocation().getPosition().distanceSquared(o.getPosition()) <= radiusSquared) {
+                                    player.spawnParticles(particle, o.getPosition());
+                                }
+                            }));
+                }
+            } else {
+                if (locationOffset != null) {
+                    consumers.add(o -> o.getExtent().getPlayers()
+                            .forEach(player -> player.spawnParticles(particle, o.getPosition().add(locationOffset))));
+                } else {
+                    consumers.add(o -> o.getExtent().getPlayers()
+                            .forEach(player -> player.spawnParticles(particle, o.getPosition())));
+                }
+            }
         });
     }
 

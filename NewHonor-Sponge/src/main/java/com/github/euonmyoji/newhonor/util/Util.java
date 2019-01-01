@@ -61,13 +61,17 @@ public class Util {
         List<PotionEffect> list = new ArrayList<>();
         getEffectsList(cfg).forEach(s -> {
             String[] args = s.split(EffectsConfig.CONNECT_KEY, 2);
-            Sponge.getRegistry().getType(PotionEffectType.class, args[0]).ifPresent(type ->
-                    list.add(PotionEffect.builder()
-                            .potionType(type)
-                            .amplifier(Integer.parseInt(args[1]))
-                            .duration(tick)
-                            .particles(show)
-                            .build()));
+            Optional<PotionEffectType> optType = Sponge.getRegistry().getType(PotionEffectType.class, args[0]);
+            if (optType.isPresent()) {
+                list.add(PotionEffect.builder()
+                        .potionType(optType.get())
+                        .amplifier(Integer.parseInt(args[1]))
+                        .duration(tick)
+                        .particles(show)
+                        .build());
+            } else {
+                NewHonor.logger.warn("The effects config(unknown name) potion type is not found! type:{}", args[0]);
+            }
         });
         return list;
     }
