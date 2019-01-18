@@ -92,16 +92,24 @@ public class LocalPlayerConfig extends BasePlayerConfig {
             } catch (SQLException e) {
                 NewHonor.logger.debug("why sql error?", e);
             }
-            PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
-            return !Sponge.getEventManager().post(event) && save();
+            try {
+                PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
+                return !Sponge.getEventManager().post(event) && save();
+            } catch (NoSuchMethodError e) {
+                return save();
+            }
         }
         return false;
     }
 
     @Override
     public boolean giveHonor(String id) {
-        PlayerGetHonorEvent event = new PlayerGetHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, id);
-        return !Sponge.getEventManager().post(event) && noSaveGive(id) && save();
+        try {
+            PlayerGetHonorEvent event = new PlayerGetHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, id);
+            return !Sponge.getEventManager().post(event) && noSaveGive(id) && save();
+        } catch (NoSuchMethodError e) {
+            return noSaveGive(id) && save();
+        }
     }
 
     @Override

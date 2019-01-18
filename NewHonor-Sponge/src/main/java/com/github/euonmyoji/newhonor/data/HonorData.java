@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * @author yinyangshi
  */
@@ -50,7 +52,8 @@ public class HonorData {
             switch (type) {
                 case "item": {
                     try {
-                        valueBuilder.onHover(TextActions.showItem(hoverNode.getNode("value").getValue(TypeToken.of(ItemStackSnapshot.class))));
+                        valueBuilder.onHover(TextActions
+                                .showItem(requireNonNull(hoverNode.getNode("value").getValue(TypeToken.of(ItemStackSnapshot.class)))));
                     } catch (ObjectMappingException e) {
                         NewHonor.logger.warn("Error about honor.conf (item may be wrong?)", e);
                     }
@@ -58,9 +61,10 @@ public class HonorData {
                 }
                 case "entity": {
                     try {
-                        valueBuilder.onHover(TextActions.showEntity(hoverNode.getNode("entity").getValue(TypeToken.of(Entity.class)),
-                                hoverNode.getNode("name").getString("name")));
-                    } catch (ObjectMappingException e) {
+                        valueBuilder.onHover(TextActions
+                                .showEntity(requireNonNull(hoverNode.getNode("entity").getValue(TypeToken.of(Entity.class))),
+                                        hoverNode.getNode("name").getString("name")));
+                    } catch (ObjectMappingException | NullPointerException e) {
                         NewHonor.logger.warn("Error about honor.conf (entity may be wrong?)", e);
                     }
                     break;
@@ -78,7 +82,7 @@ public class HonorData {
             switch (type) {
                 case "open_url": {
                     try {
-                        valueBuilder.onClick(TextActions.openUrl(new URL(clickNode.getNode("value").getString())));
+                        valueBuilder.onClick(TextActions.openUrl(new URL(clickNode.getNode("value").getString(""))));
                     } catch (MalformedURLException e) {
                         NewHonor.logger.warn("error with open_url", e);
                     }

@@ -34,11 +34,15 @@ public class OfferPlayerEffectsEvent implements Event, Cancellable {
         this.from = from;
         this.offerType = type;
         Cause.Builder builder = Cause.builder();
+        if (from != null) {
+            builder.append(from);
+        }
         for (Object cause : causes) {
             if (cause != null) {
                 builder.append(cause);
             }
         }
+        builder.append(player);
         this.cause = builder.append(NewHonor.plugin).build(EventContext.empty());
     }
 

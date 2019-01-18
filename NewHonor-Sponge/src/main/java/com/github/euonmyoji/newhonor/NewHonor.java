@@ -223,7 +223,11 @@ public final class NewHonor {
     }
 
     public void reload() {
-        Sponge.getEventManager().post(new NewHonorReloadEvent());
+        try {
+            Sponge.getEventManager().post(new NewHonorReloadEvent());
+        } catch (NoSuchMethodError ignore) {
+
+        }
         PluginConfig.reload();
         SpongeLanguageManager.reload();
         HonorConfig.reload();

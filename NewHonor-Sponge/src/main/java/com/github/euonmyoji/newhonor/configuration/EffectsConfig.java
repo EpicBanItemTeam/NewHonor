@@ -9,6 +9,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
+import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,13 +28,15 @@ public class EffectsConfig {
     private final int potionEffectsTime;
     public CommentedConfigurationNode cfg;
     private String id;
+    private Text name;
 
     public EffectsConfig(String id) {
         this.id = id;
         loader = HoconConfigurationLoader.builder()
                 .setPath(PATH.resolve(id + ".conf")).build();
-        reload();
+        cfg = load();
         potionEffectsTime = Util.getPotionEffectsDurationTick(cfg.getNode("effects"));
+        this.name = Util.toText(cfg.getNode("name").getString(id));
     }
 
     public static void init() {
@@ -80,10 +83,6 @@ public class EffectsConfig {
             NewHonor.logger.error("EffectsData Config has error!", e);
             return cfg;
         }
-    }
-
-    private void reload() {
-        cfg = load();
     }
 
     private boolean save() {

@@ -179,8 +179,20 @@ public final class MysqlManager {
                 }
             }
             if (took) {
-                PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
-                if (!Sponge.getEventManager().post(event)) {
+                try {
+                    PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
+                    if (!Sponge.getEventManager().post(event)) {
+                        try (Connection con = getConnection(); PreparedStatement state = con.prepareStatement(String
+                                .format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'",
+                                        HONORS_KEY, honors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""), uuid))) {
+                            boolean result = state.executeUpdate() == 1;
+                            if (result) {
+                                checkUsingHonor();
+                            }
+                            return result;
+                        }
+                    }
+                } catch (NoSuchMethodError e) {
                     try (Connection con = getConnection(); PreparedStatement state = con.prepareStatement(String
                             .format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'",
                                     HONORS_KEY, honors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""), uuid))) {
@@ -198,22 +210,25 @@ public final class MysqlManager {
         @Override
         public boolean giveHonor(String id) throws SQLException {
             List<String> honors = getOwnHonors().orElseGet(ArrayList::new);
-            PlayerGetHonorEvent event = new PlayerGetHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, id);
-            Sponge.getEventManager().post(event);
-            if (honors.contains(id)) {
-                event.setCancelled(true);
-            }
-            if (!event.isCancelled() && !HonorConfig.isVirtual(id)) {
-                try (Connection con = getConnection()) {
-                    Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
-                            HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
-                    try (PreparedStatement state = con.prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'"
-                            , HONORS_KEY, honors.stream().reduce((s, s2) -> s + D + s2).orElse("") + D + id, uuid))) {
-                        boolean result = state.executeUpdate() < 2;
-                        if (result && isEnabledAutoChange()) {
-                            setUseHonor(id);
+            if (!honors.contains(id)) {
+                PlayerGetHonorEvent event = null;
+                try {
+                    event = new PlayerGetHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, id);
+                } catch (NoSuchMethodError ignore) {
+                }
+                boolean passEvent = event == null || !Sponge.getEventManager().post(event);
+                if (passEvent && !HonorConfig.isVirtual(id)) {
+                    try (Connection con = getConnection()) {
+                        Sponge.getServer().getPlayer(uuid).map(Player::getName).ifPresent(name ->
+                                HonorConfig.getGetMessage(id, name).ifPresent(Sponge.getServer().getBroadcastChannel()::send));
+                        try (PreparedStatement state = con.prepareStatement(String.format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'"
+                                , HONORS_KEY, honors.stream().reduce((s, s2) -> s + D + s2).orElse("") + D + id, uuid))) {
+                            boolean result = state.executeUpdate() < 2;
+                            if (result && isEnabledAutoChange()) {
+                                setUseHonor(id);
+                            }
+                            return result;
                         }
-                        return result;
                     }
                 }
             }

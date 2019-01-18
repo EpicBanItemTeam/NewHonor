@@ -1,8 +1,10 @@
 package com.github.euonmyoji.newhonor.util;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.PluginConfig;
+import com.github.euonmyoji.newhonor.data.ParticleEffectData;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -24,6 +26,15 @@ import java.util.stream.Stream;
  */
 public class Util {
     private static final int DEFAULT_DURATION_TICK = 60;
+
+    public static void offerEffects(Player player, OfferPlayerEffectsEvent event, List<PotionEffect> potionEffects, ParticleEffectData particleEffectData) {
+        if (event == null || !Sponge.getEventManager().post(event)) {
+            Util.offerEffects(player, potionEffects);
+            if (particleEffectData != null) {
+                particleEffectData.execute(player.getLocation());
+            }
+        }
+    }
 
     /**
      * 给玩家提供药水效果

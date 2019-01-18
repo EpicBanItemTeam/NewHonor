@@ -18,6 +18,8 @@ import org.spongepowered.api.scheduler.Task;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.github.euonmyoji.newhonor.util.Util.offerEffects;
+
 /**
  * 光环特效数据
  *
@@ -63,18 +65,22 @@ public class HaloEffectsData {
             double distanceSquared = player.getLocation().getPosition().distanceSquared(o);
             boolean playerPass = include || !(p.getUniqueId().equals(player.getUniqueId()));
             if (playerPass && distanceSquared < (radius * radius)) {
-                OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, effectID, p, OfferType.Halo, particleEffectData, potionEffects);
-                if (!Sponge.getEventManager().post(event)) {
-                    Util.offerEffects(player, potionEffects);
-                    if (particleEffectData != null) {
-                        particleEffectData.execute(player.getLocation());
-                    }
+                OfferPlayerEffectsEvent event = null;
+                try {
+                    event = new OfferPlayerEffectsEvent(player, effectID, p, OfferType.Halo, particleEffectData, potionEffects);
+                } catch (NoSuchMethodError ignore) {
                 }
+                offerEffects(player, event, potionEffects, particleEffectData);
             }
         });
         if (particleEffectData != null) {
-            OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(p, effectID, null, OfferType.Owner, particleEffectData);
-            if (!Sponge.getEventManager().post(event)) {
+            OfferPlayerEffectsEvent event = null;
+            try {
+                event = new OfferPlayerEffectsEvent(p, effectID, null, OfferType.Owner, particleEffectData);
+            } catch (NoSuchMethodError ignore) {
+            }
+
+            if (event == null || !Sponge.getEventManager().post(event)) {
                 particleEffectData.execute(p.getLocation());
             }
         }

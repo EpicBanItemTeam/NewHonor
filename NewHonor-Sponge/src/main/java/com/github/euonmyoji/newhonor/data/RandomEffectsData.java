@@ -9,7 +9,6 @@ import com.github.euonmyoji.newhonor.util.RandomDelay;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
@@ -18,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KEY;
+import static com.github.euonmyoji.newhonor.util.Util.offerEffects;
 
 
 /**
@@ -50,9 +50,17 @@ public class RandomEffectsData {
                 Timing timing = Timings.of(NewHonor.plugin, "NewHonorOfferPlayerSelfEffects(Random)");
                 timing.startTimingIfSync();
                 list.forEach(player -> {
-                    OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner);
-                    if (!Sponge.getEventManager().post(event)) {
-                        Util.offerEffects(player, potionEffects);
+                    try {
+
+                        OfferPlayerEffectsEvent event = null;
+                        try {
+                            event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner);
+                        } catch (NoSuchMethodError ignore) {
+
+                        }
+                        offerEffects(player, event, potionEffects, particleEffectData);
+                    } catch (NoSuchMethodError e) {
+                        offerEffects(player, potionEffects);
                         if (particleEffectData != null) {
                             particleEffectData.execute(player.getLocation());
                         }

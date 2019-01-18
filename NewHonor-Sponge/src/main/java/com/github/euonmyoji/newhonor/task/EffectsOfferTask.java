@@ -8,8 +8,8 @@ import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import com.github.euonmyoji.newhonor.data.ParticleEffectData;
-import com.github.euonmyoji.newhonor.util.RandomDelay;
 import com.github.euonmyoji.newhonor.data.RandomEffectsData;
+import com.github.euonmyoji.newhonor.util.RandomDelay;
 import com.github.euonmyoji.newhonor.util.Util;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.github.euonmyoji.newhonor.data.ParticleEffectData.PARTICLES_KEY;
+import static com.github.euonmyoji.newhonor.util.Util.offerEffects;
 
 /**
  * @author yinyangshi
@@ -108,13 +109,13 @@ public class EffectsOfferTask {
                 Timing timing = Timings.of(NewHonor.plugin, "NewHonorOfferPlayerSelfEffects");
                 timing.startTiming();
                 list.forEach(player -> {
-                    OfferPlayerEffectsEvent event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner, particleEffectData);
-                    if (!Sponge.getEventManager().post(event)) {
-                        Util.offerEffects(player, potionEffects);
-                        if (particleEffectData != null) {
-                            particleEffectData.execute(player.getLocation());
-                        }
+                    OfferPlayerEffectsEvent event = null;
+                    try {
+                        event = new OfferPlayerEffectsEvent(player, id, null, OfferType.Owner, particleEffectData);
+                    } catch (NoSuchMethodError ignore) {
+
                     }
+                    offerEffects(player, event, potionEffects, particleEffectData);
                 });
                 timing.stopTiming();
             }).submit(NewHonor.plugin);
