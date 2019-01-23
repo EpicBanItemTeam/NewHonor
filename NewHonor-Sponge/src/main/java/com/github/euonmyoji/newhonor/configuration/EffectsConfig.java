@@ -44,7 +44,7 @@ public class EffectsConfig {
             try {
                 Files.createDirectory(PATH);
             } catch (IOException e) {
-                e.printStackTrace();
+                NewHonor.logger.warn("create dir failed", e);
             }
         }
     }
