@@ -26,8 +26,8 @@ import static org.spongepowered.api.text.action.TextActions.showText;
  * @author yinyangshi
  */
 public final class HonorCommand {
-    public static String ADMIN_PERMISSION = "newhonor.admin";
     private static final HashMap<UUID, Integer> USE_CD = new HashMap<>();
+    public static String ADMIN_PERMISSION = "newhonor.admin";
     private static String ID_KEY = "id";
     private static CommandSpec data = CommandSpec.builder()
             .permission(ADMIN_PERMISSION)
@@ -122,14 +122,14 @@ public final class HonorCommand {
                 src.sendMessage(of("-------------------------------------"));
                 return CommandResult.success();
             })
-            .child(AdminCommand.list, "list")
-            .child(AdminCommand.add, "add")
+            .child(AdminCommand.list, "list", "l")
+            .child(AdminCommand.add, "add", "create", "a")
             .child(AdminCommand.delete, "delete")
             .child(AdminCommand.set, "set")
             .child(AdminCommand.give, "give")
             .child(AdminCommand.take, "take")
             .child(AdminCommand.refresh, "refresh")
-            .child(AdminCommand.reload, "reload")
+            .child(AdminCommand.reload, "reload", "r")
             .child(AdminCommand.effects, "effects")
             .build();
 
