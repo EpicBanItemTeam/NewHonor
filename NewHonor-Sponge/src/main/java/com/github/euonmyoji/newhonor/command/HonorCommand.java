@@ -173,6 +173,8 @@ public final class HonorCommand {
             .child(effects, "effects")
             .child(data, "data")
             .child(help, "help")
+            .child(AdminCommand.reload, "reload")
+            .child(AdminCommand.refresh, "refresh")
             .build();
 
     static {
