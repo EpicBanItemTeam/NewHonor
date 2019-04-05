@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.configuration;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.data.HonorData;
+import com.github.euonmyoji.newhonor.api.data.HonorData;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;

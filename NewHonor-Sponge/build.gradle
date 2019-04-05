@@ -96,17 +96,6 @@ task spongeApiJar(type: Jar) {
     include 'com/github/euonmyoji/newhonor/api/**', 'com/github/euonmyoji/newhonor/api/**'
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir '../NewHonor-Common/src/main/java'
-        }
-        resources {
-            srcDir '../NewHonor-Common/src/main/resources'
-        }
-    }
-}
-
 artifacts {
     archives shadowJar
     archives spongeApiJar

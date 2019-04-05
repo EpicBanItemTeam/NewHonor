@@ -1,7 +1,8 @@
 package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.data.HonorData;
+import com.github.euonmyoji.newhonor.api.data.HonorData;
+import com.github.euonmyoji.newhonor.api.manager.HonorManager;
 import me.rojo8399.placeholderapi.Placeholder;
 import me.rojo8399.placeholderapi.PlaceholderService;
 import me.rojo8399.placeholderapi.Source;
@@ -43,7 +44,7 @@ public final class PlaceholderManager {
 
     @Placeholder(id = NewHonor.NEWHONOR_ID)
     public Object getNewHonorText(@Source User user, @Nullable @Token(fix = true) String token) {
-        HonorData value = NewHonor.plugin.honorTextCache.get(user.getUniqueId());
+        HonorData value = Sponge.getServiceManager().provideUnchecked(HonorManager.class).getUsingHonor(user.getUniqueId());
         if (value != null) {
             if (token == null) {
                 return value.getValue();

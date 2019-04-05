@@ -179,20 +179,15 @@ public final class MysqlManager {
                 }
             }
             if (took) {
+                boolean cancel = false;
                 try {
                     PlayerLoseHonorEvent event = new PlayerLoseHonorEvent(Cause.builder().append(NewHonor.plugin).build(EventContext.empty()), uuid, ids);
-                    if (!Sponge.getEventManager().post(event)) {
-                        try (Connection con = getConnection(); PreparedStatement state = con.prepareStatement(String
-                                .format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'",
-                                        HONORS_KEY, honors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""), uuid))) {
-                            boolean result = state.executeUpdate() == 1;
-                            if (result) {
-                                checkUsingHonor();
-                            }
-                            return result;
-                        }
+                    if (Sponge.getEventManager().post(event)) {
+                        cancel = true;
                     }
-                } catch (NoSuchMethodError e) {
+                } catch (NoSuchMethodError ignore) {
+                }
+                if (!cancel) {
                     try (Connection con = getConnection(); PreparedStatement state = con.prepareStatement(String
                             .format("UPDATE NewHonorPlayerData SET %s='%s' WHERE UUID = '%s'",
                                     HONORS_KEY, honors.get().stream().reduce((s, s2) -> s + D + s2).orElse(""), uuid))) {

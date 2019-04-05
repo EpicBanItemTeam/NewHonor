@@ -2,7 +2,8 @@ package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
-import com.github.euonmyoji.newhonor.data.HonorData;
+import com.github.euonmyoji.newhonor.api.data.HonorData;
+import com.github.euonmyoji.newhonor.api.manager.HonorManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scoreboard.Scoreboard;
@@ -71,8 +72,8 @@ public final class ScoreBoardManager {
             if (honorID != null) {
                 Optional<Team> optionalTeam = getScoreBoard().getTeam(honorID);
                 if (pd.isUseHonor()) {
-                    if (NewHonor.plugin.honorTextCache.containsKey(uuid)) {
-                        HonorData valueData = NewHonor.plugin.honorTextCache.get(uuid);
+                    HonorData valueData = Sponge.getServiceManager().provideUnchecked(HonorManager.class).getUsingHonor(uuid);
+                    if (valueData != null) {
                         List<Text> prefixes = valueData.getDisplayValue();
                         List<Text> suffixes = valueData.getSuffixes();
                         Text prefix = prefixes.get(0);

@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.command;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.api.Level;
+import com.github.euonmyoji.newhonor.api.ArgLevel;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.command.args.HonorIDArg;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
@@ -107,7 +107,7 @@ final class AdminCommand {
             })
             .build();
     static CommandSpec set = CommandSpec.builder()
-            .arguments(new HonorIDArg(of("honorID"), true, Level.WARNING),
+            .arguments(new HonorIDArg(of("honorID"), true, ArgLevel.WARNING),
                     GenericArguments.string(of("honor")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);
@@ -137,7 +137,7 @@ final class AdminCommand {
             })
             .build();
     static CommandSpec add = CommandSpec.builder()
-            .arguments(new HonorIDArg(of("honorID"), false, Level.ERROR),
+            .arguments(new HonorIDArg(of("honorID"), false, ArgLevel.ERROR),
                     GenericArguments.string(of("honor")))
             .executor((src, args) -> {
                 String id = args.<String>getOne(of("honorID")).orElseThrow(NoSuchFieldError::new);

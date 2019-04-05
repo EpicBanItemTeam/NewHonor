@@ -5,7 +5,7 @@ import co.aikar.timings.Timings;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
-import com.github.euonmyoji.newhonor.data.HonorData;
+import com.github.euonmyoji.newhonor.api.data.HonorData;
 import com.github.euonmyoji.newhonor.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.manager.SpongeLanguageManager;

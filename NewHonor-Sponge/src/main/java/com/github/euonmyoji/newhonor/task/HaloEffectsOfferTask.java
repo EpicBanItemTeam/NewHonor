@@ -1,6 +1,7 @@
 package com.github.euonmyoji.newhonor.task;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.api.manager.HonorManager;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import com.github.euonmyoji.newhonor.data.HaloEffectsData;
@@ -61,7 +62,8 @@ public class HaloEffectsOfferTask {
         }
 
         private void call() {
-            List<Player> list = Util.getStream(Util.getPlayerUsingEffects(id)).map(Sponge.getServer()::getPlayer)
+            List<Player> list = Util.getStream(Sponge.getServiceManager().provideUnchecked(HonorManager.class)
+                    .getPlayersUsingEffects(id)).map(Sponge.getServer()::getPlayer)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(Collectors.toList());

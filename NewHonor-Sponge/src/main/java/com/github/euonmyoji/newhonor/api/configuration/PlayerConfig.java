@@ -3,7 +3,7 @@ package com.github.euonmyoji.newhonor.api.configuration;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PluginConfig;
-import com.github.euonmyoji.newhonor.data.HonorData;
+import com.github.euonmyoji.newhonor.api.data.HonorData;
 import com.github.euonmyoji.newhonor.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.manager.PlayerConfigManager;
 import com.github.euonmyoji.newhonor.util.Log;

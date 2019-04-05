@@ -18,7 +18,10 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -100,17 +103,6 @@ public class Util {
 
     public static <T> Stream<T> getStream(List<T> list) {
         return list.size() > PluginConfig.parallelGoal ? list.parallelStream() : list.stream();
-    }
-
-    public static List<UUID> getPlayerUsingEffects(String id) {
-        List<UUID> list = new ArrayList<>();
-        //不锁了 以免死锁
-        new HashMap<>(NewHonor.plugin.playerUsingEffectCache).forEach((uuid, s) -> {
-            if (s.equals(id)) {
-                list.add(uuid);
-            }
-        });
-        return list;
     }
 
     public static double getTimeDuration(LocalDateTime start) {

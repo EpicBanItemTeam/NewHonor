@@ -5,6 +5,7 @@ import co.aikar.timings.Timings;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.OfferType;
 import com.github.euonmyoji.newhonor.api.event.OfferPlayerEffectsEvent;
+import com.github.euonmyoji.newhonor.api.manager.HonorManager;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import com.github.euonmyoji.newhonor.data.ParticleEffectData;
@@ -86,7 +87,8 @@ public class EffectsOfferTask {
         }
 
         private void call() {
-            List<Player> list = Util.getStream(Util.getPlayerUsingEffects(id)).map(Sponge.getServer()::getPlayer)
+            List<Player> list = Util.getStream(Sponge.getServiceManager().provideUnchecked(HonorManager.class)
+                    .getPlayersUsingEffects(id)).map(Sponge.getServer()::getPlayer)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(Collectors.toList());

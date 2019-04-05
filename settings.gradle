@@ -1,4 +1,3 @@
 rootProject.name = name
 include 'NewHonor-Sponge'
 include 'NewHonor-Common'
-include 'NewHonor-Bukkit'

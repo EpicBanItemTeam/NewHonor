@@ -1,8 +1,9 @@
 package com.github.euonmyoji.newhonor.listener;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
-import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.data.HonorData;
+import com.github.euonmyoji.newhonor.api.data.HonorData;
+import com.github.euonmyoji.newhonor.api.manager.HonorManager;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.util.Identifiable;
@@ -19,7 +20,7 @@ public final class UltimateChatEventListener {
         CommandSource source = event.getSender();
         if (source instanceof Identifiable) {
             UUID uuid = ((Identifiable) source).getUniqueId();
-            HonorData value = NewHonor.plugin.honorTextCache.get(uuid);
+            HonorData value = Sponge.getServiceManager().provideUnchecked(HonorManager.class).getUsingHonor(uuid);
             String tag = "{newhonor}";
             if (value == null) {
                 event.addTag(tag, "");

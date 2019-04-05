@@ -1,12 +1,13 @@
 package com.github.euonmyoji.newhonor;
 
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
+import com.github.euonmyoji.newhonor.api.data.HonorData;
 import com.github.euonmyoji.newhonor.api.event.NewHonorReloadEvent;
+import com.github.euonmyoji.newhonor.api.manager.HonorManager;
 import com.github.euonmyoji.newhonor.command.HonorCommand;
 import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PluginConfig;
-import com.github.euonmyoji.newhonor.data.HonorData;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
 import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
 import com.github.euonmyoji.newhonor.manager.*;
@@ -38,7 +39,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,8 +61,6 @@ public final class NewHonor {
     private static final Object CACHE_LOCK = new Object();
     public static Logger logger;
     public static NewHonor plugin;
-    public final HashMap<UUID, HonorData> honorTextCache = new HashMap<>();
-    public final HashMap<UUID, String> playerUsingEffectCache = new HashMap<>();
     private final UltimateChatEventListener UChatListener = new UltimateChatEventListener();
     private final NewHonorMessageListener NewHonorListener = new NewHonorMessageListener();
     @Inject
@@ -78,10 +76,7 @@ public final class NewHonor {
      * 清掉插件缓存 任务缓存
      */
     public static void clearCaches() {
-        synchronized (CACHE_LOCK) {
-            plugin.honorTextCache.clear();
-            plugin.playerUsingEffectCache.clear();
-        }
+        Sponge.getServiceManager().provideUnchecked(HonorManager.class).clear();
         synchronized (EffectsOfferTask.TASK_DATA) {
             EffectsOfferTask.TASK_DATA.clear();
         }
@@ -93,8 +88,7 @@ public final class NewHonor {
 
     public static void clearPlayerCache(UUID uuid) {
         synchronized (CACHE_LOCK) {
-            plugin.honorTextCache.remove(uuid);
-            plugin.playerUsingEffectCache.remove(uuid);
+            Sponge.getServiceManager().provideUnchecked(HonorManager.class).remove(uuid);
         }
     }
 
@@ -106,18 +100,16 @@ public final class NewHonor {
     public static void updateCache(PlayerConfig pd) {
         Runnable r = () -> {
             try {
-                synchronized (CACHE_LOCK) {
-                    pd.checkUsingHonor();
-                    plugin.playerUsingEffectCache.remove(pd.getUUID());
-                    plugin.honorTextCache.remove(pd.getUUID());
-                    if (pd.isUseHonor()) {
-                        HonorData data = pd.getUsingHonorValue();
-                        if (data != null) {
-                            plugin.honorTextCache.put(pd.getUUID(), data);
-                        }
-                        if (pd.isEnabledEffects()) {
-                            HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> plugin.playerUsingEffectCache.put(pd.getUUID(), s));
-                        }
+                HonorManager honorManager = Sponge.getServiceManager().provideUnchecked(HonorManager.class);
+                pd.checkUsingHonor();
+                honorManager.remove(pd.getUUID());
+                if (pd.isUseHonor()) {
+                    HonorData data = pd.getUsingHonorValue();
+                    if (data != null) {
+                        honorManager.setUsingHonor(pd.getUUID(), data);
+                    }
+                    if (pd.isEnabledEffects()) {
+                        HonorConfig.getEffectsID(pd.getUsingHonorID()).ifPresent(s -> honorManager.setUsingEffects(pd.getUUID(), s));
                     }
                 }
             } catch (Exception e) {
@@ -147,6 +139,7 @@ public final class NewHonor {
     @Listener
     public void onPreInit(GamePreInitializationEvent event) {
         plugin = this;
+        Sponge.getServiceManager().setProvider(this, HonorManager.class, new HonorManagerImpl());
         try {
             PluginConfig.defaultCfgDir = defaultCfgDir;
             Files.createDirectories(defaultCfgDir);
