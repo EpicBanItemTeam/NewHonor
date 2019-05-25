@@ -116,7 +116,7 @@ public final class NewHonor {
                 logger.error("error about data!", e);
             }
         };
-        Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> () -> ScoreBoardManager.initPlayer(player));
+        Optional<Runnable> r2 = Sponge.getServer().getPlayer(pd.getUUID()).map(player -> ScoreBoardManager::refresh);
 
         //r为插件数据修改 异步(有mysql) r2为玩家自身数据修改 可能不存在需要运行的 需要同步
         //为了保证更新时缓存为最新 r需要先运行

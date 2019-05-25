@@ -29,7 +29,7 @@ public final class ScoreBoardManager {
 
     public static void init() {
         if (enable) {
-            initAllPlayers();
+            refresh();
         }
     }
 
@@ -38,21 +38,6 @@ public final class ScoreBoardManager {
      */
     public static void clear() {
         DisplayHonorTaskManager.clear();
-    }
-
-    /**
-     * 初始化玩家
-     *
-     * @param p 玩家
-     */
-    public static void initPlayer(Player p) {
-        if (enable) {
-            try {
-                execute(p);
-            } catch (Exception e) {
-                NewHonor.logger.warn("init player scoreboard error", e);
-            }
-        }
     }
 
     /**
@@ -107,7 +92,15 @@ public final class ScoreBoardManager {
         }
     }
 
-    private static void initAllPlayers() {
-        Sponge.getServer().getOnlinePlayers().forEach(ScoreBoardManager::initPlayer);
+    public static void refresh() {
+        for (Player player : Sponge.getServer().getOnlinePlayers()) {
+            if (enable) {
+                try {
+                    execute(player);
+                } catch (Exception e) {
+                    NewHonor.logger.warn("init player scoreboard error", e);
+                }
+            }
+        }
     }
 }
