@@ -31,9 +31,9 @@ import static java.util.Objects.requireNonNull;
  * @author yinyangshi
  */
 public class HonorData {
-    private String id;
-    private Text value;
-    private String strValue;
+    private final String id;
+    private final Text value;
+    private final String strValue;
     private List<Text> displayValue;
     private List<Text> suffixes;
     private int[] delay;

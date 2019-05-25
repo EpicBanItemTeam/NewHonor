@@ -6,6 +6,7 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public final class DisplayHonorTaskManager {
         throw new UnsupportedOperationException();
     }
 
-    public static void submit(String id, List<Text> values, List<Text> suffixes, Team team, int[] delay) {
+    public static void submit(String id, List<Text> values, List<Text> suffixes, Collection<Team> team, int[] delay) {
         synchronized (TASKS) {
             if (TASKS.get(id) == null) {
                 DisplayHonorTask task = new DisplayHonorTask(id, values, suffixes, team, delay);

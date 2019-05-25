@@ -7,6 +7,7 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
 
+import java.util.Collection;
 import java.util.List;
 
 import static com.github.euonmyoji.newhonor.manager.DisplayHonorTaskManager.TASKS;
@@ -18,19 +19,19 @@ public class DisplayHonorTask implements Runnable {
     private String id;
     private List<Text> values;
     private List<Text> suffixes;
-    private Team team;
+    private Collection<Team> teams;
     private int[] delays;
     private int index;
     private volatile boolean running = true;
 
-    public DisplayHonorTask(String id, List<Text> values, List<Text> suffixes, Team team, int[] delay) {
+    public DisplayHonorTask(String id, List<Text> values, List<Text> suffixes, Collection<Team> teams, int[] delay) {
         if (values.size() > delay.length || values.size() != suffixes.size()) {
             throw new IllegalArgumentException();
         }
         this.id = id;
         this.values = values;
         this.suffixes = suffixes;
-        this.team = team;
+        this.teams = teams;
         this.delays = delay;
     }
 
@@ -39,9 +40,11 @@ public class DisplayHonorTask implements Runnable {
         if (running) {
             try (Timing timing = Timings.of(NewHonor.plugin, "NewHonorDisplayTask")) {
                 timing.startTimingIfSync();
-                team.setPrefix(values.get(index));
-                if (suffixes != null && suffixes.size() > index) {
-                    team.setSuffix(suffixes.get(index));
+                for (Team team : teams) {
+                    team.setPrefix(values.get(index));
+                    if (suffixes != null && suffixes.size() > index) {
+                        team.setSuffix(suffixes.get(index));
+                    }
                 }
                 Task.builder().execute(this)
                         .delayTicks(delays[index]).name("NewHonor - displayHonor Task " + id + "#" + index)

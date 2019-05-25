@@ -18,10 +18,7 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -101,7 +98,7 @@ public class Util {
         return cfg.getNode("effects").getList(TypeToken.of(String.class), ArrayList::new);
     }
 
-    public static <T> Stream<T> getStream(List<T> list) {
+    public static <T> Stream<T> getStream(Collection<T> list) {
         return list.size() > PluginConfig.parallelGoal ? list.parallelStream() : list.stream();
     }
 
