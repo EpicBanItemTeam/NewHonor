@@ -4,8 +4,8 @@ import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import com.github.euonmyoji.newhonor.NewHonor;
 import com.github.euonmyoji.newhonor.api.configuration.PlayerConfig;
-import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.api.data.HonorData;
+import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.enums.ListHonorStyle;
 import com.github.euonmyoji.newhonor.manager.LanguageManager;
 import com.github.euonmyoji.newhonor.manager.SpongeLanguageManager;
@@ -50,6 +50,7 @@ import static org.spongepowered.api.text.action.TextActions.showText;
  * @author yinyangshi
  */
 class ListHonorCommand {
+    private static final ItemStack GLASS = ItemStack.builder().itemType(ItemTypes.GLASS_PANE).add(Keys.DISPLAY_NAME, Text.of("")).build();
     private static HashMap<String, LocalDateTime> listCD = new HashMap<>();
 
     @Nonnull
@@ -123,8 +124,6 @@ class ListHonorCommand {
         }
         return CommandResult.empty();
     }
-
-    private static final ItemStack GLASS = ItemStack.builder().itemType(ItemTypes.GLASS_PANE).add(Keys.DISPLAY_NAME, Text.of("")).build();
 
     private static void listHonorByText(CommandSource src, PlayerConfig pd, User user, List<String> honors, boolean isSelf) throws SQLException {
         PaginationList.Builder builder = PaginationList.builder()
