@@ -112,7 +112,7 @@ public class HonorData {
                     String[] data = s.split(";;", 2);
                     delay[index] = data.length == 1 ? defaultDelay : Integer.valueOf(data[1]);
                     index++;
-                    if(data[0].length() < 16 && data[0].endsWith("&r")) {
+                    if(data[0].length() < 16 && data[0].substring(data[0].length() - 2).matches("&[0-9a-zA-Z]")) {
                         //the char to clear the color and won't display
                         data[0] += "\uE810";
                     }
