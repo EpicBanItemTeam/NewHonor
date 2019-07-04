@@ -113,7 +113,7 @@ public class HonorData {
                     delay[index] = data.length == 1 ? defaultDelay : Integer.valueOf(data[1]);
                     index++;
                     if(data[0].length() < 16 && data[0].substring(data[0].length() - 2).matches("&[0-9a-zA-Z]")) {
-                        //the char to clear the color and won't display
+                        //the char to change the name color and won't display
                         data[0] += "\uE810";
                     }
                     return Text.builder().append(Util.toText(data[0])).onClick(value.getClickAction().orElse(null))
