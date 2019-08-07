@@ -110,12 +110,8 @@ public class HonorData {
                 @Override
                 public Text apply(String s) {
                     String[] data = s.split(";;", 2);
-                    delay[index] = data.length == 1 ? defaultDelay : Integer.valueOf(data[1]);
+                    delay[index] = data.length == 1 ? defaultDelay : Integer.parseInt(data[1], 10);
                     index++;
-                    if(data[0].length() < 16 && data[0].substring(data[0].length() - 2).matches("&[0-9a-zA-Z]")) {
-                        //the char to change the name color and won't display
-                        data[0] += "\uE810";
-                    }
                     return Text.builder().append(Util.toText(data[0])).onClick(value.getClickAction().orElse(null))
                             .onHover(value.getHoverAction().orElse(null))
                             .trim().build();

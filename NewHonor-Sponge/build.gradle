@@ -92,7 +92,7 @@ task spongeApiJar(type: Jar) {
     }
     version = "${spongeVersion}"
     classifier = "API"
-    from sourceSets.main.output
+    from sourceSets.main.output, project(":NewHonor-Common").sourceSets.main.output
     include 'com/github/euonmyoji/newhonor/api/**', 'com/github/euonmyoji/newhonor/api/**'
 }
 

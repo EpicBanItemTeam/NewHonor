@@ -7,14 +7,14 @@ import com.github.euonmyoji.newhonor.api.manager.HonorManager;
 import com.github.euonmyoji.newhonor.util.Util;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.scoreboard.CollisionRules;
 import org.spongepowered.api.scoreboard.Team;
-import org.spongepowered.api.scoreboard.Visibilities;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author yinyangshi
@@ -74,12 +74,6 @@ public final class ScoreBoardManager {
                                                     .prefix(prefix)
                                                     .suffix(honorData.getSuffixes() == null ? Text.of("") : honorData.getSuffixes().get(0))
                                                     .allowFriendlyFire(true)
-                                                    .collisionRule(CollisionRules.ALWAYS)
-                                                    .canSeeFriendlyInvisibles(false)
-                                                    .deathTextVisibility(Visibilities.ALWAYS)
-                                                    .color(TextColors.WHITE)
-                                                    .displayName(honorData.getDisplayValue().get(0))
-                                                    .members(new HashSet<>())
                                                     .build();
                                             sb.registerTeam(team);
                                         }
