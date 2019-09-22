@@ -52,7 +52,9 @@ public final class ScoreBoardManager {
         String honorID = pd.getUsingHonorID();
         synchronized (LOCK) {
             List<Team> teams = new ArrayList<>();
-            HonorData honorData = honorID == null ? null: Sponge.getServiceManager().provideUnchecked(HonorManager.class).getUsingHonor(uuid);
+            HonorData honorData = honorID == null ? null : Sponge.getServiceManager().provideUnchecked(HonorManager.class).getUsingHonor(uuid);
+            List<Text> displayValue = honorData == null ? null : honorData.getDisplayValue(p);
+            List<Text> suffixes = honorData == null ? null : honorData.getSuffixes(p);
             Util.getStream(Sponge.getServer().getOnlinePlayers()).map(Player::getScoreboard)
                     .distinct()
                     .forEach(sb -> {
@@ -62,17 +64,17 @@ public final class ScoreBoardManager {
                             try {
                                 if (pd.isUseHonor()) {
                                     if (honorData != null) {
-                                        Text prefix = honorData.getDisplayValue().get(0);
+                                        Text prefix = displayValue.get(0);
                                         Team team;
                                         if (optionalTeam.isPresent()) {
                                             team = optionalTeam.get();
                                             team.setPrefix(prefix);
-                                            team.setSuffix(honorData.getSuffixes() == null ? Text.of("") : honorData.getSuffixes().get(0));
+                                            team.setSuffix(suffixes == null ? Text.of("") : suffixes.get(0));
                                         } else {
                                             team = Team.builder()
                                                     .name(honorID)
                                                     .prefix(prefix)
-                                                    .suffix(honorData.getSuffixes() == null ? Text.of("") : honorData.getSuffixes().get(0))
+                                                    .suffix(suffixes== null ? Text.of("") : suffixes.get(0))
                                                     .allowFriendlyFire(true)
                                                     .build();
                                             sb.registerTeam(team);
@@ -86,8 +88,8 @@ public final class ScoreBoardManager {
                             }
                         }
                     });
-            if (teams.size() > 0 && honorData.getDisplayValue().size() > 1) {
-                DisplayHonorTaskManager.submit(honorID, honorData.getDisplayValue(), honorData.getSuffixes(), teams, honorData.getDelay());
+            if (teams.size() > 0 && displayValue.size() > 1) {
+                DisplayHonorTaskManager.submit(honorID, displayValue, suffixes, teams, honorData.getDelay());
             }
         }
     }
