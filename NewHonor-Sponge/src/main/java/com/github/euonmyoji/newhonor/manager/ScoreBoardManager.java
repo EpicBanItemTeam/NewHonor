@@ -60,7 +60,7 @@ public final class ScoreBoardManager {
                     .forEach(sb -> {
                         sb.getTeams().forEach(team -> team.removeMember(p.getTeamRepresentation()));
                         if (honorID != null) {
-                            Optional<Team> optionalTeam = sb.getTeam(honorID);
+                            Optional<Team> optionalTeam = sb.getTeam(p.getName());
                             try {
                                 if (pd.isUseHonor()) {
                                     if (honorData != null) {
