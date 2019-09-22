@@ -72,7 +72,7 @@ public final class ScoreBoardManager {
                                             team.setSuffix(suffixes == null ? Text.of("") : suffixes.get(0));
                                         } else {
                                             team = Team.builder()
-                                                    .name(honorID)
+                                                    .name(p.getName())
                                                     .prefix(prefix)
                                                     .suffix(suffixes== null ? Text.of("") : suffixes.get(0))
                                                     .allowFriendlyFire(true)
