@@ -176,7 +176,7 @@ public class HonorData {
     }
 
     public Text getValue(Player p) {
-        if(NewHonor.plugin.enabledPlaceHolderAPI) {
+        if (NewHonor.plugin.enabledPlaceHolderAPI && value != null) {
             PlaceholderManager manager = PlaceholderManager.getInstance();
             return manager.parseText(value, p);
         }
@@ -192,7 +192,7 @@ public class HonorData {
     }
 
     public List<Text> getDisplayValue(Player p) {
-        if(NewHonor.plugin.enabledPlaceHolderAPI && displayValue != null) {
+        if (NewHonor.plugin.enabledPlaceHolderAPI && displayValue != null) {
             PlaceholderManager manager = PlaceholderManager.getInstance();
             return displayValue.stream().map(text -> manager.parseText(text, p)).collect(Collectors.toList());
         }
@@ -200,7 +200,7 @@ public class HonorData {
     }
 
     public List<Text> getSuffixes(Player p) {
-        if(NewHonor.plugin.enabledPlaceHolderAPI && suffixes != null) {
+        if (NewHonor.plugin.enabledPlaceHolderAPI && suffixes != null) {
             PlaceholderManager manager = PlaceholderManager.getInstance();
             return suffixes.stream().map(text -> manager.parseText(text, p)).collect(Collectors.toList());
         }
