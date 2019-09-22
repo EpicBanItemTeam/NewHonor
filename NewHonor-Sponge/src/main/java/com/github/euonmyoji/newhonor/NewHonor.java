@@ -66,7 +66,7 @@ public final class NewHonor {
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path defaultCfgDir;
-    private boolean enabledPlaceHolderAPI = false;
+    public boolean enabledPlaceHolderAPI = false;
     private boolean hookedNucleus = false;
     private boolean hookedUChat = false;
     @Inject
@@ -249,7 +249,7 @@ public final class NewHonor {
 
         //hook PAPI
         if (Sponge.getPluginManager().getPlugin(PAPI_ID).isPresent()) {
-            PlaceholderManager.create();
+            PlaceholderManager.getInstance();
             if (!enabledPlaceHolderAPI) {
                 logger.info("hooked PAPI, you can use '%newhonor%' now.");
             }

@@ -3,6 +3,7 @@ package com.github.euonmyoji.newhonor;
 import com.github.euonmyoji.newhonor.api.data.HonorData;
 import com.github.euonmyoji.newhonor.api.manager.HonorManager;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.channel.MessageReceiver;
@@ -25,7 +26,7 @@ public class NewHonorMessageChannel implements MessageChannel {
         if (sender instanceof Identifiable) {
             HonorData v = Sponge.getServiceManager().provideUnchecked(HonorManager.class).getUsingHonor(((Identifiable) sender).getUniqueId());
             if (v != null) {
-                return Optional.of(Text.of(v.getValue(), text));
+                return Optional.of(Text.of(v.getValue(sender instanceof Player ? ((Player) sender) : null), text));
             }
         }
         return Optional.of(text);

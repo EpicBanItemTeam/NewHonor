@@ -7,10 +7,16 @@ import me.rojo8399.placeholderapi.Placeholder;
 import me.rojo8399.placeholderapi.PlaceholderService;
 import me.rojo8399.placeholderapi.Source;
 import me.rojo8399.placeholderapi.Token;
+import me.rojo8399.placeholderapi.impl.utils.TextUtils;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.TextTemplate;
 
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author yinyangshi
@@ -20,9 +26,10 @@ public final class PlaceholderManager {
     private static final String STR_T = "strvalue";
     private static final String ID_T = "usingid";
     private static PlaceholderManager instance;
+    private PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
+
 
     private PlaceholderManager() {
-        PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
         service.loadAll(this, NewHonor.plugin).forEach(builder -> {
             if (NewHonor.NEWHONOR_ID.equals(builder.getId())) {
                 try {
@@ -36,10 +43,21 @@ public final class PlaceholderManager {
         });
     }
 
-    public static void create() {
+    public static PlaceholderManager getInstance() {
         if (instance == null) {
             instance = new PlaceholderManager();
         }
+        return instance;
+    }
+
+    public Text parseText(Text text, Player p) {
+        TextTemplate textTemplate = TextUtils.toTemplate(text, PlaceholderService.DEFAULT_PATTERN);
+        Map<String, ?> map = service.fillPlaceholders(textTemplate, p, p).entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, o -> {
+                    Object v = o.getValue();
+                    return v == null ? o.getKey() : v;
+                }));
+        return textTemplate.apply(map).build();
     }
 
     @Placeholder(id = NewHonor.NEWHONOR_ID)
@@ -47,7 +65,7 @@ public final class PlaceholderManager {
         HonorData value = Sponge.getServiceManager().provideUnchecked(HonorManager.class).getUsingHonor(user.getUniqueId());
         if (value != null) {
             if (token == null) {
-                return value.getValue();
+                return value.getValue(user.getPlayer().orElse(null));
             }
             switch (token) {
                 case ID_T: {
@@ -57,7 +75,7 @@ public final class PlaceholderManager {
                     return value.getStrValue();
                 }
                 case VALUE_T: {
-                    return value.getValue();
+                    return value.getValue(user.getPlayer().orElse(null));
                 }
                 default: {
                     //not to offer value though default

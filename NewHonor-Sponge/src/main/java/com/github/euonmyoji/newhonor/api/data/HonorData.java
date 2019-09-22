@@ -1,12 +1,14 @@
 package com.github.euonmyoji.newhonor.api.data;
 
 import com.github.euonmyoji.newhonor.NewHonor;
+import com.github.euonmyoji.newhonor.manager.PlaceholderManager;
 import com.github.euonmyoji.newhonor.util.Util;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
@@ -170,14 +172,38 @@ public class HonorData {
     }
 
     public Text getValue() {
-        return this.value;
+        return getValue(null);
+    }
+
+    public Text getValue(Player p) {
+        if(NewHonor.plugin.enabledPlaceHolderAPI) {
+            PlaceholderManager manager = PlaceholderManager.getInstance();
+            return manager.parseText(value, p);
+        }
+        return value;
     }
 
     public List<Text> getDisplayValue() {
-        return this.displayValue;
+        return getDisplayValue(null);
     }
 
     public List<Text> getSuffixes() {
+        return getSuffixes(null);
+    }
+
+    public List<Text> getDisplayValue(Player p) {
+        if(NewHonor.plugin.enabledPlaceHolderAPI && displayValue != null) {
+            PlaceholderManager manager = PlaceholderManager.getInstance();
+            return displayValue.stream().map(text -> manager.parseText(text, p)).collect(Collectors.toList());
+        }
+        return this.displayValue;
+    }
+
+    public List<Text> getSuffixes(Player p) {
+        if(NewHonor.plugin.enabledPlaceHolderAPI && suffixes != null) {
+            PlaceholderManager manager = PlaceholderManager.getInstance();
+            return suffixes.stream().map(text -> manager.parseText(text, p)).collect(Collectors.toList());
+        }
         return this.suffixes;
     }
 

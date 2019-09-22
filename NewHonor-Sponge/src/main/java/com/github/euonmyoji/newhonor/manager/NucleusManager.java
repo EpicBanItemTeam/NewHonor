@@ -1,11 +1,11 @@
 package com.github.euonmyoji.newhonor.manager;
 
 import com.github.euonmyoji.newhonor.NewHonor;
-import com.github.euonmyoji.newhonor.api.data.HonorData;
 import com.github.euonmyoji.newhonor.api.manager.HonorManager;
 import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import io.github.nucleuspowered.nucleus.api.exceptions.PluginAlreadyRegisteredException;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.util.Identifiable;
 
 import java.util.Optional;
@@ -29,7 +29,7 @@ public final class NucleusManager {
                     if (NewHonor.NEWHONOR_ID.equals(tokenInput) && src instanceof Identifiable) {
                         return Optional.ofNullable(Sponge.getServiceManager().provideUnchecked(HonorManager.class)
                                 .getUsingHonor((((Identifiable) src).getUniqueId())))
-                                .map(HonorData::getValue);
+                                .map(honorData -> honorData.getValue(src instanceof Player ? ((Player) src) : null));
                     }
                     return Optional.empty();
                 });
