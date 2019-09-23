@@ -7,16 +7,12 @@ import me.rojo8399.placeholderapi.Placeholder;
 import me.rojo8399.placeholderapi.PlaceholderService;
 import me.rojo8399.placeholderapi.Source;
 import me.rojo8399.placeholderapi.Token;
-import me.rojo8399.placeholderapi.impl.utils.TextUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextTemplate;
 
 import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author yinyangshi
@@ -51,13 +47,7 @@ public final class PlaceholderManager {
     }
 
     public Text parseText(Text text, Player p) {
-        TextTemplate textTemplate = TextUtils.toTemplate(text, PlaceholderService.DEFAULT_PATTERN);
-        Map<String, ?> map = service.fillPlaceholders(textTemplate, p, p).entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, o -> {
-                    Object v = o.getValue();
-                    return v == null ? o.getKey() : v;
-                }));
-        return textTemplate.apply(map).build();
+        return service.replaceSourcePlaceholders(text, p);
     }
 
     @Placeholder(id = NewHonor.NEWHONOR_ID)
