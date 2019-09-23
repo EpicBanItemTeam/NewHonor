@@ -11,6 +11,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import javax.annotation.Nullable;
 
@@ -47,7 +48,15 @@ public final class PlaceholderManager {
     }
 
     public Text parseText(Text text, Player p) {
-        return service.replaceSourcePlaceholders(text, p);
+        return service.replacePlaceholders(text, p,p);
+    }
+
+    public Text parseTextOnlyColor(Text text, Player p) {
+        String s = TextSerializers.FORMATTING_CODE.serialize( service.replacePlaceholders(text, p,p));
+        if(s.startsWith("&r&f")) {
+            s = s.substring(4);
+        }
+        return TextSerializers.FORMATTING_CODE.deserialize(s);
     }
 
     @Placeholder(id = NewHonor.NEWHONOR_ID)

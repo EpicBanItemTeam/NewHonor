@@ -194,17 +194,37 @@ public class HonorData {
     public List<Text> getDisplayValue(Player p) {
         if (NewHonor.plugin.enabledPlaceHolderAPI && displayValue != null) {
             PlaceholderManager manager = PlaceholderManager.getInstance();
-            return displayValue.stream().map(text -> manager.parseText(text, p)).collect(Collectors.toList());
+            return displayValue.stream().map(text -> manager.parseTextOnlyColor(text, p)).collect(Collectors.toList());
         }
         return this.displayValue;
+    }
+
+    public Text getDisplayValue(Player p, int index) {
+        if (displayValue == null) {
+            return Text.EMPTY;
+        } else if (NewHonor.plugin.enabledPlaceHolderAPI) {
+            PlaceholderManager manager = PlaceholderManager.getInstance();
+            return manager.parseTextOnlyColor(displayValue.get(index), p);
+        }
+        return displayValue.get(index);
     }
 
     public List<Text> getSuffixes(Player p) {
         if (NewHonor.plugin.enabledPlaceHolderAPI && suffixes != null) {
             PlaceholderManager manager = PlaceholderManager.getInstance();
-            return suffixes.stream().map(text -> manager.parseText(text, p)).collect(Collectors.toList());
+            return suffixes.stream().map(text -> manager.parseTextOnlyColor(text, p)).collect(Collectors.toList());
         }
         return this.suffixes;
+    }
+
+    public Text getSuffixValue(Player p, int index) {
+        if (suffixes == null) {
+            return Text.EMPTY;
+        } else if (NewHonor.plugin.enabledPlaceHolderAPI) {
+            PlaceholderManager manager = PlaceholderManager.getInstance();
+            return manager.parseTextOnlyColor(suffixes.get(index), p);
+        }
+        return suffixes.get(index);
     }
 
     public String getStrValue() {
