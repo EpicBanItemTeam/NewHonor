@@ -9,7 +9,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -72,7 +71,6 @@ public final class ScoreBoardManager {
                                             team.setPrefix(prefix);
                                             team.setSuffix(suffixes == null ? Text.of("") : suffixes.get(0));
                                         } else {
-                                            p.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.serialize(prefix)));
                                             team = Team.builder()
                                                     .name(p.getName())
                                                     .prefix(prefix)

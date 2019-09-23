@@ -53,8 +53,11 @@ public final class PlaceholderManager {
 
     public Text parseTextOnlyColor(Text text, Player p) {
         String s = TextSerializers.FORMATTING_CODE.serialize( service.replacePlaceholders(text, p,p));
-        if(s.startsWith("&r&f")) {
-            s = s.substring(4);
+        if(s.startsWith("&r")) {
+            s = s.substring(2);
+        }
+        if(s.startsWith("&f")) {
+            s = s.substring(2);
         }
         return TextSerializers.FORMATTING_CODE.deserialize(s);
     }
