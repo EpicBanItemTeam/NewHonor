@@ -59,6 +59,9 @@ public final class PlaceholderManager {
         if(s.startsWith("&f")) {
             s = s.substring(2);
         }
+        if(s.charAt(s.length() - 2) == '&') {
+            s = s.substring(0, s.length() - 2);
+        }
         return TextSerializers.FORMATTING_CODE.deserialize(s);
     }
 
