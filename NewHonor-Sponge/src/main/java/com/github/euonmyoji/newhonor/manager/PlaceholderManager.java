@@ -7,13 +7,17 @@ import me.rojo8399.placeholderapi.Placeholder;
 import me.rojo8399.placeholderapi.PlaceholderService;
 import me.rojo8399.placeholderapi.Source;
 import me.rojo8399.placeholderapi.Token;
+import me.rojo8399.placeholderapi.impl.utils.TextUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.TextTemplate;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author yinyangshi
@@ -47,21 +51,45 @@ public final class PlaceholderManager {
         return instance;
     }
 
+    private static String removeInvalidColorCode(String s) {
+        if (s.startsWith("&r")) {
+            s = s.substring(2);
+        }
+        if (s.startsWith("&f")) {
+            s = s.substring(2);
+        }
+        if (s.startsWith("&r")) {
+            s = s.substring(2);
+        }
+        if (s.length() > 2 && s.charAt(s.length() - 2) == '&') {
+            s = s.substring(0, s.length() - 2);
+        }
+        return s;
+    }
+
     public Text parseText(Text text, Player p) {
-        return service.replacePlaceholders(text, p,p);
+        return service.replacePlaceholders(text, p, p);
     }
 
     public Text parseTextOnlyColor(Text text, Player p) {
-        String s = TextSerializers.FORMATTING_CODE.serialize( service.replacePlaceholders(text, p,p));
-        if(s.startsWith("&r")) {
-            s = s.substring(2);
-        }
-        if(s.startsWith("&f")) {
-            s = s.substring(2);
-        }
-        if(s.charAt(s.length() - 2) == '&') {
-            s = s.substring(0, s.length() - 2);
-        }
+        TextTemplate textTemplate = TextUtils.toTemplate(text, PlaceholderService.DEFAULT_PATTERN);
+        Map<String, ?> map = service.fillPlaceholders(textTemplate, p, p).entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, node -> {
+                    Object v = node.getValue();
+                    if (v == null) {
+                        return node.getKey();
+                    }
+                    if (v instanceof Text) {
+                        String s = TextSerializers.FORMATTING_CODE.serialize(((Text) v));
+                        s = removeInvalidColorCode(s);
+                        return s;
+                    } else if (v instanceof String) {
+                        return removeInvalidColorCode(((String) v));
+                    }
+                    return v;
+                }));
+        String s = TextSerializers.FORMATTING_CODE.serialize(textTemplate.apply(map).build());
+        s = removeInvalidColorCode(s);
         return TextSerializers.FORMATTING_CODE.deserialize(s);
     }
 
@@ -91,5 +119,4 @@ public final class PlaceholderManager {
 
         return null;
     }
-
 }
