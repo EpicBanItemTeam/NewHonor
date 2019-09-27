@@ -90,7 +90,7 @@ public final class ScoreBoardManager {
                     });
             if (teams.size() > 0 && displayValue.size() > 1) {
                 if (NewHonor.plugin.enabledPlaceHolderAPI) {
-                    DisplayHonorTaskManager.submit(honorID, honorData, teams, honorData.getDelay());
+                    DisplayHonorTaskManager.submit(honorID + p.getName(), honorData, teams, honorData.getDelay());
                 } else {
                     DisplayHonorTaskManager.submit(honorID, displayValue, suffixes, teams, honorData.getDelay());
                 }
