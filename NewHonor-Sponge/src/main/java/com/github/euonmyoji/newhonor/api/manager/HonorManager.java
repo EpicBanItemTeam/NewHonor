@@ -35,6 +35,7 @@ public interface HonorManager {
 
     /**
      * get the players that using the effects
+     *
      * @param id the id of the effects
      * @return player's uuid
      */

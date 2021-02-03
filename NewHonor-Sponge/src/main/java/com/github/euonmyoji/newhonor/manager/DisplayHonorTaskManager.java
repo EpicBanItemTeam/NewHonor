@@ -42,7 +42,7 @@ public final class DisplayHonorTaskManager {
     public static void submit(String idName, HonorData honorData, List<Team> teams, int[] delay) {
         synchronized (TASKS) {
             if (TASKS.get(idName) == null) {
-                DisplayHonorTask task = new DisplayHonorTask(idName, honorData,teams, delay);
+                DisplayHonorTask task = new DisplayHonorTask(idName, honorData, teams, delay);
                 Task.builder().delayTicks(1).name("NewHonor - display task:" + idName)
                         .execute(task).submit(NewHonor.plugin);
                 TASKS.put(idName, task);

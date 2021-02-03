@@ -71,10 +71,8 @@ tasks.withType(JavaCompile) {
 
 dependencies {
     compileOnly "org.spongepowered:spongeapi:${spongeapi}"
-    compileOnly 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-5.0-6.0:1.8.6'
     compileOnly 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
     compileOnly 'io.github.nucleuspowered:nucleus-api:1.3.9-S7.0'
-    shade 'org.bstats.bStats-Metrics:bstats-sponge:1.4'
 
     compile project(":NewHonor-Common")
 }
@@ -86,7 +84,7 @@ shadowJar() {
     classifier = ""
 }
 
-task spongeApiJar(type: Jar) {
+task makeApiJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'com.github.euonmyoji.newhonor.Main'
     }
@@ -98,7 +96,7 @@ task spongeApiJar(type: Jar) {
 
 artifacts {
     archives shadowJar
-    archives spongeApiJar
+    archives makeApiJar
 }
 
 jar.setEnabled(true)

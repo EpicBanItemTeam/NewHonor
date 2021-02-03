@@ -1,7 +1,7 @@
 package com.github.euonmyoji.newhonor.manager;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.PropertyResourceBundle;
@@ -41,7 +41,7 @@ public class LanguageManager {
     }
 
     public static void reload(Path path) throws IOException {
-        res = new PropertyResourceBundle(Files.newBufferedReader(path, Charset.forName("UTF8")));
+        res = new PropertyResourceBundle(Files.newBufferedReader(path, StandardCharsets.UTF_8));
     }
 
     public static class Builder {

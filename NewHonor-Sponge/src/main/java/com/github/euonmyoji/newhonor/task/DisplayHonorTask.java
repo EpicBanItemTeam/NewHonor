@@ -26,6 +26,7 @@ public class DisplayHonorTask implements Runnable {
     private Collection<Team> teams;
     private int[] delays;
     private int index;
+    private int size;
     private volatile boolean running = true;
     private boolean hasSuffix = false;
 
@@ -38,6 +39,7 @@ public class DisplayHonorTask implements Runnable {
         this.suffixes = suffixes;
         this.teams = teams;
         this.delays = delay;
+        this.size = values.size();
     }
 
     public DisplayHonorTask(String id, HonorData honorData, List<Team> teams, int[] delay) {
@@ -48,6 +50,7 @@ public class DisplayHonorTask implements Runnable {
         if (data.getSuffixes() != null && data.getSuffixes().size() > 0) {
             hasSuffix = true;
         }
+        size = honorData.getDisplayValueSize();
     }
 
     @Override
@@ -76,11 +79,7 @@ public class DisplayHonorTask implements Runnable {
                 Task.builder().execute(this)
                         .delayTicks(delays[index]).name("NewHonor - displayHonor Task " + id + "#" + index)
                         .submit(NewHonor.plugin);
-                if (data != null) {
-                    if(++index == data.getDisplayValue().size()) {
-                        index = 0;
-                    }
-                } else if (++index == values.size()) {
+                if (++index == size) {
                     index = 0;
                 }
             } catch (IllegalArgumentException | IndexOutOfBoundsException | NullPointerException e) {

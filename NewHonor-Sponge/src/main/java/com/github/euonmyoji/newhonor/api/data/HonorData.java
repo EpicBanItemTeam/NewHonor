@@ -238,4 +238,8 @@ public class HonorData {
     public ItemStack getItem() {
         return item.copy();
     }
+
+    public int getDisplayValueSize() {
+        return displayValue.size();
+    }
 }

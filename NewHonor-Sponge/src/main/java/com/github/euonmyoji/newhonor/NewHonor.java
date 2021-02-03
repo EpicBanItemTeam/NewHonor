@@ -9,7 +9,6 @@ import com.github.euonmyoji.newhonor.configuration.EffectsConfig;
 import com.github.euonmyoji.newhonor.configuration.HonorConfig;
 import com.github.euonmyoji.newhonor.configuration.PluginConfig;
 import com.github.euonmyoji.newhonor.listener.NewHonorMessageListener;
-import com.github.euonmyoji.newhonor.listener.UltimateChatEventListener;
 import com.github.euonmyoji.newhonor.manager.*;
 import com.github.euonmyoji.newhonor.task.EffectsOfferTask;
 import com.github.euonmyoji.newhonor.task.HaloEffectsOfferTask;
@@ -17,7 +16,6 @@ import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
-import org.bstats.sponge.Metrics2;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
@@ -30,7 +28,6 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.plugin.meta.version.ComparableVersion;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -61,16 +58,12 @@ public final class NewHonor {
     private static final Object CACHE_LOCK = new Object();
     public static Logger logger;
     public static NewHonor plugin;
-    private final UltimateChatEventListener UChatListener = new UltimateChatEventListener();
     private final NewHonorMessageListener NewHonorListener = new NewHonorMessageListener();
+    public boolean enabledPlaceHolderAPI = false;
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path defaultCfgDir;
-    public boolean enabledPlaceHolderAPI = false;
     private boolean hookedNucleus = false;
-    private boolean hookedUChat = false;
-    @Inject
-    private Metrics2 metrics;
 
     /**
      * 清掉插件缓存 任务缓存
@@ -165,31 +158,11 @@ public final class NewHonor {
     public void onStarted(GameStartedServerEvent event) {
         //纽尊严? 过于真实        idea from sponge 咕咕咕 group
         Sponge.getCommandManager().register(this, HonorCommand.honor, "honor", "honour", "newhonor", "头衔", "称号", "纽尊严", "tx", "ch");
-        logger.info("NewHonor author email:1418780411@qq.com");
         hook();
         try {
             TaskManager.update();
         } catch (IOException e) {
             logger.warn("Task init error", e);
-        }
-        metrics.addCustomChart(new Metrics2.SimplePie("useeffects", () -> EffectsOfferTask.TASK_DATA.size() > 0 ? "true" : "false"));
-        metrics.addCustomChart(new Metrics2.SimplePie("displayhonor", () -> ScoreBoardManager.enable ? "true" : "false"));
-        metrics.addCustomChart(new Metrics2.SimplePie("usepapi",
-                () -> enabledPlaceHolderAPI ? "true" : "false"));
-        metrics.addCustomChart(new Metrics2.SimplePie("usehaloeffects", () -> HaloEffectsOfferTask.TASK_DATA.size() > 0 ?
-                "true" : "false"));
-        metrics.addCustomChart(new Metrics2.SimplePie("usenucleus", () -> hookedNucleus ? "true" : "false"));
-
-        try {
-            if (!Sponge.getMetricsConfigManager().areMetricsEnabled(this)) {
-                Sponge.getServer().getConsole()
-                        .sendMessage(Text.of("[NewHonor]If you think newhonor is a good plugin and want to support newhonor, please enable metrics, thanks!"));
-            }
-        } catch (NoClassDefFoundError | NoSuchMethodError e) {
-            //do not spam the server (ignore)
-            metrics.cancel();
-            Task.builder().delayTicks(60 * 20).execute(metrics::cancel).submit(this);
-            logger.info("NoMetricsManagerClassDefFound, try canceling the metrics");
         }
     }
 
@@ -255,14 +228,7 @@ public final class NewHonor {
             }
             enabledPlaceHolderAPI = true;
         }
-        //hook UChat
-        if (Sponge.getPluginManager().getPlugin(UCHAT_ID).isPresent()) {
-            if (!hookedUChat) {
-                Sponge.getEventManager().registerListeners(this, UChatListener);
-                logger.info("hooked UChat");
-            }
-            hookedUChat = true;
-        }
+
         //没用uchat  开了nucleus就必须force 或者不开直接用
         //displayHonor
         boolean displayHonor = PluginConfig.generalNode.getNode(DISPLAY_HONOR).getBoolean(false);
@@ -274,7 +240,7 @@ public final class NewHonor {
 
         //default listener
         boolean forcePass = !(hookedNucleus || displayHonor) || PluginConfig.generalNode.getNode(FORCE_ENABLE_DEFAULT_LISTENER).getBoolean();
-        if (forcePass && !hookedUChat) {
+        if (forcePass) {
             Sponge.getEventManager().registerListeners(this, NewHonorListener);
         }
     }
