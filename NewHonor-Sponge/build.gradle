@@ -3,7 +3,6 @@ import org.ajoberstar.grgit.Grgit
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath 'org.ajoberstar:grgit:1.7.0'
@@ -61,7 +60,6 @@ repositories {
         name = "nucleus"
         url = "http://repo.drnaylor.co.uk/artifactory/list/minecraft"
     }
-    maven { url = 'https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/' }
     maven { url = 'https://jitpack.io' }
 }
 

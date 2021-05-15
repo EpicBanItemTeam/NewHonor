@@ -213,11 +213,15 @@ public final class NewHonor {
 
         //hook nucleus
         if (Sponge.getPluginManager().getPlugin(NUCLEUS_ID).isPresent()) {
-            NucleusManager.doIt();
-            if (!hookedNucleus) {
-                logger.info("hooked nucleus");
+            try {
+                NucleusManager.doIt();
+                if (!hookedNucleus) {
+                    logger.info("hooked nucleus");
+                }
+                hookedNucleus = true;
+            } catch (Throwable e) {
+                logger.error("hook nucleus failed", e);
             }
-            hookedNucleus = true;
         }
 
         //hook PAPI
